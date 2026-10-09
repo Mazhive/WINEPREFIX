@@ -411,7 +411,7 @@ vulkaninfo --summary
 udevadm info /dev/input/js0 2>/dev/null || echo "No joystick detected"
 ```
 
-## Notes
+## Notes ##
 
 1. **PySide6 is the ONLY mandatory Python package** - everything else is stdlib.
 2. The launcher scripts (`*.sh` in `LINUXLAUNCHERS/`) may have their own dependencies (specific Wine versions, Proton, DXVK, etc.) - check individual scripts.
