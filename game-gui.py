@@ -749,7 +749,7 @@ class MainWindow(QMainWindow):
         header.setObjectName("header")
         lay = QVBoxLayout(header)
         lay.setContentsMargins(0, 6, 0, 2)
-        title = QLabel("VAN VOORN GAME LAUNCHER")
+        title = QLabel("WWN GAME LAUNCHER")
         title.setObjectName("title")
         title.setAlignment(Qt.AlignCenter)
         lay.addWidget(title)
