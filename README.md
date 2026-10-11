@@ -1,135 +1,135 @@
 # Wineprefix Templates for Shared Games
 
-Een modulair, lichtgewicht script- en GUI-systeem voor Linux-omgevingen, ontworpen om gedeelde Windows-games af te spelen vanaf een centrale Network File System (NFS) share met geïsoleerde, lokale Wine-prefixen per gebruiker.
+A modular, lightweight script and GUI system for Linux environments, designed to play shared Windows games from a central Network File System (NFS) share with isolated, local Wine prefixes per user.
 
 ---
 
-## 🚀 Overzicht
+## 🚀 Overview
 
-Het direct draaien van Windows-games vanaf een NFS-share door meerdere gebruikers veroorzaakt vaak bestandsslot-conflicten (*file locking*) en permissieproblemen in de Wine-prefix. 
+Running Windows games directly from an NFS share by multiple users often causes file locking conflicts and permission issues within the Wine prefix.
 
-Dit project lost dat op via een **hybride architectuur**:
-* **Game-bestanden** staan centraal op de NFS-share (read-only voor spelers).
-* **Wine-prefixen** worden voor elke gebruiker lokaal en **vers** aangemaakt in `~/GAMEPREFIXES/<Game>/`.
-* **Modulaire Launchers:** Scripts op de share bevatten de opstartlogica. Ze werken volledig zelfstandig via de terminal óf via de meegeleverde PySide6 GUI (`game-gui.py`).
+This project solves this through a **hybrid architecture**:
+* **Game files** reside centrally on the NFS share (read-only for players).
+* **Wine prefixes** are created fresh and locally for each user in `~/GAMEPREFIXES/<Game>/`.
+* **Modular Launchers:** Scripts on the share contain the startup logic. They work completely independently via the terminal or through the included PySide6 GUI (`game-gui.py`).
 
 ---
 
-## 🏗️ Architectuur & Mapstructuur
+## 🏗️ Architecture & Directory Structure
 
 ```
-NFS Share (Gedeeld, Read-Only/Read-Mostly)
+NFS Share (Shared, Read-Only/Read-Mostly)
 └─ PRE-INSTALLED-GAMES/
-   ├─ WINDOWSGAMES/<Game>/        # De originele game-bestanden (exes, assets)
+   ├─ WINDOWSGAMES/<Game>/        # Original game files (exes, assets)
    └─ WINEPREFIX/
       ├─ game-gui.py              # PySide6 Graphical Interface
       └─ template-scripts/
          ├─ game-core/
-         │  ├─ game-common.sh     # Herbruikbare core (provisioning, launching, desktop-icoon)
-         │  └─ hooks/             # Modulaire hooks (VC++ redists, winebus tweaks, gamescope)
+         │  ├─ game-common.sh     # Reusable core (provisioning, launching, desktop icon)
+         │  └─ hooks/             # Modular hooks (VC++ redists, winebus tweaks, gamescope)
          ├─ game-launchers/
-         │  ├─ LINUXLAUNCHERS/    # Snelkoppelingen naar actieve launcher-scripts (*.sh)
-         │  │  └─ gameicons/      # Afbeeldingen en icons voor de GUI
-         │  ├─ angry-birds.sh     # Dun launcher-script (vanilla Wine)
-         │  ├─ cyberpunk2077.sh   # Launcher met GE-Proton + VC++ Hooks
-         │  └─ citiesskylines.sh  # Launcher met Proton + Gamescope-wrap
+         │  ├─ LINUXLAUNCHERS/    # Shortcuts to active launcher scripts (*.sh)
+         │  │  └─ gameicons/      # Images and icons for the GUI
+         │  ├─ angry-birds.sh     # Thin launcher script (vanilla Wine)
+         │  ├─ cyberpunk2077.sh   # Launcher with GE-Proton + VC++ Hooks
+         │  └─ citiesskylines.sh  # Launcher with Proton + Gamescope wrap
          └─ tools/
-            ├─ install-proton.sh  # Automatische GE-Proton installer
-            ├─ ask-yesno.sh       # Herbruikbare TTY/GUI vragen-helper
-            └─ gamepad-status.sh  # Helper voor gamepad-diagnostiek
+            ├─ install-proton.sh  # Automatic GE-Proton installer
+            ├─ ask-yesno.sh       # Reusable TTY/GUI prompt helper
+            └─ gamepad-status.sh  # Helper for gamepad diagnostics
 
-Lokaal (Per Gebruiker op de eigen PC)
+Local (Per User on their own PC)
 └─ ~/GAMEPREFIXES/
    └─ <Game>/
-      ├─ pfx/                    # Lokale Wine-prefix (eigendom van de speler)
-      ├─ compatdata/<appid>/     # Proton compatibiliteitsmap (symlink)
-      └─ .provisioned            # Versie-marker voor automatische updates
+      ├─ pfx/                    # Local Wine prefix (player-owned)
+      ├─ compatdata/<appid>/     # Proton compatibility folder (symlink)
+      └─ .provisioned            # Version marker for automatic updates
 ```
 
 ---
 
 ## 🔑 Key Features
 
-* **Geïsoleerde Executie:** Geen slot-conflicten op het netwerk. Elke speler heeft z'n eigen lokale prefix en instellingen.
+* **Isolated Execution:** No network lock conflicts. Every player has their own local prefix and settings.
 * **PySide6 Graphical Interface (`game-gui.py`):**
-  * **Interactieve Cover-roller:** Blader visueel door beschikbare games met custom icons en automatische fallback-placeholders.
-  * **Live Terminal Log Streaming:** Bekijk direct de `stdout`/`stderr` van de game en launchers via `QProcess`.
-  * **Schakelopties voor Startparameters:** Eenvoudig vinkjes zetten voor Desktop-shortcuts, Gamescope-wrapping, SDL3-fallbacks, Backup-snapshots en Gamepad-modi.
-  * **Native Renderers:** Schakel flexibel tussen Vulkan (Zink) en OpenGL voor native titels.
-  * **Custom Installatiepaden:** Mogelijkheid om per game het bronpad te overschrijven via `installpaths.conf`.
-* **Slimme Provisioning & Hooks:** Automatische inrichting van verse prefixen en installatie van afhankelijkheden (zoals VC++ 2019 via runtime-hooks) bij de eerste start.
-* **Wayland & AMD RADV Optimalisatie:** Ingebouwde Gamescope-wrapper voorkomt scherm-stalls/focus-problemen bij DXVK exclusive fullscreen op AMD/Wayland.
-* **Automatische Desktop Shortcuts:** Genereert bij de eerste start `.desktop`-bestanden op het bureaublad zodat de GUI of terminal niet meer nodig is.
+  * **Interactive Cover Roller:** Visually browse available games with custom icons and automatic fallback placeholders.
+  * **Live Terminal Log Streaming:** View the `stdout`/`stderr` of the game and launchers instantly via `QProcess`.
+  * **Startup Parameter Toggles:** Easily check boxes for Desktop shortcuts, Gamescope wrapping, SDL3 fallbacks, backup snapshots, and gamepad modes.
+  * **Native Renderers:** Flexibly switch between Vulkan (Zink) and OpenGL for native titles.
+  * **Custom Installation Paths:** Ability to override the source path per game via `installpaths.conf`.
+* **Smart Provisioning & Hooks:** Automatic setup of fresh prefixes and installation of dependencies (such as VC++ 2019 via runtime hooks) on first launch.
+* **Wayland & AMD RADV Optimization:** Built-in Gamescope wrapper prevents screen stalls/focus issues during DXVK exclusive fullscreen on AMD/Wayland.
+* **Automatic Desktop Shortcuts:** Generates `.desktop` files on the desktop on first launch so the GUI or terminal is no longer needed.
 
 ---
 
-## 🕹️ Game Compatibiliteitsoverzicht
+## 🕹️ Game Compatibility Overview
 
-| Game | Runner / Renderer | Bijzonderheden & Hooks |
+| Game | Runner / Renderer | Specifics & Hooks |
 | :--- | :--- | :--- |
-| **Angry Birds** | Vanilla Wine / OpenGL | Lichte Wine-modus (geen Proton nodig). Runtimes meegeleverd in gamemap. |
-| **Cyberpunk 2077** | GE-Proton / DX12 | `install_vcrun2019` hook vereist. Gebruikt `disable_winebus` (`Enable SDL=0`) voor correcte toetsenbord- en muisinvoer. |
-| **Cities: Skylines** | GE-Proton / DX11 | Inclusief `install_gamescope` wrapper tegen Wayland/AMD freezes. Parallelle DXVK shader-compilatie ingeschakeld. |
-| **Ori: Blind Forest** | GE-Proton / DX11 | 32-bit Unity Mono build. Automatische resolutie-detectie via Gamescope. |
+| **Angry Birds** | Vanilla Wine / OpenGL | Light Wine mode (Proton not required). Runtimes included in game folder. |
+| **Cyberpunk 2077** | GE-Proton / DX12 | Requires `install_vcrun2019` hook. Uses `disable_winebus` (`Enable SDL=0`) for correct keyboard and mouse input. |
+| **Cities: Skylines** | GE-Proton / DX11 | Includes `install_gamescope` wrapper against Wayland/AMD freezes. Parallel DXVK shader compilation enabled. |
+| **Ori: Blind Forest** | GE-Proton / DX11 | 32-bit Unity Mono build. Automatic resolution detection via Gamescope. |
 | **Ori: Will of the Wisps** | GE-Proton / DX11 | Standalone Unity IL2CPP build (`oriandthewillofthewisps-pc.exe`). |
 
 ---
 
-## 🛠️ Gebruik
+## 🛠️ Usage
 
-### 1. Grafische Interface (GUI)
-Start de GUI vanuit de terminal of dubbelklik op de aangemaakte snelkoppeling:
+### 1. Graphical Interface (GUI)
+Launch the GUI from the terminal or double-click the generated shortcut:
 ```bash
 python3 /mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINEPREFIX/game-gui.py
 ```
-* **Bladeren:** Gebruik de pijltjestoetsen of het muiswiel op de roller.
-* **Instellingen:** Vink de gewenste opties aan (zoals Gamescope of Gamepad-modus).
-* **Starten:** Klik op een game-card of druk op `Enter`.
+* **Browse:** Use the arrow keys or mouse wheel on the roller.
+* **Settings:** Check the desired options (such as Gamescope or Gamepad mode).
+* **Launch:** Click a game card or press `Enter`.
 
 ### 2. Command Line / Terminal
-Je kunt een game-script direct via de bash-terminal aanroepen:
+You can call a game script directly via the bash terminal:
 ```bash
 /mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINEPREFIX/template-scripts/game-launchers/cyberpunk2077.sh
 ```
 
 ---
 
-## 📝 Zelf een Game Launcher Toevoegen
+## 📝 Adding a Custom Game Launcher
 
-Elk launcher-script is een dunne wrapper om `game-common.sh`. Maak een nieuw bestand aan in `template-scripts/game-launchers/<game-naam>.sh`:
+Each launcher script is a thin wrapper around `game-common.sh`. Create a new file in `template-scripts/game-launchers/<game-name>.sh`:
 
 ```bash
 #!/bin/bash
-export GAME_NAME="MijnGame"
-export GAME_DISPLAY_NAME="Mijn Super Game"
-export GAME_DIR="/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINDOWSGAMES/MijnGame"
-export GAME_EXE="$GAME_DIR/MijnGame.exe"
-export GAME_ICON="mijngame.png"  # Geplaatst in game-launchers/gameicons/
+export GAME_NAME="MyGame"
+export GAME_DISPLAY_NAME="My Super Game"
+export GAME_DIR="/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINDOWSGAMES/MyGame"
+export GAME_EXE="$GAME_DIR/MyGame.exe"
+export GAME_ICON="mygame.png"  # Placed in game-launchers/gameicons/
 export PREFIX_ARCH="win64"
 export SCRIPT_VERSION="1"
 export CREATE_DESKTOP_SHORTCUT="1"
 export GAME_LAUNCHER="$(readlink -f "$0")"
 
-# Optionele Proton Instellingen
+# Optional Proton Settings
 export PROTON_ENABLED="1"
 export PROTON_PIN="GE-Proton11-7"
 export STEAM_APPID="123456"
 
-# Optionele Hooks
+# Optional Hooks
 export PROVISION_HOOKS=("install_vcrun2019")
 
-# Laad de centrale core-logica
+# Load central core logic
 source "$(dirname "${BASH_SOURCE[0]}")/../game-core/game-common.sh"
 game_main "$@"
 ```
 
-Maak het script uitvoerbaar:
+Make the script executable:
 ```bash
-chmod +x template-scripts/game-launchers/<game-naam>.sh
+chmod +x template-scripts/game-launchers/<game-name>.sh
 ```
 
 ---
 
-## 📄 Licentie
+## 📄 License
 
-Dit project is uitgebracht onder de [MIT-licentie](LICENSE).
+This project is licensed under the [MIT License](LICENSE).

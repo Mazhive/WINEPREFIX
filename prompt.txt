@@ -51,3 +51,51 @@ Start het script en vraag: "Lees BEVINDINGEN-<GameName>.md en voer de vereiste w
 Lees BEVINDING-[GameName].md en pas de launcher in template-scripts/game-launchers/LINUXLAUNCHERS/ aan 
 volgens de boilerplate en projectregels."
 
+
+##########################
+
+
+Als agent die een nieuwe game-start overneemt, zijn de essentiële kernpunten:
+1. De Boilerplate Structuur (verplicht)
+Elk launcher script moet beginnen met:
+#!/usr/bin/env bash
+set -euo pipefail
+
+export GAME_NAME="<GameName>"
+export GAME_DIR="/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINDOWSGAMES/<GameDir>"
+export GAME_EXE="$GAME_DIR/<GameExe>.exe"
+export PREFIX_ARCH="win64"
+export SCRIPT_VERSION="1"
+export CREATE_DESKTOP_SHORTCUT="1"
+export GAME_LAUNCHER="$(readlink -f "$0")"
+2. Sourcing van game-common.sh
+Elk script moet eindigen met:
+source "$(dirname "$(readlink -f "$0")")/../../game-core/game-common.sh"
+game_main "$@"
+Dit is de kern van het modulair ontwerp. game-common.sh bevat:
+- Automatische doorvoer van GUI environment variables (GUI_MANGOHUD, GUI_GAMESCOPE, etc.)
+- Hook mechaniek (PROVISION_HOOKS, PRE_LAUNCH_HOOKS)
+- MangoHud configuratie afhandeling
+3. Game Directory & Executable
+- Locatie: /mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINDOWSGAMES/<GameName>/
+- Executable: Let op, niet altijd <GameName>.exe. Bij Obduction is het <GameName>/Binaries/Win64/<GameExe>-Win64-Shipping.exe (de .exe is een bootstrapper, niet de game)
+4. MangoHud / HUD configuratie
+Als de game MangoHud ondersteunt:
+- GUI-checkbox 'MangoHud overlay' aanklikken in de launcher (standaard UIT)
+- Config file: $HOME/.config/mangohud/mangohud.conf (standaardinstellingen)
+- Of: mangohud wine <spel> op de commandline
+- Let op: MANGOHUD=1 wine <spel> werkt niet, moet mangohud wine <spel> zijn
+5. BEVINDINGEN-analyse (indiegame-specifiek)
+Als er een BEVINDINGEN-<GameName>.md bestand is, bevat dit:
+- De oorzaak van eventuele vorige problemen
+- De testvolgorde (baseline, DXVK, gebruikersinstellingen)
+- De referentie-game (bijv. Stray voor UE4-spellen)
+Samenvattend: De 5-minuten checklijst voor een nieuwe game
+1. ✅ Controleer of het launcher script de boilerplate structuur volgt
+2. ✅ Controleer of GAME_EXE de juiste executable is (niet .exe maar mogelijk -Win64-Shipping.exe)
+3. ✅ Controleer of game-common.sh is ingesloten (source .../game-core/game-common.sh)
+4. ✅ Check of er MangoHud-configuratie nodig is en de checkbox in de GUI aanklikken
+5. ✅ Als er BEVINDINGEN-<GameName>.md is, lees dan de testvolgorde door
+Dit is de minimuminformatie die een agent nodig heeft om een nieuwe game te starten binnen dit systeem.
+
+
