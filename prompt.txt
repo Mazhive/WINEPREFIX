@@ -1,0 +1,39 @@
+"Aan welke projectregels moet je je houden?"
+
+
+       Launcher Agent !!!
+
+"Maak een nieuwe launcher voor [GameName] volgens ons template."
+
+       diag agent !!!
+
+"Help me de crash van [GameName] te bisecten via de werkwijze."
+
+"Ik heb een log van een crashende game, laten we die analyseren volgens de werkwijze."
+
+
+2. Verschillende rollen meegeven via je prompt
+Als je wilt dat een specifieke agent zich als een specialist gedraagt, 
+geef je hem bij het opstarten van de taak een duidelijke rol mee:
+
+diagprefix AGENT
+
+"Je bent nu de Diagnostiek-Agent. 
+Analyseer de log van [GameName] en volg de aftrekkende methode uit WERKWIJZE.md om de crash te isoleren."   
+
+launcherprefix  AGENT
+
+"Je bent nu de Launcher-Builder. 
+Maak een nieuw dun launcher-script voor [GameName] op basis van onze boilerplate."   
+
+
+
+
+additionele rules toevoegen 
+
+Hoe je dit vraagt:
+Je kunt OpenCode in de terminal bijvoorbeeld de volgende opdrachten geven:
+
+"Voeg aan .opencode/AGENTS.md een extra regel toe onder UI dat alle icoonbestanden .png moeten zijn."
+
+"Update ons AGENTS.md bestand met de regel dat we bij elke nieuwe launcher ook een .desktop test moeten uitvoeren."

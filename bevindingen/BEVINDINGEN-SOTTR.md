@@ -189,3 +189,42 @@ Dit script:
 - Zonder icon toont de desktop shortcut en GUI een generiek/leeg icoon
 
 **Voor SOTTR toegepast:** `SOTTR-2.ico` frame 7 (256x256 PNG) geëxtraheerd en geplaatst als `gameicons/sottr.png`. Desktop shortcut bijgewerkt met `Icon=` regel.
+
+---
+
+## DX12-crash: DXR (ray tracing) als oorzaak — 2026-10-10
+
+### Symptoom
+Met DX12 aan crasht SOTTR tijdens het laden (vóór het menu); DX11 werkt. Getest met fullscreen + DX12 aangevinkt.
+
+### Isolatietests (één variabele per run)
+Vijf testscripts in `/mnt/VG_00/PUBLIC-LIBRARY/tmp/sottr-tests/` (`testN-*.sh`), elk met één extra env-var bovenop de launcher:
+
+| Test | Env-variabele | Uitkomst |
+|------|---------------|----------|
+| 1 | `VKD3D_CONFIG=nodxr` | **menu gehaald** |
+| 2 | `PROTON_DISABLE_NVAPI=1` | crash |
+| 3 | `VKD3D_DISABLE_EXTENSIONS=present_id,present_wait` | crash |
+| 4 | `VKD3D_FEATURE_LEVEL=11_1` | crash |
+| 5 | `VKD3D_SHADER_CACHE_PATH=0` | crash |
+
+Baseline (run vóór test 1, `sottr-debug-20261010_183123.log`, `VKD3D_CONFIG` leeg) crasht óók.
+
+### Bewijs uit de baseline-log
+- `vkd3d-proton:d3d12_device_determine_ray_tracing_tier: DXR support enabled`
+- GPU: NVIDIA GeForce GTX 1080 Ti (Pascal) — géén RT-cores.
+- De log breekt af midden in PSO-creatie → crash tijdens het laden.
+
+### Conclusie
+Alleen `nodxr` (DXR uit) doorstaat het laden. **DXR is de oorzaak**: vkd3d-proton zet op deze Pascal-kaart DXR automatisch aan (driver 580 exposeert de Vulkan-RT-extensies, software-pad) en dat pad crasht. Gevolg: detectie via Vulkan-extensies is **onbetrouwbaar** (false positive op Pascal); detectie moet op GPU-model/architectuur.
+
+### Fix (implementatie)
+1. Generieke pre-launch hook `game-core/hooks/gpu_dxr_detect.sh`: detecteert GPU-model; zet `nodxr` tenzij de kaart een bekende RT-familie is (NVIDIA `RTX`, AMD `RX 6000/7000/9000`, Intel `Arc`). Override `GAME_DXR=auto|on|off`. Onbekend → `nodxr`. Appendt op bestaande `VKD3D_CONFIG` (idempotent).
+2. Generieke pre-launch hook `game-core/hooks/vkd3d_cache_prefix.sh`: `VKD3D_SHADER_CACHE_PATH="${PREFIX_DIR}/vkd3d-cache"` (lokale home i.p.v. de NFS-gamefolder → lost de fout `Failed to MapViewOfFile for vkd3d-proton.cache.write` op, regels 690-696 van de baseline-log).
+3. `sottr.sh`: `PRE_LAUNCH_HOOKS=("gpu_dxr_detect" "vkd3d_cache_prefix")`.
+
+### Gevolg
+Ray-traced schaduwen (SOTTR's DX12-RT-feature) zijn uit op niet-RT-kaarten; op een RT-kaart blijft DXR aan. De override `GAME_DXR=on` forceert DXR alsnog (voor een exotische RT-kaart die de tabel niet herkent).
+
+### Kanttekening
+`VKD3D_FEATURE_LEVEL` (test 4) staat niet in de vkd3d-proton-README → vermoedelijk een no-op; test 3 is grotendeels redundant (vkd3d zet `present_id2/wait2` al uit op pre-595 NV-drivers). Beide doen niets aan de DXR-crash.

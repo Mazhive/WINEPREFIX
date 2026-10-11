@@ -11,6 +11,8 @@ dicts DISPLAY_NAMES en ICON_OVERRIDES - daaronder vrije aanpassing mogelijk.
 import os
 import re
 import signal
+import subprocess
+import time
 from pathlib import Path
 
 from PySide6.QtCore import (QEasingCurve, QProcess, QPointF, QRect, QRectF, Qt,
@@ -23,8 +25,8 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFileDialog,
                                QGraphicsView, QGridLayout, QHBoxLayout, QLabel,
                                QLineEdit, QListWidget, QListWidgetItem,
                                QMainWindow, QMessageBox, QPlainTextEdit,
-                               QPushButton, QSplitter, QTabBar, QVBoxLayout,
-                               QWidget)
+                               QPushButton, QSlider, QSplitter, QTabBar,
+                               QVBoxLayout, QWidget)
 
 BASE = Path(__file__).resolve().parent
 TEMPLATE_ROOT = Path("/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINEPREFIX/template-scripts")
@@ -348,6 +350,113 @@ def _placeholder_pixmap(name):
     return pm
 
 
+# ── Wielmuis-geluid ──────────────────────────────────────────
+# Subtiel "tick"-geluid bij het wisselen van icoon met de wielmuis.
+# QtMultimedia is niet geïnstalleerd, dus het WAV-bestand wordt eenmalig
+# gegenereerd (BASE/scroll.wav) en afgespeeld via paplay/pw-play/aplay.
+# Aan/uit via de GUI-checkbox (SOUND=1|0 in settings.conf).
+_SOUND_WAV = BASE / "scroll.wav"
+_SOUND_PLAYERS = ("paplay", "pw-play", "aplay")
+_sound_enabled = True
+_sound_volume = 50
+_sound_wav_volume = None
+_sound_last_play = 0.0
+
+
+def _ensure_sound_wav():
+    global _sound_wav_volume
+    if _SOUND_WAV.is_file() and _sound_wav_volume == _sound_volume:
+        return _SOUND_WAV
+    try:
+        import math
+        import struct
+        import wave
+        rate = 44100
+        dur = 0.06
+        n = int(rate * dur)
+        amp = int(18000 * _sound_volume / 100)
+        frames = bytearray()
+        for i in range(n):
+            t = i / rate
+            env = math.exp(-t * 80.0)
+            val = int(amp * env * math.sin(2 * math.pi * 1000 * t))
+            frames += struct.pack("<h", val)
+        with wave.open(str(_SOUND_WAV), "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(rate)
+            w.writeframes(bytes(frames))
+        _sound_wav_volume = _sound_volume
+    except OSError:
+        return None
+    return _SOUND_WAV
+
+
+def _play_scroll_sound():
+    global _sound_last_play
+    if not _sound_enabled or _sound_volume <= 0:
+        return
+    now = time.monotonic()
+    if now - _sound_last_play < 0.06:
+        return
+    _sound_last_play = now
+    wav = _ensure_sound_wav()
+    if not wav:
+        return
+    for player in _SOUND_PLAYERS:
+        try:
+            subprocess.Popen(
+                [player, str(wav)],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return
+        except OSError:
+            continue
+
+
+# ── Soundtrack ───────────────────────────────────────────────
+# Achtergrondmuziek uit soundtrack/st*.mp3 (st1, st2, ...). Afspelen via
+# cvlc --loop (VLC) zodat de tracks doorlopen. Aan/uit via de GUI-checkbox
+# (SOUNDTRACK=1|0 in settings.conf).
+_SOUNDTRACK_DIR = BASE / "soundtrack"
+_soundtrack_enabled = False
+_soundtrack_process = None
+
+
+def _soundtrack_files():
+    if not _SOUNDTRACK_DIR.is_dir():
+        return []
+    return sorted(_SOUNDTRACK_DIR.glob("st*.mp3"))
+
+
+def _start_soundtrack():
+    global _soundtrack_process
+    _stop_soundtrack()
+    files = _soundtrack_files()
+    if not files:
+        return
+    try:
+        _soundtrack_process = subprocess.Popen(
+            ["cvlc", "--loop", "--no-video", "--quiet"]
+            + [str(f) for f in files],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except OSError:
+        _soundtrack_process = None
+
+
+def _stop_soundtrack():
+    global _soundtrack_process
+    if _soundtrack_process is not None:
+        try:
+            _soundtrack_process.terminate()
+        except OSError:
+            pass
+        _soundtrack_process = None
+
+
 class CoverItem(QGraphicsObject):
     """Eén game-kaart in de roller: icoon + naam, gecentreerd op (0,0)."""
 
@@ -587,6 +696,7 @@ class CarouselView(QGraphicsView):
 
     def nudge(self, delta):
         if self.games:
+            _play_scroll_sound()
             self.move_to(self._target + delta)
 
     def _on_anim(self, value):
@@ -732,7 +842,7 @@ class MainWindow(QMainWindow):
             " · Muiswiel / pijltjes: bladeren door de games\n"
             " · Klik op een icoon of Enter: starten\n"
             " · Installatiemap: eigen pad of leeg laten (standaard uit script)\n"
-            " · Checkboxen: Desktop-icoon, Gamescope, SDL3, bevestigen, snapshot, gamepad\n"
+            " · Checkboxen: Desktop-icoon, Gamescope, SDL3, bevestigen, snapshot, gamepad, MangoHud, wielmuis-geluid, soundtrack\n"
             " · Gamepad-modus: pad als SDL-joystick (DInput/SDL-games); XInput-only-\n"
             "   games krijgen de pad pas na de eenmalige udev/groep-rootstap (zie status)")
 
@@ -785,6 +895,11 @@ class MainWindow(QMainWindow):
         self.cb_desktop = QCheckBox("Desktop-icoon op het bureaublad")
         self.cb_desktop.setChecked(True)
         self.cb_gamescope = QCheckBox("Start met Gamescope")
+        self.cb_gamescope.setToolTip(
+            "Isoleert de game op een vaste resolutie om Alt-Tab-crashes, "
+            "muis-lekkage en resolutieproblemen op de desktop te voorkomen. "
+            "Wayland support, X11 conflicts mogelijk"
+        )
         self.cb_sdl3 = QCheckBox("SDL3-fallback aan (standaard SDL)")
         self.cb_sdl3.setChecked(True)
         self.cb_confirm = QCheckBox("Bevestigen vóór start")
@@ -793,10 +908,18 @@ class MainWindow(QMainWindow):
         self.cb_gamepad = QCheckBox("Gamepad-modus (SDL / non-standaard)")
         self.cb_gamepad.setChecked(load_settings().get("GPAD") == "1")
         self.cb_gamepad.toggled.connect(self._on_gamepad_toggled)
+        self.cb_mangohud = QCheckBox("MangoHud overlay")
+        self.cb_mangohud.setChecked(False)
+        self.cb_sound = QCheckBox("Geluid bij wielmuis")
+        self.cb_sound.toggled.connect(self._on_sound_toggled)
+        self.cb_sound.setChecked(load_settings().get("SOUND", "1") == "1")
 
         # Native renderer checkboxes (altijd zichtbaar, standaard uit)
         self.cb_native_vulkan = QCheckBox("Vulkan (Zink)")
         self.cb_native_opengl = QCheckBox("OpenGL")
+        self.cb_soundtrack = QCheckBox("Soundtrack")
+        self.cb_soundtrack.toggled.connect(self._on_soundtrack_toggled)
+        self.cb_soundtrack.setChecked(load_settings().get("SOUNDTRACK", "1") == "1")
 
         # Grid van 3 kolommen: schaalt vanzelf naar rechts voor extra
         # checkboxen (een 6e valt in kolom 3, een 7e/8e start een nieuwe rij).
@@ -805,10 +928,23 @@ class MainWindow(QMainWindow):
         grid.setVerticalSpacing(6)
         checks = (self.cb_desktop, self.cb_gamescope, self.cb_sdl3,
                   self.cb_confirm, self.cb_snapshot, self.cb_gamepad,
-                  self.cb_native_vulkan, self.cb_native_opengl)
+                  self.cb_mangohud, self.cb_native_vulkan, self.cb_native_opengl)
         for i, cb in enumerate(checks):
             grid.addWidget(cb, i // 3, i % 3)
+        # Soundtrack-checkbox direct onder "Vulkan (Zink)" (rij 3, kolom 1)
+        grid.addWidget(self.cb_soundtrack, 3, 1)
         lay.addLayout(grid)
+
+        sound_row = QHBoxLayout()
+        sound_row.setSpacing(6)
+        self.sound_slider = QSlider(Qt.Horizontal)
+        self.sound_slider.setRange(0, 100)
+        self.sound_slider.setValue(int(load_settings().get("SOUND_VOL", "50")))
+        self.sound_slider.setToolTip("Volume van het wielmuis-geluid")
+        self.sound_slider.valueChanged.connect(self._on_sound_volume_changed)
+        sound_row.addWidget(self.cb_sound)
+        sound_row.addWidget(self.sound_slider, 1)
+        lay.addLayout(sound_row)
 
         dir_row = QHBoxLayout()
         dir_row.setSpacing(6)
@@ -830,6 +966,31 @@ class MainWindow(QMainWindow):
     def _on_gamepad_toggled(self, state):
         opts = load_settings()
         opts["GPAD"] = "1" if state else "0"
+        save_settings(opts)
+
+    def _on_sound_toggled(self, state):
+        global _sound_enabled
+        _sound_enabled = bool(state)
+        opts = load_settings()
+        opts["SOUND"] = "1" if state else "0"
+        save_settings(opts)
+
+    def _on_sound_volume_changed(self, value):
+        global _sound_volume
+        _sound_volume = value
+        opts = load_settings()
+        opts["SOUND_VOL"] = str(value)
+        save_settings(opts)
+
+    def _on_soundtrack_toggled(self, state):
+        global _soundtrack_enabled
+        _soundtrack_enabled = bool(state)
+        if state:
+            _start_soundtrack()
+        else:
+            _stop_soundtrack()
+        opts = load_settings()
+        opts["SOUNDTRACK"] = "1" if state else "0"
         save_settings(opts)
 
     def _on_dir_edited(self, text):
@@ -966,6 +1127,7 @@ class MainWindow(QMainWindow):
             "GUI_SDL3_DYNAMIC_API_OFF": "1" if self.cb_sdl3.isChecked() else "0",
             "SNAPSHOT_BACKUP": "1" if self.cb_snapshot.isChecked() else "0",
             "GUI_GAMEPAD": "1" if self.cb_gamepad.isChecked() else "0",
+            "GUI_MANGOHUD": "1" if self.cb_mangohud.isChecked() else "0",
             "GAME_GUI": "1",
             "GUI_NATIVE_RENDERER": renderer,
         }
@@ -1083,6 +1245,7 @@ class MainWindow(QMainWindow):
                 return
             for r in running:
                 r.stop()
+        _stop_soundtrack()
         event.accept()
 
     def _append_terminal(self, line):
