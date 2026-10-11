@@ -4,15 +4,17 @@
 # Module (game-core/hooks/) opgeroepen door game-common.sh via
 #   PROVISION_HOOKS=("set_graphics_resolution")
 #
-# Sets the Graphics Width and Height registry keys for Worms World Party Remastered
-# to match the monitor resolution (1920x1080).
+# Zet de door Worms World Party Remastered gelezen resolutiesleutels.
+# De game leest HKCU\Software\Team17DigitalLTD\WormsWorldParty\Options met
+# DisplayXSize/DisplayYSize (REG_DWORD) + DisplaySize (index). Referentiewaarden
+# uit een werkende prefix: 1024x768 (4:3), DisplaySize=2, vSync=0.
 
 hook_run() {
-  local width="1920"
-  local height="1080"
-  local reg_path="HKEY_CURRENT_USER\Software\Team17\Worms World Party\Options"
+  local width="1024"
+  local height="768"
+  local reg_path="HKEY_CURRENT_USER\Software\Team17DigitalLTD\WormsWorldParty\Options"
 
-  _log "hook(set_graphics_resolution): Setting Graphics Width=$width, Height=$height..."
+  _log "hook(set_graphics_resolution): Setting DisplayXSize=$width, DisplayYSize=$height..."
 
   # Runner-eigen wine/wineserver gebruiken
   local winecmd wineservercmd
@@ -23,15 +25,21 @@ hook_run() {
     _log "hook(set_graphics_resolution): runner-wine gebruikt ($winecmd)."
   fi
 
-  # Set Graphics Width
+  # Set DisplayXSize
   WINEPREFIX="$PREFIX_PATH" "$winecmd" reg add "$reg_path" \
-    /v "Graphics Width" /t REG_DWORD /d "$width" /f >/dev/null 2>&1 || \
-    _log "hook(set_graphics_resolution): Kon Graphics Width niet instellen."
+    /v "DisplayXSize" /t REG_DWORD /d "$width" /f >/dev/null 2>&1 || \
+    _log "hook(set_graphics_resolution): Kon DisplayXSize niet instellen."
 
-  # Set Graphics Height
+  # Set DisplayYSize
   WINEPREFIX="$PREFIX_PATH" "$winecmd" reg add "$reg_path" \
-    /v "Graphics Height" /t REG_DWORD /d "$height" /f >/dev/null 2>&1 || \
-    _log "hook(set_graphics_resolution): Kon Graphics Height niet instellen."
+    /v "DisplayYSize" /t REG_DWORD /d "$height" /f >/dev/null 2>&1 || \
+    _log "hook(set_graphics_resolution): Kon DisplayYSize niet instellen."
+
+  # Set DisplaySize (index) + vSync, net als de werkende referentie
+  WINEPREFIX="$PREFIX_PATH" "$winecmd" reg add "$reg_path" \
+    /v "DisplaySize" /t REG_DWORD /d "2" /f >/dev/null 2>&1 || true
+  WINEPREFIX="$PREFIX_PATH" "$winecmd" reg add "$reg_path" \
+    /v "vSync" /t REG_DWORD /d "0" /f >/dev/null 2>&1 || true
 
   # Registry flush
   WINEPREFIX="$PREFIX_PATH" "$wineservercmd" -w 2>/dev/null || true
@@ -39,7 +47,7 @@ hook_run() {
   # Verify
   local out
   out="$(WINEPREFIX="$PREFIX_PATH" "$winecmd" reg query "$reg_path" 2>/dev/null)"
-  echo "$out" | grep -E 'Graphics Width|Graphics Height' | sed 's/^/       [game] /'
+  echo "$out" | grep -E 'DisplayXSize|DisplayYSize|DisplaySize|vSync' | sed 's/^/       [game] /'
 
   _log "hook(set_graphics_resolution): Klaar."
 }

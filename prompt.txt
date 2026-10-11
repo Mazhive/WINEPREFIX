@@ -16,7 +16,7 @@
 Als je wilt dat een specifieke agent zich als een specialist gedraagt, 
 geef je hem bij het opstarten van de taak een duidelijke rol mee:
 
-diagprefix AGENT
+diagpre meer ninet fix AGENT
 
 "Je bent nu de Diagnostiek-Agent. 
 Analyseer de log van [GameName] en volg de aftrekkende methode uit WERKWIJZE.md om de crash te isoleren."   
@@ -37,3 +37,17 @@ Je kunt OpenCode in de terminal bijvoorbeeld de volgende opdrachten geven:
 "Voeg aan .opencode/AGENTS.md een extra regel toe onder UI dat alle icoonbestanden .png moeten zijn."
 
 "Update ons AGENTS.md bestand met de regel dat we bij elke nieuwe launcher ook een .desktop test moeten uitvoeren."
+
+
+het overdragen van analyse door diag agent naar de launcher agent 
+
+In de Diagnostiek-Agent sessie:
+Vraag: "Schrijf je bevindingen en het actieplan voor de launcher neer in BEVINDINGEN-<GameName>.md."
+
+In de Launcher-Builder sessie:
+Start het script en vraag: "Lees BEVINDINGEN-<GameName>.md en voer de vereiste wijzigingen door in de launcher."
+
+
+Lees BEVINDING-[GameName].md en pas de launcher in template-scripts/game-launchers/LINUXLAUNCHERS/ aan 
+volgens de boilerplate en projectregels."
+

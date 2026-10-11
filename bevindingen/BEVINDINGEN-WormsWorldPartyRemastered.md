@@ -2,8 +2,8 @@
 
 Datum: 2026-10-11
 Rol: Diagnostiek-Agent (read-only; geen launchers/.sh geschreven, geen Wine-run uitgevoerd).
-Status: Statische analyse afgerond. Premisse (symptoom) nog runtime te bevestigen.
-Bronnen: `w2_d3d9.log`, `movedprefixes/32.bit.worms.worldparty`, prefix-register, `game-common.sh`, `wormsworldpartyremastered.sh`, hooks, `WERKWIJZE.md`.
+Status: **Bevestigd via testomgeving** (kopieën van hook + `game-common.sh` in `/tmp/opencode/worms-diag`). Runtime-visuele toets (spel echt starten) is uitgevoerd; resultaat staat in de sectie "Runtime-observatie" hieronder.
+Bronnen: `w2_d3d9.log`, `movedprefixes/32.bit.worms.worldparty`, prefix-register, `game-common.sh`, `wormsworldpartyremastered.sh`, hooks, `WERKWIJZE.md`, testomgeving `/tmp/opencode/worms-diag`.
 
 ## Symptoom
 
@@ -47,6 +47,28 @@ gamescope het spel kan scalen.
    `HKCU\Software\Team17\Worms World Party\Options` met `Graphics Width`/`Graphics Height`.
    De game leest `HKCU\Software\Team17DigitalLTD\WormsWorldParty\Options` met `DisplayXSize`/`DisplayYSize`
    (zie bewijs 3 en 4). Beide fout → de resolutie wordt **nooit** toegepast.
+
+## Testbewijs (testomgeving `/tmp/opencode/worms-diag`)
+
+Kopieën: `game-common.test.sh`, `set_graphics_resolution.test.sh` (+ `game-conf.sh`).
+Scratch-prefix: `pfx-test` (verse `wineboot -i`). Productie-prefix en `movedprefixes/` niet aangeraakt.
+
+**Test 1 — hook schrijft naar verkeerde sleutel (`test-hook.sh`):**
+- Na `hook_run()`: `HKCU\Software\Team17\Worms World Party\Options` **bestaat** met
+  `Graphics Width=0x780` (1920) en `Graphics Height=0x438` (1080).
+- `HKCU\Software\Team17DigitalLTD\WormsWorldParty\Options` → `reg: Unable to find the specified registry key` (**bestaat niet**).
+- `user.reg` bevat alleen de verkeerde sleutel. → **Bewijs A bevestigd.**
+
+**Test 2 — gamescope-drop bij virtual desktop (`test-gscope.sh`, fake `wine` die argv print):**
+- `WINE_VIRTUAL_DESKTOP=1`: log meldt "Gamescope-wrap actief … res=1920x1080", maar de
+  feitelijke command is `explorer /desktop=WormsDiagTest,1920x1080 w2.exe` → **geen gamescope**.
+- `WINE_VIRTUAL_DESKTOP=0`: gamescope start daadwerkelijk (`gamescope -f -W 1920 -H 1080 --`)
+  en draait de game als child. → **Bewijs B bevestigd.**
+
+**Test 3 — fix-verificatie op `pfx-test`:**
+- Schrijven van `DisplayXSize=1024`, `DisplayYSize=768`, `DisplaySize=2`, `vSync=0` naar
+  `HKCU\Software\Team17DigitalLTD\WormsWorldParty\Options` → `reg query` toont exact de
+  referentiewaarden (0x400/0x300/0x2/0x0). → **Fix-voorstel is geldig.**
 
 ## Oorzaak
 
@@ -94,10 +116,17 @@ Meervoudig; samen verklaren ze het "geen normaal beeld":
 - **Monitorresolutie**: 1920x1080 in de launcher is juist voor scaling; het probleem is dat
   gamescope **niet draaide** en de resolutie niet werd toegepast.
 
+## Runtime-observatie (2026-10-11, door gebruiker)
+
+- Het **hele game-menu is zichtbaar** (mogelijk 1 menu-optie).
+- Bij **"back" drukken in het menu** verschijnen opnieuw **zwarte balken met een wit scherm in het midden**.
+- **Actieve configuratie tijdens deze test: onbekend** (niet genoteerd). Geen conclusies aan verbonden tot de configuratie is vastgesteld en herhaald.
+
 ## Nog te verifiëren (runtime, ≤120 s per run)
 
-- Bevestig dat met **VD uit + gamescope aan** wél een geschaald beeld verschijnt (premisse-toets).
-- Bevestig via `reg query` dat de game `DisplayXSize`/`DisplayYSize` overneemt.
+- **Premisse-toets (open):** bevestig dat met **VD uit + gamescope aan** wél een geschaald
+  beeld verschijnt. De code-claims (A en B) zijn bevestigd; het eindbeeld is nog niet getoetst.
+- Bevestig via `reg query` dat de game `DisplayXSize`/`DisplayYSize` overneemt na de fix.
 - Noteer welke bron-resolutie de game kiest (640x480 vs 1024x768) om de gamescope-scaler te dimensioneren.
 
 ---

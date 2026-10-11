@@ -1,0 +1,5 @@
+# Ignore list
+#
+# File format is one nickname per line.
+# Lines starting with # are ignored.
+#

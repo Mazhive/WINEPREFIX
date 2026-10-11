@@ -8,6 +8,17 @@
 #   export PREFIX_ARCH="win64"
 #   export SCRIPT_VERSION="1"
 #   game_main "$@"
+# ── Automatische doorvoer van GUI environment variables ──────────────
+# De Python-GUI (game-gui.py) stelt diverse GUI_*-variabelen in bij het
+# starten van een game (zie extra_env in launch_selected). Deze variabelen
+# moeten beschikbaar zijn in de wine-prefix om door de game/common hooks
+# en de game-hooks correct te worden verwerkt (MangoHud, gamescope, etc.).
+# Deze sectie exporteert alle variabelen die beginnen met GUI_ als ze
+# al in de ouderlijke shell-omgeving staan, zodat elke launcher die
+# game-common.sh sourcet er automatisch toegang tot heeft.
+for var in "${!GUI_@}" "${!GAME_@}"; do
+  [ -n "${!var:-}" ] && export "$var"="${!var}"
+done 2>/dev/null || true
 #
 # Opties:
 #   PROVISION_HOOKS=( "install_vcrun2019" "install_vkd3d" )  — extra stappen na provision.
@@ -41,12 +52,6 @@
 #   GAME_KEEP_OVERLAYS="1"                                    — MangoHud/vkBasalt wél actief
 #                                                                laten (default: uit; overlays
 #                                                                crashen sommige games op RADV)
-#   GUI_MANGOHUD="1"                                          — per-launch MangoHud aan via de
-#                                                                GUI-checkbox (default: uit)
-#   GUI_VKBASALT="1"                                          — per-launch vkBasalt aan via de
-#                                                                GUI-checkbox (default: uit;
-#                                                                GE-Proton bundelt de layer,
-#                                                                conf: ~/.config/vkBasalt/)
 #   GAME_KEEP_XALIA="1"                                       — GE-Proton's xalia (gamepad-UI-
 #                                                                hulp voor launchers/installers)
 #                                                                wél aan laten (default: uit)
@@ -180,17 +185,6 @@ _distro_pkg() {
   esac
 }
 
-# ── OS-weergavenaam (voor popups/meldingen) ──────────────────
-# Leest PRETTY_NAME uit /etc/os-release (bv. "CachyOS", "Ubuntu 24.04 LTS").
-# Val op "onbekend" als /etc/os-release ontbreekt of geen PRETTY_NAME heeft.
-_os_pretty_name() {
-  local name=""
-  if [ -r /etc/os-release ]; then
-    name="$(awk -F= '/^PRETTY_NAME=/{gsub(/["\r]/, "", $2); print $2}' /etc/os-release 2>/dev/null)"
-  fi
-  [ -n "$name" ] && echo "$name" || echo "onbekend"
-}
-
 # ── Initialisatie ────────────────────────────────────────────
 game_init() {
   _require_var GAME_NAME
@@ -214,18 +208,6 @@ game_init() {
   if [ "${GAME_NATIVE:-0}" != "1" ]; then
     _require_var GAME_EXE
     command -v wine >/dev/null 2>&1 || _fail "wine niet gevonden in PATH."
-    # Architectuur-controle op de exe zelf. Een 64-bits exe in een
-    # win32-prefix kan nooit starten; een 32-bits exe in een win64-prefix
-    # (WoW64) is normaal en wordt toegestaan. Dit voorkomt dat zo'n
-    # mismatch pas bij het starten stil blijft.
-    local exe_arch
-    exe_arch="$(_pe_arch "$GAME_EXE")"
-    if [ "$exe_arch" = x86_64 ] && [ "$PREFIX_ARCH" = win32 ]; then
-      _fail "$GAME_EXE is 64-bits maar PREFIX_ARCH=win32; dat kan niet starten. Zet PREFIX_ARCH=\"win64\"."
-    fi
-    if [ -n "$exe_arch" ]; then
-      _log "Exe-architectuur: $exe_arch (prefix: $PREFIX_ARCH)."
-    fi
   fi
 
   # Een grafische sessie is nodig om een prefix aan te maken én te starten
@@ -253,66 +235,17 @@ game_needs_provision() {
 
 # ── Wine-prefix aanmaken ─────────────────────────────────────
 
-# PE-architectuur van een PE-bestand bepalen: x86 | x86_64 | aarch64.
-# Leest de machine-woordcode op PE-header-offset+4 met od, dus zonder
-# 'file' of objdump (beide niet gegarandeerd aanwezig op elke pc).
-# De 32/64-bits WOORDCODE is al het enige dat telt: een x64-msvcp140.dll
-# in de 32-bits map laadt niet in een 32-bits proces (c000007b).
-_pe_arch() {
-  local f="$1" off machine
-  [ -f "$f" ] || return 1
-  command -v od >/dev/null 2>&1 || return 1
-  # offset 0x3C = verwijzing naar de PE-signatuur
-  off="$(od -An -tu4 -j60 -N4 --endian=little "$f" 2>/dev/null | tr -d '[:space:]')"
-  [ -n "$off" ] || return 1
-  machine="$(od -An -tu2 -j$((off + 4)) -N2 --endian=little "$f" 2>/dev/null | tr -d '[:space:]')"
-  case "$machine" in
-    332)    echo x86 ;;
-    34404)  echo x86_64 ;;
-    43620)  echo aarch64 ;;
-    *)      return 1 ;;
-  esac
-}
-
-# 32-bits DLL-map van de prefix. In een win32-prefix IS system32 de
-# 32-bits map; in een win64-prefix (WoW64) woont 32-bit in syswow64 en
-# 64-bit in system32. Rayman (32-bit) draaide in een win32-prefix en
-# kreeg daar x64-DLL's in: precies deze verwisseling.
-_prefix_dir_32() {
-  if [ "${PREFIX_ARCH:-win64}" = "win64" ]; then
-    echo "$PREFIX_PATH/drive_c/windows/syswow64"
-  else
-    echo "$PREFIX_PATH/drive_c/windows/system32"
-  fi
-}
-
-# 64-bits DLL-map van de prefix (bestaat niet in een win32-prefix).
-_prefix_dir_64() {
-  if [ "${PREFIX_ARCH:-win64}" = "win64" ]; then
-    echo "$PREFIX_PATH/drive_c/windows/system32"
-  else
-    echo /dev/null
-  fi
-}
-
-# Is de DLL in $1 een PE van de gevraagde architectuur? $2 = x86|x86_64.
-_dll_arch_is() {
-  [ "$(_pe_arch "$1")" = "$2" ]
-}
-
-# Zoek een PE-DLL in de aanwezige Proton/GE-Proton-runners voor de
-# gevraagde architectuur ($2, default x86_64); PROTON_PIN heeft voorrang.
-# Nooit vanaf de NFS-share.
+# Zoek een x86_64-windows builtin-DLL in de aanwezige Proton/GE-Proton-
+# runners; PROTON_PIN heeft voorrang. Nooit vanaf de NFS-share.
 _proton_builtin_dll() {
-  local dll="$1" arch="${2:-x86_64}" root runner sub
-  if [ "$arch" = x86 ]; then sub=i386-windows; else sub=x86_64-windows; fi
+  local dll="$1" root runner
   while IFS= read -r root; do
     if [ -n "${PROTON_PIN:-}" ] && \
-       [ -f "$root/$PROTON_PIN/files/lib/wine/$sub/$dll" ]; then
-      echo "$root/$PROTON_PIN/files/lib/wine/$sub/$dll"
+       [ -f "$root/$PROTON_PIN/files/lib/wine/x86_64-windows/$dll" ]; then
+      echo "$root/$PROTON_PIN/files/lib/wine/x86_64-windows/$dll"
       return 0
     fi
-    for runner in "$root"/*/files/lib/wine/"$sub"/"$dll" "$root"/*/files/lib64/wine/"$sub"/"$dll"; do
+    for runner in "$root"/*/files/lib/wine/x86_64-windows/"$dll"; do
       [ -f "$runner" ] && { echo "$runner"; return 0; }
     done
   done < <(_proton_search_roots)
@@ -330,81 +263,34 @@ _proton_builtin_dll() {
 # PE32+/x86-64 zijn), niet alleen "geen ARM64" — anders keurt een compleet
 # corrupt/leeg bestand ("data") ten onrechte goed.
 _dll_is_x86_64() {
-  _dll_arch_is "$1" x86_64
+  local f="$1" out
+  [ -f "$f" ] || return 1
+  command -v file >/dev/null 2>&1 || return 0   # geen 'file': niet blokkeren
+  out="$(file -b "$f" 2>/dev/null)"
+  echo "$out" | grep -qiE 'PE32\+? executable' || return 1
+  echo "$out" | grep -qiE 'aarch64|arm64' && return 1
+  echo "$out" | grep -qiE 'x86-64|x86_64|amd64'
 }
 
-# 32-bits-tegenhanger van _dll_is_x86_64. Deze functie miste, terwijl
-# raymanlegends_vcrun2019.sh hem aanriep: het gevolg was dat de juiste
-# x86-DLL's als "ongeldig" werden verklaard en door x64 werden overschreven.
-_dll_is_x86() {
-  _dll_arch_is "$1" x86
-}
-
-# Zoek een NATIVE runtime-DLL (msvcp/vcruntime/ucrtbase) in de
+# Zoek een NATIVE x86_64-runtime-DLL (msvcp/vcruntime/ucrtbase) in de
 # default-prefix van een aanwezige GE-Proton/Steam-Proton runner
-# (files/share/default_pfx) voor de gevraagde architectuur ($2, default
-# x86_64). PROTON_PIN heeft voorrang.
-# LET OP: die default_pfx bevat vaak geen echte redist maar een
-# Wine-placeholder (51 bytes, string "Wine placeholder DLL"). Zonder
-# grootte-guard levert deze functie die placeholder als "herstelbron" aan,
-# wat de prefix stilletjes kapot maakt. _runtime_dll_is_real vangt dat.
-_runtime_dll_is_real() {
-  [ -f "$1" ] || return 1
-  [ "$(stat -c%s "$1" 2>/dev/null || echo 0)" -ge 65536 ] || return 1
-  _pe_arch "$1" >/dev/null 2>&1 || return 1
-  return 0
-}
-
+# (files/share/default_pfx) — dáár levert de runner echte redist-DLLs mee,
+# geen wine-builtins. Hulpje voor hook-modules die runtimes leveren.
+# PROTON_PIN heeft voorrang.
 _runtime_dll_source() {
-  local dll="$1" arch="${2:-x86_64}" root runner d sub
-  if [ "$arch" = x86 ]; then sub=syswow64; else sub=system32; fi
+  local dll="$1" root runner d
   while IFS= read -r root; do
     if [ -n "${PROTON_PIN:-}" ] && [ -d "$root/$PROTON_PIN" ]; then
-      d="$root/$PROTON_PIN/files/share/default_pfx/drive_c/windows/$sub/$dll"
-      _runtime_dll_is_real "$d" && { echo "$d"; return 0; }
+      d="$root/$PROTON_PIN/files/share/default_pfx/drive_c/windows/system32/$dll"
+      [ -f "$d" ] && { echo "$d"; return 0; }
     fi
     for runner in "$root"/*/; do
       [ -d "$runner" ] || continue
-      d="$runner/files/share/default_pfx/drive_c/windows/$sub/$dll"
-      _runtime_dll_is_real "$d" && { echo "$d"; return 0; }
+      d="$runner/files/share/default_pfx/drive_c/windows/system32/$dll"
+      [ -f "$d" ] && { echo "$d"; return 0; }
     done
   done < <(_proton_search_roots)
   return 1
-}
-
-# ── Prefix-architectuur-audit (log-only, blokkeert niets) ─────
-# De uitkomst van provisioning hoort zichtbaar te zijn: na de hooks weten
-# we welke pakketten er echt staan en of hun PE-architectuur bij de map
-# past. Een x64-DLL in de 32-bits map (of omgekeerd) is precies de fout
-# die een 32-bits game onzichtbaar doet stoppen. Alleen melden, nooit
-# zelf repareren — herstellen mag de winetricks-uitkomst nooit overschrijven.
-_AUDIT_DLLS="msvcp140.dll msvcp140_1.dll msvcp140_2.dll msvcp140_atomic_wait.dll
-msvcp140_codecvt_ids.dll vcruntime140.dll vcruntime140_1.dll ucrtbase.dll
-d3d8.dll d3d9.dll d3d10core.dll d3d11.dll dxgi.dll d3d12.dll d3d12core.dll"
-
-_audit_prefix_arch() {
-  local dir64 dir32 want dll got bad=0
-  dir32="$(_prefix_dir_32)"
-  dir64="$(_prefix_dir_64)"
-  for dir in "$dir32" "$dir64"; do
-    [ "$dir" = /dev/null ] && continue
-    [ -d "$dir" ] || continue
-    if [ "$dir" = "$dir64" ]; then want=x86_64; else want=x86; fi
-    for dll in $_AUDIT_DLLS; do
-      [ -f "$dir/$dll" ] || continue
-      got="$(_pe_arch "$dir/$dll")"
-      if [ "$got" != "$want" ]; then
-        _log "AUDIT: $dir/$dll is ${got:-onleesbaar}, map verwacht $want."
-        bad=1
-      fi
-    done
-  done
-  if [ "$bad" = "0" ]; then
-    _log "AUDIT: prefix-architectuur consistent (32/64-bits DLL's staan in de juiste map)."
-  else
-    _log "AUDIT: LET OP — zie bovenstaande regels; een 32-bits game laadt een 64-bits DLL niet."
-  fi
-  return 0
 }
 
 # ── Hook-modules uitvoeren ───────────────────────────────────
@@ -448,13 +334,6 @@ _provision_fresh() {
   _log "Prefix aanmaken voor $GAME_NAME op $PREFIX_PATH"
   mkdir -p "$PREFIX_DIR"
 
-  # Pre-provision hooks (vóór wineboot -i) — bv. install_wine32 check
-  local pre_hooks="${PRE_PROVISION_HOOKS[*]:-}"
-  for hook in ${pre_hooks:-}; do
-    _log "Pre-provision hook: $hook"
-    _run_hook "$hook"
-  done
-
   # gecko/mono-dialogen onderdrukken (niet nodig voor de meeste games)
   export WINEDLLOVERRIDES="mscoree=;mshtml=${WINEDLLOVERRIDES:-}"
   _busy_start "wineboot -i"
@@ -462,15 +341,10 @@ _provision_fresh() {
     { _busy_stop; _fail "wineboot mislukt (prefix: $PREFIX_PATH)"; }
   _busy_stop
 
-  # Provision hooks (na wineboot -i) — bv. install_win7, install_dxvk
   for hook in ${HOOKS:-}; do
     _log "Hook: $hook"
     _run_hook "$hook"
   done
-
-  # Na alle pakketten: laten zien wat er werkelijk is geland, en of de
-  # PE-architectuur van elke DLL bij de map past waarin hij staat.
-  _audit_prefix_arch
 }
 
 # ── Re-provision if marker outdated ──────────────────────────
@@ -646,29 +520,11 @@ _ensure_proton_or_warn() {
 # ── Overlays neutraliseren (MangoHud/vkBasalt) ───────────────
 # Overlay-layers crashen sommige games (bv. Cyberpunk op RADV) tijdens de
 # Vulkan-init, en niet iedereen heeft ze sowieso draaien. Daarom standaard
-# UIT voor game-runs; expliciet weer aan via GAME_KEEP_OVERLAYS=1 of per
-# launch via de GUI-checkboxen (GUI_MANGOHUD=1 / GUI_VKBASALT=1).
-# MangoHud en vkBasalt worden ONafhankelijk behandeld: de oude else-tak
-# zette vkBasalt uit zodra MangoHud uit stond.
+# UIT voor game-runs; expliciet weer aan via GAME_KEEP_OVERLAYS=1.
 _neutralize_overlays() {
   [ "${GAME_KEEP_OVERLAYS:-0}" = "1" ] && return 0
-  if [ "${GUI_MANGOHUD:-0}" = "1" ]; then
-    export MANGOHUD=1
-    unset DISABLE_MANGOHUD 2>/dev/null || true
-    _log "MangoHud overlay actief (GUI-checkbox)."
-  else
-    export DISABLE_MANGOHUD=1
-    unset MANGOHUD 2>/dev/null || true
-  fi
-  # vkBasalt: GE-Proton bundelt de layer; ENABLE_VKBASALT=1 laat Proton zelf
-  # het layer-pad zetten. Config: ~/.config/vkBasalt/vkBasalt.conf.
-  if [ "${GUI_VKBASALT:-0}" = "1" ]; then
-    export ENABLE_VKBASALT=1
-    unset DISABLE_VKBASALT 2>/dev/null || true
-    _log "vkBasalt actief (GUI-checkbox)."
-  else
-    unset ENABLE_VKBASALT 2>/dev/null || true
-  fi
+  export DISABLE_MANGOHUD=1
+  unset MANGOHUD ENABLE_VKBASALT 2>/dev/null || true
   :
 }
 
@@ -832,7 +688,7 @@ _flags_editor() {
   [ "$FLAGS_SNAPSHOT" = "1" ] && w3="ON" || w3="OFF"
 
   if [ -t 1 ] && command -v whiptail >/dev/null 2>&1; then
-    sel="$(whiptail --title "${GAME_DISPLAY_NAME:-$GAME_NAME} - Instellingen" --checklist \
+    sel="$(whiptail --title "$GAME_NAME - Instellingen" --checklist \
       "Zwart beeld maar wel geluid? (native Wayland-game)" 14 80 3 \
       "windowed" "Windowed starten: +vid_fullscreen 0" "$w1" \
       "gamescope" "Nested fullscreen via gamescope" "$w2" \
@@ -841,7 +697,7 @@ _flags_editor() {
     printf '%s' "$sel" | grep -qw "gamescope" && FLAGS_GAMESCOPE=1 || FLAGS_GAMESCOPE=0
     printf '%s' "$sel" | grep -qw "snapshot" && FLAGS_SNAPSHOT=1 || FLAGS_SNAPSHOT=0
   elif command -v kdialog >/dev/null 2>&1; then
-    sel="$(kdialog --title "${GAME_DISPLAY_NAME:-$GAME_NAME} - Instellingen" --separate-output --checklist \
+    sel="$(kdialog --title "$GAME_NAME - Instellingen" --separate-output --checklist \
       "Zwart beeld maar wel geluid? (native Wayland-game)" \
       "windowed" "Windowed starten: +vid_fullscreen 0" "$w1" \
       "gamescope" "Nested fullscreen via gamescope" "$w2" \
@@ -853,11 +709,11 @@ _flags_editor() {
     # zenity --list --checklist geeft geen row-kwalitatieve uitvoer → per
     # optie een losse --question (boolean netjes teruggeven, geen parse).
     local q1 q2 q3
-    zenity --question --title="${GAME_DISPLAY_NAME:-$GAME_NAME} - Instellingen" \
+    zenity --question --title="$GAME_NAME - Instellingen" \
       --text="Windowed starten (+vid_fullscreen 0) aanzetten?" && q1=1 || q1=0
-    zenity --question --title="${GAME_DISPLAY_NAME:-$GAME_NAME} - Instellingen" \
+    zenity --question --title="$GAME_NAME - Instellingen" \
       --text="Nested fullscreen via gamescope aanzetten?" && q2=1 || q2=0
-    zenity --question --title="${GAME_DISPLAY_NAME:-$GAME_NAME} - Instellingen" \
+    zenity --question --title="$GAME_NAME - Instellingen" \
       --text="Backup-snapshot vóór elke start aanzetten (testzone)?" && q3=1 || q3=0
     FLAGS_WINDOWED="$q1"
     FLAGS_GAMESCOPE="$q2"
@@ -892,42 +748,6 @@ _flags_snapshot_notify() {
   elif command -v zenity >/dev/null 2>&1; then
     zenity --info --title "Backup-snapshot" --text "Snapshot klaar: ${latest##*/}" 2>/dev/null
   fi
-}
-
-# ── GUI-meldingen (herbruikbaar voor hooks) ──────────────────
-# Informatieve popup: kdialog → zenity → notify-send (fallback). Alleen bij een
-# displaysessie; retourneert altijd 0 zodat set -e de flow niet afbreekt.
-_gui_message() {
-  local title="$1" body="$2"
-  [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ] || return 0
-  if command -v kdialog >/dev/null 2>&1; then
-    kdialog --title "$title" --msgbox "$body" 2>/dev/null
-  elif command -v zenity >/dev/null 2>&1; then
-    zenity --info --title "$title" --text "$body" --width=480 2>/dev/null
-  elif command -v notify-send >/dev/null 2>&1; then
-    notify-send -u critical "$title" "$body"
-  fi
-  return 0
-}
-
-# Ja/Nee-popup: kdialog → zenity → notify-send (melding zonder knoppen).
-# Exit: 0=ja, 1=nee/geannuleerd, 2=geen interactieve methode beschikbaar.
-# Zelfde methode-volgorde als tools/ask-yesno.sh, maar als gesourcete functie
-# zodat hooks hem direct kunnen aanroepen zonder subprocess.
-_gui_confirm() {
-  local title="$1" body="$2"
-  if [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
-    if command -v kdialog >/dev/null 2>&1; then
-      kdialog --title "$title" --yesno "$body"; return $?
-    fi
-    if command -v zenity >/dev/null 2>&1; then
-      zenity --question --title="$title" --text="$body" --width=480; return $?
-    fi
-    if command -v notify-send >/dev/null 2>&1; then
-      notify-send -u critical "$title" "$body"
-    fi
-  fi
-  return 2
 }
 
 # ── Gamepad-modus (SDL/evdev, zonder root) ───────────────────
@@ -1110,29 +930,7 @@ game_launch() {
     return $rc
   else
     _gamepad_enabled && gamepad_begin
-    local wine_cmd=("${gscope[@]}" ${WINE_CMD:-wine})
-    # WINE_VIRTUAL_DESKTOP=1: forceer windowed mode via Wine Virtual Desktop
-    # WINE_DESKTOP_W/H: resolutie (default: auto-detect via xrandr)
-    if [ "${WINE_VIRTUAL_DESKTOP:-0}" = "1" ]; then
-      local desk_w="${WINE_DESKTOP_W:-1920}"
-      local desk_h="${WINE_DESKTOP_H:-1080}"
-      _log "Wine Virtual Desktop actief: ${desk_w}x${desk_h}"
-      wine_cmd=(wine explorer /desktop="${GAME_NAME},${desk_w}x${desk_h}")
-    fi
-
-    # Colin McRae 4: CenterFullscreen tweak voor integer scaling virtual desktop
-    if [ "${COLINMCREA4_CENTER_FULLSCREEN:-0}" = "1" ]; then
-      _log "CenterFullscreen tweak actief voor ${GAME_NAME}"
-      WINEPREFIX="$PREFIX_PATH" wine reg add "HKCU\Software\Wine\Direct3D" /v "CenterFullscreen" /t REG_DWORD /d 1 /f >/dev/null 2>&1 || true
-      WINEPREFIX="$PREFIX_PATH" wine reg add "HKCU\Software\Wine\Direct3D" /v "VideoMemorySize" /t REG_SZ /d "256" /f >/dev/null 2>&1 || true
-    fi
-
-    # GAME_WINE_EXTRA_ARGS="..." — engine-argumenten vóór de user-args
-    # ingeschoven (bewust ongequoot: woord-splitsing net als bij wine).
-    local wine_extra_args=()
-    [ -n "${GAME_WINE_EXTRA_ARGS:-}" ] && wine_extra_args+=($GAME_WINE_EXTRA_ARGS)
-
-    WINEPREFIX="$PREFIX_PATH" "${wine_cmd[@]}" "$GAME_EXE" "${wine_extra_args[@]}" "$@"
+    WINEPREFIX="$PREFIX_PATH" "${gscope[@]}" ${WINE_CMD:-wine} "$GAME_EXE" "$@"
     rc=$?
     _gamepad_enabled && gamepad_end
     return $rc
@@ -1168,12 +966,6 @@ game_make_desktop() {
 
   if [ -n "${DESKTOP_ICON_PATH:-}" ]; then
     icon_path="$DESKTOP_ICON_PATH"
-  elif [ -n "${GAME_ICON:-}" ]; then
-    # Expliciete icoon uit launcher-script (GAME_ICON)
-    local icons_dir="$base/game-launchers/gameicons"
-    if [ -d "$icons_dir" ] && [ -f "$icons_dir/${GAME_ICON}" ]; then
-      icon_path="$icons_dir/${GAME_ICON}"
-    fi
   else
     local icons_dir="$base/game-launchers/gameicons"
     if [ -d "$icons_dir" ]; then
@@ -1211,7 +1003,7 @@ game_make_desktop() {
   cat > "$apps_dir/$GAME_NAME.desktop" <<EOF
 [Desktop Entry]
 Type=Application
-Name=${GAME_DISPLAY_NAME:-$GAME_NAME}
+Name=$GAME_NAME
 Exec="$launcher"
 ${icon_path:+Icon=$icon_path}
 Terminal=false
@@ -1222,14 +1014,13 @@ EOF
 
   # Native-only extra-icoon: "Instellingen" roept de GUI-checkboxes op
   # (windowed / gamescope) zonder de game te starten.
-  # Alleen als CREATE_SETTINGS_SHORTCUT=1 (standaard: 0 = uit).
-  if [ "${GAME_NATIVE:-0}" = "1" ] && [ "${CREATE_SETTINGS_SHORTCUT:-0}" = "1" ]; then
+  if [ "${GAME_NATIVE:-0}" = "1" ]; then
     local name_key
     name_key="$(echo "$GAME_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]//g')"
     cat > "$apps_dir/${name_key}-instellingen.desktop" <<EOF
 [Desktop Entry]
 Type=Application
-Name=${GAME_DISPLAY_NAME:-$GAME_NAME} - Instellingen
+Name=$GAME_NAME - Instellingen
 Exec="$launcher" --gui-flags
 ${icon_path:+Icon=$icon_path}
 Terminal=false
@@ -1320,16 +1111,4 @@ game_main() {
   done
   _flags_apply
   game_launch "$@"
-
-# Terminal hint bij crash
-if [ $? -ne 0 ]; then
-  echo ""
-  echo "=========================================="
-  echo "  GAME START MISLUKT"
-  echo "=========================================="
-  echo "Tip: In de GUI, vink aan:"
-  echo "  ☑ 'SDL3-fallback aan (standaard SDL)'"
-  echo "en herstart de game."
-  echo "=========================================="
-fi
 }
