@@ -34,7 +34,7 @@ LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
 ICONS_DIR = LAUNCHERS_DIR / "gameicons"
 
-APP_VERSION = "1.9"
+APP_VERSION = "1.9.2"
 
 CARD_W = 200.0
 CARD_H = 200.0
@@ -727,8 +727,9 @@ class CarouselView(QGraphicsView):
 
 class GameRun:
     _log_lines = 5000
+    _GAME_START_MARKER = " [game] Starten:"
 
-    def __init__(self, game, on_status, on_output, extra_env=None, banner=None):
+    def __init__(self, game, on_status, on_output, extra_env=None, banner=None, on_game_started=None):
         self.game = game
         self.status = "Starten..."
         self.proc = QProcess()
@@ -737,6 +738,8 @@ class GameRun:
             self.log.append(banner)
         self.on_status = on_status
         self.on_output = on_output
+        self.on_game_started = on_game_started
+        self._game_started_fired = False
         self.proc.setProcessChannelMode(QProcess.MergedChannels)
         self.proc.setProgram("bash")
         self.proc.setArguments([str(game.script)])
@@ -761,6 +764,11 @@ class GameRun:
         if data:
             for line in data.splitlines():
                 self.log.append(line.strip())
+                if (not self._game_started_fired
+                        and self.on_game_started
+                        and self._GAME_START_MARKER in line):
+                    self._game_started_fired = True
+                    self.on_game_started()
             self.log = self.log[-self._log_lines:]
             self.on_output(self)
 
@@ -842,7 +850,7 @@ class MainWindow(QMainWindow):
             " · Muiswiel / pijltjes: bladeren door de games\n"
             " · Klik op een icoon of Enter: starten\n"
             " · Installatiemap: eigen pad of leeg laten (standaard uit script)\n"
-            " · Checkboxen: Desktop-icoon, Gamescope, SDL3, bevestigen, snapshot, gamepad, MangoHud, wielmuis-geluid, soundtrack\n"
+            " · Checkboxen: Desktop-icoon, Gamescope, SDL3, bevestigen, snapshot, gamepad, MangoHud, vkBasalt, wielmuis-geluid, soundtrack\n"
             " · Gamepad-modus: pad als SDL-joystick (DInput/SDL-games); XInput-only-\n"
             "   games krijgen de pad pas na de eenmalige udev/groep-rootstap (zie status)")
 
@@ -910,6 +918,12 @@ class MainWindow(QMainWindow):
         self.cb_gamepad.toggled.connect(self._on_gamepad_toggled)
         self.cb_mangohud = QCheckBox("MangoHud overlay")
         self.cb_mangohud.setChecked(False)
+        self.cb_vkbasalt = QCheckBox("vkBasalt (vibrance/deband)")
+        self.cb_vkbasalt.setChecked(False)
+        self.cb_vkbasalt.setToolTip(
+            "Vulkan-postprocessing (Deband/Vibrance/Curves/Tonemap). "
+            "Alleen via Proton; standaard uit."
+        )
         self.cb_sound = QCheckBox("Geluid bij wielmuis")
         self.cb_sound.toggled.connect(self._on_sound_toggled)
         self.cb_sound.setChecked(load_settings().get("SOUND", "1") == "1")
@@ -933,6 +947,8 @@ class MainWindow(QMainWindow):
             grid.addWidget(cb, i // 3, i % 3)
         # Soundtrack-checkbox direct onder "Vulkan (Zink)" (rij 3, kolom 1)
         grid.addWidget(self.cb_soundtrack, 3, 1)
+        # vkBasalt-checkbox in de vrije cel onder MangoHud (rij 3, kolom 0)
+        grid.addWidget(self.cb_vkbasalt, 3, 0)
         lay.addLayout(grid)
 
         sound_row = QHBoxLayout()
@@ -1128,6 +1144,7 @@ class MainWindow(QMainWindow):
             "SNAPSHOT_BACKUP": "1" if self.cb_snapshot.isChecked() else "0",
             "GUI_GAMEPAD": "1" if self.cb_gamepad.isChecked() else "0",
             "GUI_MANGOHUD": "1" if self.cb_mangohud.isChecked() else "0",
+            "GUI_VKBASALT": "1" if self.cb_vkbasalt.isChecked() else "0",
             "GAME_GUI": "1",
             "GUI_NATIVE_RENDERER": renderer,
         }
@@ -1144,9 +1161,14 @@ class MainWindow(QMainWindow):
             # een oude conf-waarde die we zojuist verwijderden.
         self._dir_edits.pop(game.key, None)
         save_paths(paths)
+
+        def _on_game_started():
+            _stop_soundtrack()
+
         run = GameRun(game, self._run_status_changed, self._run_output,
                       extra_env=extra_env,
-                      banner=f"== {game.display_name} — installatie wordt uitgevoerd ==")
+                      banner=f"== {game.display_name} — installatie wordt uitgevoerd ==",
+                      on_game_started=_on_game_started)
         if self.cb_gamepad.isChecked():
             run.log.append("[gamepad] SDL-modus aan: pad als joystick voor SDL/DInput-games; toetsenbord kan uitvallen in de game. XInput-only-games (Ori/Cyberpunk) zien de pad pas ná de eenmalige root-setup (zie status hieronder).")
             self._attach_tool_output(run, GAMEPAD_STATUS_TOOL)

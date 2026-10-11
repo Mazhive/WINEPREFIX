@@ -43,6 +43,10 @@
 #                                                                crashen sommige games op RADV)
 #   GUI_MANGOHUD="1"                                          — per-launch MangoHud aan via de
 #                                                                GUI-checkbox (default: uit)
+#   GUI_VKBASALT="1"                                          — per-launch vkBasalt aan via de
+#                                                                GUI-checkbox (default: uit;
+#                                                                GE-Proton bundelt de layer,
+#                                                                conf: ~/.config/vkBasalt/)
 #   GAME_KEEP_XALIA="1"                                       — GE-Proton's xalia (gamepad-UI-
 #                                                                hulp voor launchers/installers)
 #                                                                wél aan laten (default: uit)
@@ -643,7 +647,9 @@ _ensure_proton_or_warn() {
 # Overlay-layers crashen sommige games (bv. Cyberpunk op RADV) tijdens de
 # Vulkan-init, en niet iedereen heeft ze sowieso draaien. Daarom standaard
 # UIT voor game-runs; expliciet weer aan via GAME_KEEP_OVERLAYS=1 of per
-# launch via de GUI-checkbox (GUI_MANGOHUD=1, alleen MangoHud).
+# launch via de GUI-checkboxen (GUI_MANGOHUD=1 / GUI_VKBASALT=1).
+# MangoHud en vkBasalt worden ONafhankelijk behandeld: de oude else-tak
+# zette vkBasalt uit zodra MangoHud uit stond.
 _neutralize_overlays() {
   [ "${GAME_KEEP_OVERLAYS:-0}" = "1" ] && return 0
   if [ "${GUI_MANGOHUD:-0}" = "1" ]; then
@@ -652,7 +658,16 @@ _neutralize_overlays() {
     _log "MangoHud overlay actief (GUI-checkbox)."
   else
     export DISABLE_MANGOHUD=1
-    unset MANGOHUD ENABLE_VKBASALT 2>/dev/null || true
+    unset MANGOHUD 2>/dev/null || true
+  fi
+  # vkBasalt: GE-Proton bundelt de layer; ENABLE_VKBASALT=1 laat Proton zelf
+  # het layer-pad zetten. Config: ~/.config/vkBasalt/vkBasalt.conf.
+  if [ "${GUI_VKBASALT:-0}" = "1" ]; then
+    export ENABLE_VKBASALT=1
+    unset DISABLE_VKBASALT 2>/dev/null || true
+    _log "vkBasalt actief (GUI-checkbox)."
+  else
+    unset ENABLE_VKBASALT 2>/dev/null || true
   fi
   :
 }
