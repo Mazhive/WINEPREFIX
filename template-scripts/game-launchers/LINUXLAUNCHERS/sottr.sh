@@ -19,6 +19,10 @@ export STEAM_APPID="750920"
 # Optionele hooks (uitschakelen indien niet nodig)
 # export PROVISION_HOOKS=("install_vcrun2019")
 
+# Pre-launch hooks (bij elke start): DXR-detectie (nodxr op niet-RT GPU's) +
+# vkd3d-shader-cache naar de lokale prefix i.p.v. de NFS-gamefolder.
+PRE_LAUNCH_HOOKS=("gpu_dxr_detect" "vkd3d_cache_prefix")
+
 # Laad de centrale core-logica
 source "$(dirname "${BASH_SOURCE[0]}")/../../game-core/game-common.sh"
 game_main "$@"

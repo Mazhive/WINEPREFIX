@@ -217,13 +217,13 @@ AMD/Wayland): díe bepaalt of een game óók zonder wrap via Steam zou stallen.
 - Scripts op de share: leesbaar voor de hele groep; uitvoerbaar maken met
   `chmod +x`.
 
-## GUI-voornemen (later, nu niet belangrijk)
+## GUI-voornemen 
 
-**De werking via de scripts is de basis; de GUI is nu niet belangrijk.** Zodra
-er een Python-GUI komt, is die uitsluitend een **gebruiksvriendelijke
-opstarthelper**: een venster met een selector van spelletjes; bij kiezen wordt
-het bijbehorende `game-launchers/<game>.sh`-script aangeroepen (dat zelf de
-prefix aanmaakt indien nodig, en anders direct start).
+**De werking via de scripts is de basis; de GUI is de gebruikers vriendelijke manier.** 
+Er is een Python-GUI die uitsluitend een **gebruiksvriendelijke
+opstarthelper is**: een venster met een selector van spelletjes; bij kiezen wordt
+het bijbehorende `game-launchers/LINUXLAUNCHERS/<game>.sh`-script aangeroepen (dat zelf de
+prefix aanmaakt , en direct start).
 
 **Zodra de prefix eenmaal is aangemaakt, heeft de gebruiker de GUI niet meer
 nodig** — het `.desktop`-icoon (dat de scripts al automatisch aanmaken) start
@@ -277,178 +277,10 @@ per-game hack.
 
 ### Verifieerbare feiten
 
-- **Hardware:** De game ziet eender welk joystick-achtig device als
-  "controller" en negeert dan toetsenbord/muis. Op deze machine zijn er
-  minstens twee "valse": een **Wacom Intuos BT M (056a:0378)** die joydev als
-  js* exposeert, en de **eigen Lenovo-toetsenbord-js (17ef:6099,
-  `ID_INPUT_KEY=1`)** die er altijd in zit — vandaar dat "Wacom los" nooit
-  genoeg is. Echte gamepad: **Holtek (045e:028e, `ID_INPUT_JOYSTICK=1`)**.
-- **Eerste succesvolle launch (referentie):** werkte destijds wél met zowel
-  Wacom als gamepad in de USB-poorten → er is tussentijds iets veranderd;
-  dit onderscheid telt mee bij het zoeken naar de oorzaak.
-- **v16-launcher:** `PROVISION_HOOKS=("install_gamescope" "install_vcrun2019"
-  "wacom-detect")`, `PROTON_PIN="GE-Proton11-7"`, `GAME_GAMESCOPE="1"`,
-  `VC_RUNTIME_METHOD="redist"`, `STEAM_APPID="1091500"`. v15-regressie
-  (geen vcrun/PIN/gamescope → stille stop, laatste regel *"Failed loading SDL3
-  library."*) is daarmee gerepareerd.
-- **Hook `wacom-detect` bewerkt in de praktijk:** bij Ja wordt de Wacom fysiek
-  losgekoppeld en bevestigt de hook dat ("Wacom losgekoppeld — gamepad kan nu
-  werken"); log-regel verschijnt netjes vóór de game-start.
+Met behulp van de Bevindingen<gamename>.md is vastgelegty hoe de launcher is gemaakt
+Waar op gelet moet worden en andere cruciale bevindingen.
 
-### Status
 
-- ✅ `wacom-detect.sh` (hooks/) gebouwd en los getest: `_wacom_present`,
-  `_wacom_as_joystick` (vindt `js0`), `_wacom_await_unplug`
-  (`WACOM_WAIT_SEC`, standaard 30 s), `hook_run()`. Beide keuzepaden + timeout
-  geverifieerd.
-- ✅ cyberpunk2077.sh op v16 gebracht (zie feiten hierboven).
-- ✅ v16-provision live geslaagd: backup-snapshot op share, hooks draaiden,
-  marker v16, `.desktop`-shortcut, gamescope-wrap actief (Wayland), Proton
-  gestart.
-- ✅ **OORZAAK + FIX GEVONDEN (2026-09):** de game negeert toetsenbord zodra
-  er één joystick-achtig device te zien is, en die machine heeft er altijd
-  minstens één: de eigen **Lenovo-toetsenbord-js (17ef:6099, `ID_INPUT_KEY`)**
-  plus willekeurige andere (Wacom 056a). Isolatietest bewees: Space dood met
-  alleen keyboard-js1 (geen Wacom, geen gamepad). "Wacom los" kan dus nooit
-  de fix zijn. **Fix = winebus `Enable SDL=0`** (hidraw blijft aan →
-  DisableHidraw wordt NIET meer gezet, dat schakelde ook alle gamepads uit);
-  echte gamepads (045e, `ID_INPUT_JOYSTICK`) blijven via XInput/hidraw
-  werken. SDL-env-hints (`SDL_GAMECONTROLLER_IGNORE_DEVICES` e.d.) worden
-  niet door de game gehonoreerd.
-- ✅ **Test D (bewijs Wacom-onafhankelijkheid):** `Enable SDL=0` + Wacom erin
-  (ja, ook met pad) → Space werkt, óók wanneer de keuze-dialoog met "Nee"
-  wordt beantwoord. Conclusie: wacom-detect-flow is voor Cyberpunk overbodig;
-  `wacom-detect.sh` blijft bestaan als herbruikbare interactieve module voor
-  andere hosts/games.
-- ✅ **GAMEPAD-ANALYSE (2026-09, afgerond):** pad (045e:028e, "Microsoft
-  X-Box 360 pad") werkt op OS-niveau volledig (A/B/X/Y, LB/RB, L3/R3,
-  Select/Start, beide sticks vol bereik, triggers, D-pad — bewezen via evdev).
-  Maar in Cyberpunk heeft hij **geen werkende route**:
-  - XInput/hidraw-route dood: de pad heeft géén hidraw-node (xpad-driver
-    claimt het USB-interface) en `/dev/hidraw*` is `0600` root → winebus:
-    `Unable to open "/dev/hidraw0", Permission denied`. Zonder leesbare
-    hidraw bouwt Wine geen XInput-controller → Cyberpunk (XInput-only) ziet
-    geen gamepad.
-  - SDL/evdev-joystick-route faalt: met `Enable SDL=1` breekt het
-    toetsenbord in élke variant (met/zonder `SDL_GAMECONTROLLER_IGNORE_DEVICES`,
-    `EXCEPT`, `BLACKLIST` — getest in runs X/Y/Z) en krijgt de pad nog steeds
-    geen device (`evdev event3: deferring ... to a different backend`, waarna
-    niets wordt aangemaakt). `SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT` zet de
-    pad nota bene zélf op de negeren-lijst (verkeerde SDL2-semantiek).
-  - Einde: standaard terug op de bewezen staat **`Enable SDL=0`** (toetsenbord
-    werkt). Strikt XInput-in-game zou een echte XInput-bron vereisen:
-    eenmalige udev-rule (root) die hidraw 045e:028e leesbaar maakt, óf
-    Steam/SteamInput-overlay.
-  - ✅ **Nieuwe vondst (vervolg 2026-09):** een schone SDL-context (géén
-    SDL-hint-env) laadt de pad WEL als winebus-device met `is_gamepad 1`
-    (bewezen in een 20s-winebus-probe):
-    `bus_create_hid_device desc {vid 045e, pid 028e, is_gamepad 1, ...}`.
-    De eerder gebruikte SDL-hints (`SDL_GAMECONTROLLER_IGNORE_DEVICES(Exception)`)
-    waren zélf het gif: de EXCEPT-variant zette de pad óp de negeren-lijst.
-    Paspoort: gamepad-modus is dus zonder root mogelijk — ten koste van het
-    toetsenbord (game schakelt naar controllermodus; keyboard valt uit).
-  - ✅ **Losse handmatige tool** `tools/cyberpunk_gamepad.sh`
-    (`status|probe|on|off`), géén onderdeel van de workflow: `on` zet
-    `.pad-mode`-marker + `Enable SDL=1` (de drift-guard in disable_winebus
-    slaat dan bewust over), `off` doet het omgekeerde. Standaard blijft
-    toetsenbordmodus; padmodus is opt-in en in-game-nog-te-bevestigen.
-- ✅ Launcher v17: `SCRIPT_VERSION="17"`,
-  `PROVISION_HOOKS=("install_gamescope" "install_vcrun2019" "disable_winebus")`
-  én `PRE_LAUNCH_HOOKS=("disable_winebus")` als drift-guard → `Enable SDL=0`
-  staat bij élke start gegarandeerd (en blijft staan als de registry ooit weer
-  wordt omgezet).
-- ✅ **CITIES: SKYLINES (2026-09, afgerond):** launcher v2 (GE-Proton11-7,
-  appid 255710, verse prefix) start op de NVIDIA/GTX-1070-machine direct, maar
-  op deze AMD/Wayland-machine: zwarte spinner, venster kwam niet naar voren, en
-  gamescope patchte het interne beeld naar 720p. Fixes:
-  - `GAME_GAMESCOPE=1` → gamescope-wrap lost de present/focus-stall op
-    (XWayland + RADV + DXVK exclusive-FS; NVIDIA had het niet).
-  - `GAME_GAMESCOPE_RES` → nu leeg/uit in de launcher → **core auto-detect**
-    van de actieve monitormode via xrandr (op deze machine 1920x1080); pin
-    optioneel met een expliciete "WxH"-export. Gamescope pakt daardoor nooit
-    meer zelf een 720p-mode.
-  - `dxvk.conf` naast de game-exe: `dxvk.numCompilerThreads = 4` +
-    `dxvk.enableGraphicsPipelineLibrary = True` → shader-compile piekte vóór
-    tot ~195% CPU gedurende minuten; nu een korte piek en snel aan het menu.
-  - Boot-bevestiging door gebruiker: zwart+spinner → blauwe logo → witte logo →
-    hoofdmenu. Exit: verloopt netjes zolang je Proton de paar tellen teardown
-    gunt (`Destroying swapchain` → `Primary child shut down` → alles weg); te
-    snel de taakbalk gebruiken = schijncrash.
-  - Prefix met warme DXVK-cache bewust behouden i.p.v. verse provision.
-  - `PROVISION_HOOKS=(install_gamescope)` toegevoegd voor verse machines
-    (skip als al aanwezig / geen root → melding; géén re-provision van deze
-    prefix, want de marker vergelijkt alleen SCRIPT_VERSION).
-- ✅ **ORI-WOTW (2026-09, afgerond):** `ori-willofthewisps.sh` (v1, dun).
-  Verse prefix `OriWillOfTheWisps` (.provisioned=1). Unity **IL2CPP**
-  PC-build standalone; gamescope-wrap + res auto (1080p/240Hz aangemaakt);
-  boot→menu vlot, idle ~5%, gebruiker: "ging smooth". Referentie-prefix
-  (movedprefixes/1057090.ori_atwotw) gebruikte winetricks d3dx9/10/11_43 +
-  dxvk + vcrun6 → onder modern Proton NIET nodig.
-  Gamepad-onderzoek (na "gamepad-game?"): Óri is ontworpen rond de controller
-  maar KBM is volwaardig/aanbevolen (WOTW: XInput-only + schakelt naar
-  controllermodus als een Xinput-pad aanwezig is → KB dan ondergeschikt;
-  BF: XInput én DirectInput, maar DInput-mapping van de originele build is
-  berucht gebroken). Pad-in-game = root-route (xpad weg + udev-hidraw |
-  hidraw leesbaar) of SteamInput; SDL-only levert bij WOTW niets en bij BF
-  een gebroken DInput-layout.
-- ✅ **ORI-BF (2026-09, bezig→afronding):** `ori-blindforest.sh` — CODEX
-  origineel (261570), 32-bit Unity5-Mono `ori.exe`; gamescope-wrap
-  (exclusive-FS in oude d3d11-log); verse prefix `OriBlindForest`. Eerste
-  run hing ("hang na ~5s, Primary child shut down"); referentierun
-  2026-09-20 herhaalde dat NIET: `ori.exe` >2 min stabiel, titel/menu
-  zichtbaar en stabiel (gebruiker bevestigd). Voorafgaande hang dus niet
-  gereproduceerd; diffuse/perifere oorzaak (niet pad, wél mogelijk
-  vóór PROTON_PIN-pinning). Speeltest door gebruiker resteert.
-- ✅ **STEAM-TOOLS (2026-09-20, nieuw):** bij de non-Steam-fusie-route
-  gebouwde toolset (alle in `tools/`):
-  - `steam-nonsteam-fix.sh` — inspect | neutralise | restore | fake |
-    scan | boom (--dry-run, --appid, --len). Eerste echte toepassing:
-    WOTW's `steam_appid.txt` (1057090) op 2026-09-20 geneutraliseerd.
-    Scan (2026-09, WINDOWSGAMES): conflict-dragers Eve Online (8500) en
-    AOW.Planetfall (718850 + steam_api64.dll).
-  - `appid.fromname.sh` — naam→appid (Digital-root-condensering, standaard
-    8 cijfers, `-l <len>` voor BF's 261570-formaat; 10/10 cross-check tegen
-    `appid.numerator.py` incl. reverse). `appid.numerator.reverse.py` =
-    reverse-lookup van die methode.
-  - `steam-shortcut-cleanup.sh` — list | verify | remove <naam> (--commit/
-    --force/--file). Punt: shortcuts.vdf is **binair** VDF → de bewezen
-    `vdf`-pythonlib doet load/roundtrip (geverifieerd byte-exact 10499 B) en
-    reikt writes uit; `remove` weigert meer dan één match en schrijft
-    standaard NIET (dry-run; --commit vereist + Steam gesloten + backup).
-    Echt bestand (userdata 203236556): 21 entries; **Forza Horizon 5 (#20)**
-    staat er nog in en is klaar voor één-opdracht-verwijdering zodra Steam
-    gesloten is — test-verwijdering slaagde op een kopie (20 entries, stabiel).
-- ✅ **GAMEPAD-TOOLS (2026-09, nieuw):** de SDL/winebus-route is opgegeven
-  en gearchiveerd (backup/): het eigen probe-verdict ("pad krijgt GEEN
-  winebus-device") bewees dat hij doodloopt, én XInput-only-titels (Ori,
-  Cyberpunk) lezen sowieso alleen een wine-gebouwde XInput-controller.
-  Vervanging = root-route als **een bewust los paar tools**:
-  `pad-xinput-on.sh` (xpad-driver uit → usbhid/udev → hidraw leesbaar via
-  70-pad-xinput.rules; `--shot`=tijdelijk) en `pad-xinput-off.sh`
-  (udev-rule weg + xpad terug; idempotent). Worden bewust NIET door
-  launchers aangeroepen en doen géén SDL/marker-schoonmaak (die blijft bij
-  de launch-time guard `disable_winebus`). Uiteindelijk oproepbaar via GUI.
-
-### Volgende stappen
-
-1. ✅ `game-common.sh` ondersteunt generiek `PRE_LAUNCH_HOOKS` (zelfde
-   array/string-mechaniek als `PROVISION_HOOKS`); hooks lopen vóór
-   `game_launch` bij élke run.
-2. ✅ `cyberpunk2077.sh`: v17, fix in provision én pre-launch (drift-guard).
-3. ✅ Spielverificaatie gamepad: OS-niveau volledig werkend; in-game bewust
-   géén pad-pad (zie werklog). Toetsenbord-control lui prima.
-4. ✅ Cities: Skylines op deze AMD/Wayland-machine afgerond (gamescope-wrap,
-   native 1080p, dxvk.conf parallel-compile) — zie werklog-bullet hierboven.
-5. ✅ Ori: Will of the Wisps — launcher klaar en "smooth" bevestigd;
-   `steam_appid.txt` geneutraliseerd (fix-tool). Pad-retest vervalt
-   (overbodig verklaard); off-cyclus per gebruiker niet nodig.
-   Menuslot verschijnt zodra de gebruiker speelt (nog geen slot in saves).
-6. 🔄 Ori: Blind Forest — referentierun 2026-09-20: titel/menu stabiel,
-   hang niet gereproduceerd. **Speeltest door gebruiker volgt**; daarna
-   rij "afgerond".
-7. 🔜 Steam non-Steam-fusie-optioneel: A/B-verificatie (261570 vs 480) en
-   Forza-#20-shortcut-verwijdering via `steam-shortcut-cleanup.sh`
-   (Steam sluiten, `remove "Forza" --commit`). Bedoeld voor GUI-integratie.
 
 ### Relevante bestanden
 
