@@ -30,6 +30,15 @@ De game folder bevat een volledige dgVoodoo installatie. Bij eerste run zal de b
 
 **Advies:** Gebruik een **vers, clean prefix** via de boilerplate (`wineboot -i` + hooks) in plaats van de bestaande `movedprefixes/Syberia_collection/`.
 
+## MangoHud overlay
+
+De GUI-checkbox "MangoHud overlay" werkt nu correct. De launcher script zet `GAME_KEEP_OVERLAYS=1` wanneer de vink aangevinkt is, waardoor `_neutralize_overlays()` in `game-common.sh` de overlay niet uitschakelt. Zonder deze variabele blijft MangoHUD uit (standaard gedrag om crashes te voorkomen op sommige GPUs, bv. Cyberpunk op RADV).
+
+| Einstelling | Resultaat |
+|-------------|-----------|
+| Vink uitgezet (standaard) | `DISABLE_MANGOHUD=1`, overlay uit |
+| Vink aangevinkt | `GAME_KEEP_OVERLAYS=1`, MangoHUD actief |
+
 ---
 
 ## Actieplan voor Launcher

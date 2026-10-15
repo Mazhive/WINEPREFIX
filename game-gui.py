@@ -34,7 +34,7 @@ LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
 ICONS_DIR = LAUNCHERS_DIR / "gameicons"
 
-APP_VERSION = "1.9.2"
+APP_VERSION = "1.9.3"
 
 CARD_W = 200.0
 CARD_H = 200.0
@@ -924,9 +924,6 @@ class MainWindow(QMainWindow):
             "Vulkan-postprocessing (Deband/Vibrance/Curves/Tonemap). "
             "Alleen via Proton; standaard uit."
         )
-        self.cb_sound = QCheckBox("Geluid bij wielmuis")
-        self.cb_sound.toggled.connect(self._on_sound_toggled)
-        self.cb_sound.setChecked(load_settings().get("SOUND", "1") == "1")
 
         # Native renderer checkboxes (altijd zichtbaar, standaard uit)
         self.cb_native_vulkan = QCheckBox("Vulkan (Zink)")
@@ -945,22 +942,29 @@ class MainWindow(QMainWindow):
                   self.cb_mangohud, self.cb_native_vulkan, self.cb_native_opengl)
         for i, cb in enumerate(checks):
             grid.addWidget(cb, i // 3, i % 3)
-        # Soundtrack-checkbox direct onder "Vulkan (Zink)" (rij 3, kolom 1)
+# Soundtrack-checkbox direct onder "Vulkan (Zink)" (rij 3, kolom 1)
         grid.addWidget(self.cb_soundtrack, 3, 1)
         # vkBasalt-checkbox in de vrije cel onder MangoHud (rij 3, kolom 0)
         grid.addWidget(self.cb_vkbasalt, 3, 0)
         lay.addLayout(grid)
 
-        sound_row = QHBoxLayout()
-        sound_row.setSpacing(6)
+        # Volume effect regel onder vkBasalt, halve hoogte, 2 kolommen
+        vol_grid = QGridLayout()
+        vol_grid.setHorizontalSpacing(6)
+        vol_grid.setVerticalSpacing(2)
+        self.cb_sound = QCheckBox("volume effect")
+        self.cb_sound.toggled.connect(self._on_sound_toggled)
+        self.cb_sound.setChecked(load_settings().get("SOUND", "1") == "1")
         self.sound_slider = QSlider(Qt.Horizontal)
         self.sound_slider.setRange(0, 100)
         self.sound_slider.setValue(int(load_settings().get("SOUND_VOL", "50")))
         self.sound_slider.setToolTip("Volume van het wielmuis-geluid")
+        self.sound_slider.setFixedWidth(80)
         self.sound_slider.valueChanged.connect(self._on_sound_volume_changed)
-        sound_row.addWidget(self.cb_sound)
-        sound_row.addWidget(self.sound_slider, 1)
-        lay.addLayout(sound_row)
+        vol_grid.addWidget(self.cb_sound, 0, 0)
+        vol_grid.addWidget(self.sound_slider, 0, 1)
+        vol_grid.setRowMinimumHeight(0, 20)
+        lay.addLayout(vol_grid)
 
         dir_row = QHBoxLayout()
         dir_row.setSpacing(6)

@@ -12,7 +12,7 @@ This project solves this through a **hybrid architecture**:
 * **Game files** reside centrally on the NFS share (read-only for players).
 * **Wine prefixes** are created fresh and locally for each user in `~/GAMEPREFIXES/<Game>/`.
 * **Modular Launchers:** Scripts on the share contain the startup logic. They work completely independently via the terminal or through the included PySide6 GUI (`game-gui.py`).
-
+* dep.md ** dependencies list available.
 ---
 
 ## 🏗️ Architecture & Directory Structure

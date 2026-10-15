@@ -4,7 +4,7 @@
 
 export GAME_NAME="Halo"
 export GAME_DIR="/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINDOWSGAMES/Halo"
-export GAME_EXE="$GAME_DIR/haloce-patch-1.0.10.exe"
+export GAME_EXE="$GAME_DIR/HALO.EXE"
 export PREFIX_ARCH="win32"
 export SCRIPT_VERSION="6"
 export CREATE_DESKTOP_SHORTCUT="1"

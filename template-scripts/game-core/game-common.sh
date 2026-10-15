@@ -523,6 +523,7 @@ _ensure_proton_or_warn() {
 # UIT voor game-runs; expliciet weer aan via GAME_KEEP_OVERLAYS=1.
 _neutralize_overlays() {
   [ "${GAME_KEEP_OVERLAYS:-0}" = "1" ] && return 0
+  [ "${GUI_MANGOHUD:-0}" = "1" ] && return 0
   export DISABLE_MANGOHUD=1
   unset MANGOHUD ENABLE_VKBASALT 2>/dev/null || true
   :

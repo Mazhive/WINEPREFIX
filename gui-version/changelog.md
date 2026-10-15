@@ -1,5 +1,9 @@
 # Changelog voor game-gui.py
 
+## v1.9.3 (2026-10-11)
+
+- Volume effect regel onder vkBasalt geplaatst, halve hoogte; checkbox "volume effect" links, slider ernaast (1 kollom)
+
 ## v1.9.2 (2026-10-11)
 
 - vkBasalt-checkbox (vibrance/deband) toegevoegd, standaard uit, per-launch (niet gepersisteerd)
