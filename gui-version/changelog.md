@@ -30,3 +30,6 @@
 - Gamepad-modus toggling
 - MangoHud overlay checkbox
 - Snapshot backup checkbox
+## v1.9.6 (2026-10-16)
+
+- Case-insensitive sortering voor launcher-lijst en soundtrack-bestanden (fix: ThelastofusiiRM stond vooraan door hoofdletter T)

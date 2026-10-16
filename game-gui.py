@@ -34,7 +34,7 @@ LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
 ICONS_DIR = LAUNCHERS_DIR / "gameicons"
 
-APP_VERSION = "1.9.5"
+APP_VERSION = "1.9.6"
 
 CARD_W = 200.0
 CARD_H = 200.0
@@ -427,7 +427,7 @@ _soundtrack_process = None
 def _soundtrack_files():
     if not _SOUNDTRACK_DIR.is_dir():
         return []
-    return sorted(_SOUNDTRACK_DIR.glob("st*.mp3"))
+    return sorted(_SOUNDTRACK_DIR.glob("st*.mp3"), key=lambda x: x.name.lower())
 
 
 def _start_soundtrack():
@@ -1379,7 +1379,7 @@ class MainWindow(QMainWindow):
 def scan_games():
     games = []
     if LINUXLAUNCHERS.exists():
-        for f in sorted(LINUXLAUNCHERS.glob("*.sh")):
+        for f in sorted(LINUXLAUNCHERS.glob("*.sh"), key=lambda x: x.name.lower()):
             if ".notworking" in f.name:
                 continue
             games.append(Game(f.name[:-3], f))

@@ -18,7 +18,7 @@ export GAME_LAUNCHER="$(readlink -f "$0")"
 
 # --- Proton / Wine configuratie ---
 export PROTON_ENABLED="1"
-export PROTON_PIN="GE-Proton11-7"
+export PROTON_PIN="GE-Proton9-11"
 export STEAM_APPID="1206580"               # Anno 1800 Steam appid (voor ProtonFixes)
 
 # VC++ 2019 runtime via winetricks (game bevat geen _CommonRedist)
