@@ -67,6 +67,34 @@ done 2>/dev/null || true
 #                                                                (reproduceerbaar). Leeg/uit =
 #                                                                auto-detect van de actieve
 #                                                                monitormode via xrandr.
+#   GAME_STEAM_RUNTIME="1"                                    — de Proton-runner wrappen in de
+#                                                                Steam Linux Runtime (SLR4):
+#                                                                <SLR>/_v2-entry-point --verb=run
+#                                                                -- <proton> run <exe>. Verplicht
+#                                                                voor runners met
+#                                                                require_tool_appid 4183110
+#                                                                (o.a. GE-Proton11-7); zonder
+#                                                                wrapper faalt bv. libSDL3. De
+#                                                                entry wordt generiek in de
+#                                                                Steam-library gezocht; ontbreekt
+#                                                                hij → duidelijke melding (géén
+#                                                                stille terugval op kale proton).
+#   GAME_WORKDIR="$GAME_DIR/..."                              — werkmap vóór de launch (default
+#                                                                GAME_DIR). Sommige games
+#                                                                verwachten de map van de exe.
+#   GAME_STARTUP_INDICATOR="0"                                — opstart-indicator UIT (default
+#                                                                aan). Tussen de Proton-start
+#                                                                ("fsync: up and running") en
+#                                                                het spelvenster zit soms ~20 s
+#                                                                zonder terugkoppeling; de
+#                                                                indicator toont dan een spinner
+#                                                                (echte terminal) of een
+#                                                                statusregel (GUI-terminal/log).
+#   GAME_STARTUP_TIMEOUT="60"                                 — max. seconden dat de opstart-
+#                                                                indicator op het venster wacht.
+#   GAME_PROCESS_NAME="witcher3.exe"                          — procesnaam voor de venster-
+#                                                                detectie (default: bestandsnaam
+#                                                                van GAME_EXE).
 #
 # Richtlijn: de prefix wordt ALTIJD lokaal en vers aangemaakt (wineboot -i);
 # er wordt nooit een bestaande prefix gekopieerd of vanaf de NFS-share
@@ -131,6 +159,83 @@ _busy_stop() {
   printf '\r [game] klaar: %s (duurde %ss)\n' "$BUSY_LABEL" "$s"
 }
 
+# ── Opstart-indicator (wachten op het spelvenster) ───────────
+# Tussen de Proton-start ("fsync: up and running") en het verschijnen van het
+# spelvenster zit soms ~20 s zonder enige terugkoppeling; de gebruiker denkt
+# dan dat de launcher hangt. Deze indicator toont tijdens die wachttijd een
+# spinner (echte terminal) of een statusregel (GUI-terminal/log), en stopt
+# zodra het spelvenster verschijnt (of na GAME_STARTUP_TIMEOUT s).
+# Uit te zetten met GAME_STARTUP_INDICATOR=0.
+STARTUP_PID=""
+
+# Heeft het spelproces al een X-venster? Proton-games draaien onder Xwayland,
+# dus xdotool ziet ze. Zoekt het proces op GAME_PROCESS_NAME (default: de
+# bestandsnaam van GAME_EXE) en vraagt xdotool om een venster bij dat PID.
+_game_window_present() {
+  command -v xdotool >/dev/null 2>&1 || return 1
+  local name="${GAME_PROCESS_NAME:-}"
+  [ -n "$name" ] || name="$(basename "${GAME_EXE:-}")"
+  [ -n "$name" ] || return 1
+  local pid
+  while IFS= read -r pid; do
+    [ -n "$pid" ] || continue
+    [ -n "$(xdotool search --pid "$pid" 2>/dev/null)" ] && return 0
+  done < <(pgrep -f -- "$name" 2>/dev/null)
+  return 1
+}
+
+# Start de indicator op de achtergrond; hij stopt zichzelf zodra het venster
+# verschijnt of de timeout verstrijkt. _startup_indicator_stop() ruimt op.
+_startup_indicator_start() {
+  [ "${GAME_STARTUP_INDICATOR:-1}" = "1" ] || return 0
+  command -v xdotool >/dev/null 2>&1 || return 0
+  # Zonder procesnaam (bv. native games zonder GAME_EXE) valt er geen venster
+  # te detecteren → indicator overslaan i.p.v. de volle timeout te spinnen.
+  local pname="${GAME_PROCESS_NAME:-}"
+  [ -n "$pname" ] || pname="$(basename "${GAME_EXE:-}")"
+  [ -n "$pname" ] || return 0
+  local tty=0
+  [ -t 1 ] && tty=1
+  # Vensterlijst vóór de start: een nieuw venster is een tweede signaal dat de
+  # game (of zijn launcher) in beeld komt, ook als de procesnaam afwijkt.
+  local before
+  before="$(xdotool search --onlyvisible --name '.*' 2>/dev/null | sort | tr '\n' ' ')"
+  [ "$tty" = "0" ] && printf ' [game] Spel wordt gestart, wachten op spelvenster...\n'
+  (
+    local frames='|/-\' i=0 start found=0 now
+    start="$(date +%s)"
+    while :; do
+      if _game_window_present; then found=1; break; fi
+      now="$(xdotool search --onlyvisible --name '.*' 2>/dev/null | sort | tr '\n' ' ')"
+      if [ -n "$now" ] && [ "$now" != "$before" ]; then found=1; break; fi
+      [ $(( $(date +%s) - start )) -ge "${GAME_STARTUP_TIMEOUT:-60}" ] && break
+      [ "$tty" = "1" ] && printf '\r [game] Spel wordt gestart %s ' "${frames:i%4:1}"
+      i=$((i+1))
+      sleep 0.25
+    done
+    local dur=$(( $(date +%s) - start ))
+    if [ "$tty" = "1" ]; then
+      if [ "$found" = "1" ]; then
+        printf '\r [game] Spelvenster verschenen (na %ss).                    \n' "$dur"
+      else
+        printf '\r [game] Geen spelvenster gedetecteerd (na %ss).            \n' "$dur"
+      fi
+    elif [ "$found" = "1" ]; then
+      printf ' [game] Spelvenster verschenen (na %ss).\n' "$dur"
+    else
+      printf ' [game] Geen spelvenster gedetecteerd (na %ss).\n' "$dur"
+    fi
+  ) &
+  STARTUP_PID=$!
+}
+
+_startup_indicator_stop() {
+  [ -n "${STARTUP_PID:-}" ] || return 0
+  kill "$STARTUP_PID" 2>/dev/null || true
+  wait "$STARTUP_PID" 2>/dev/null || true
+  STARTUP_PID=""
+}
+
 # ── Single-instance lock ─────────────────────────────────────
 # Voorkomt dat iemand een tweede launcher start terwijl de eerste nog
 # provisiont of de game draait (bv. omdat de voortgangsindicator nog niet
@@ -149,7 +254,7 @@ _acquire_lock() {
   fi
   echo "$$" >"$lf"
   _LOCK_FILE="$lf"
-  _release_lock() { rm -f "${_LOCK_FILE:-}"; }
+  _release_lock() { _startup_indicator_stop; rm -f "${_LOCK_FILE:-}"; }
   trap _release_lock EXIT INT TERM
 }
 
@@ -376,6 +481,22 @@ _steam_client_dir() {
   echo "$dir"
 }
 
+# ── Alle Steam-library-roots (hoofdinstallatie + extra libraries) ─
+# Naast de hoofdinstallatie kan Steam extra bibliotheken hebben (andere
+# schijf/partitie). Die staan in steamapps/libraryfolders.vdf als
+# "path"-regels. Nodig om de Steam Linux Runtime ook daar te vinden.
+_steam_library_dirs() {
+  local dir vdf
+  {
+    while IFS= read -r dir; do
+      echo "$dir"
+      vdf="$dir/steamapps/libraryfolders.vdf"
+      [ -f "$vdf" ] || continue
+      sed -n 's/^[[:space:]]*"path"[[:space:]]*"\(.*\)".*/\1/p' "$vdf"
+    done < <(_steam_client_dirs)
+  } | awk '!seen[$0]++'
+}
+
 # ── Alle mappen waar Proton/GE-Proton-runners kunnen staan ────
 # Heroic-layout + compatibilitytools.d van elke gevonden Steam-flavor.
 _proton_search_roots() {
@@ -497,6 +618,40 @@ _warn_missing_proton() {
   echo " [game]" >&2
   echo " [game] Of installeer handmatig: protonup-qt, of via Steam > Instellingen > Compatibiliteit." >&2
   echo " [game] Na installatie start je dit script opnieuw." >&2
+  return 1
+}
+
+# ── Steam Linux Runtime (SLR) entry-point vinden ─────────────
+# Sommige Proton-runners (o.a. GE-Proton11-7) verklaren in hun toolmanifest
+# require_tool_appid 4183110 = SteamLinuxRuntime_4. Steam start zulke games
+# NOOIT kaal, maar altijd via de runtime-container:
+#   <SLR>/_v2-entry-point --verb=run -- <proton> run <exe>
+# Zonder die wrapper faalt bv. het laden van libSDL3 (alleen in de container
+# aanwezig) → de game sluit direct af. Zoek de entry generiek binnen de
+# Steam-library van de gebruiker (nooit hardgecodeerd op $HOME/...).
+_detect_steam_runtime() {
+  local lib base
+  while IFS= read -r lib; do
+    for base in \
+      "$lib/steamapps/common/SteamLinuxRuntime_4/_v2-entry-point" \
+      "$lib/steamapps/common/SteamLinuxRuntime_sniper/_v2-entry-point"; do
+      [ -x "$base" ] && { echo "$base"; return 0; }
+    done
+  done < <(_steam_library_dirs)
+  return 1
+}
+
+# ── Instructie bij ontbrekende Steam Linux Runtime ───────────
+# Geldt voor elke game met GAME_STEAM_RUNTIME=1. Nooit stil terugvallen op
+# een kale `proton run` — dat geeft juist de SDL3-exit.
+_warn_missing_steam_runtime() {
+  echo " [game] FOUT: deze game (${GAME_NAME:-onbekend}) vereist de Steam Linux" >&2
+  echo " [game] Runtime (SLR4), maar de runtime-entry (_v2-entry-point) is niet" >&2
+  echo " [game] gevonden in de Steam-library." >&2
+  echo " [game]" >&2
+  echo " [game] Installeer SteamLinuxRuntime_4 via Steam (Bibliotheek → Tools)," >&2
+  echo " [game] of zie tools/install-proton.sh. Zonder de runtime faalt het laden" >&2
+  echo " [game] van libSDL3 en sluit de game direct af." >&2
   return 1
 }
 
@@ -815,7 +970,9 @@ game_launch() {
   _neutralize_sdl3_dynapi
   _log "Starten: ${GAME_EXE:-${GAME_NATIVE_SHELL:-} ${GAME_NATIVE_CMD}} (prefix: $PREFIX_PATH)"
 
-  cd "$GAME_DIR" || _fail "Kan niet naar $GAME_DIR"
+  # GAME_WORKDIR: sommige games verwachten een specifieke werkmap (bv. de
+  # map van de exe) i.p.v. de game-root. Default = GAME_DIR.
+  cd "${GAME_WORKDIR:-$GAME_DIR}" || _fail "Kan niet naar ${GAME_WORKDIR:-$GAME_DIR}"
 
   # GAME_GAMESCOPE=1: de launch wrappen via gamescope (nested compositor).
   # Dit lost op Wayland-lagen de bekende XWayland-inputbug op (muis wordt
@@ -925,14 +1082,42 @@ game_launch() {
     export SteamAppId="$appid"
     export WINEPREFIX="$PREFIX_PATH"
     _gamepad_enabled && gamepad_begin
-    "${gscope[@]}" "$runner" waitforexitandrun "$GAME_EXE" "$@"
+    # GAME_STEAM_RUNTIME=1: de runner vereist de Steam Linux Runtime
+    # (require_tool_appid 4183110). Steam start zulke games nooit kaal, maar
+    # via de runtime-container; zonder wrapper faalt bv. libSDL3 → game-exit.
+    # umu-run regelt de runtime zélf → dan géén losse _v2-entry-point.
+    _startup_indicator_start
+    if [ "${GAME_STEAM_RUNTIME:-0}" = "1" ] && [ "${runner##*/}" != "umu-run" ]; then
+      local slr_entry
+      slr_entry="$(_detect_steam_runtime)" || {
+        _warn_missing_steam_runtime
+        _startup_indicator_stop
+        _gamepad_enabled && gamepad_end
+        return 1
+      }
+      _log "Steam Linux Runtime-wrapper: $slr_entry"
+      # Proton leidt de prefix af uit STEAM_COMPAT_DATA_PATH; een geërfde
+      # WINEPREFIX zou dat overschrijven → unset (bewezen recipe).
+      unset WINEPREFIX
+      export SteamGameId="$appid"
+      "${gscope[@]}" "$slr_entry" --verb=run -- "$runner" run "$GAME_EXE" "$@"
+    elif [ "${runner##*/}" = "umu-run" ]; then
+      # umu-run regelt de Steam Linux Runtime zélf en neemt de exe direct
+      # (geen proton-verb, geen losse _v2-entry-point).
+      "${gscope[@]}" "$runner" "$GAME_EXE" "$@"
+    else
+      "${gscope[@]}" "$runner" waitforexitandrun "$GAME_EXE" "$@"
+    fi
     rc=$?
+    _startup_indicator_stop
     _gamepad_enabled && gamepad_end
     return $rc
   else
     _gamepad_enabled && gamepad_begin
+    _startup_indicator_start
     WINEPREFIX="$PREFIX_PATH" "${gscope[@]}" ${WINE_CMD:-wine} "$GAME_EXE" "$@"
     rc=$?
+    _startup_indicator_stop
     _gamepad_enabled && gamepad_end
     return $rc
   fi

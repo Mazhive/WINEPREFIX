@@ -1,5 +1,15 @@
 # Changelog voor game-gui.py
 
+## v1.9.5 (2026-10-15)
+
+- Knight Rider-scanlijn groen gemaakt (matcht terminal `#00ff88`)
+- Uitdovende staart (trailing fade) achter de kop, tegengesteld aan de bewegingsrichting
+
+## v1.9.4 (2026-10-15)
+
+- Knight Rider-achtige scanlijn (`KnightRiderBar`) boven de terminal: gloeiende rode balk die heen en weer schuift zolang een game start/draait
+- Scanner verschijnt bij start en verdwijnt zodra de run stopt; volgt de actieve run bij tabwissel/sluiten
+
 ## v1.9.3 (2026-10-11)
 
 - Volume effect regel onder vkBasalt geplaatst, halve hoogte; checkbox "volume effect" links, slider ernaast (1 kollom)

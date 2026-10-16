@@ -34,7 +34,7 @@ LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
 ICONS_DIR = LAUNCHERS_DIR / "gameicons"
 
-APP_VERSION = "1.9.3"
+APP_VERSION = "1.9.5"
 
 CARD_W = 200.0
 CARD_H = 200.0
@@ -725,6 +725,86 @@ class CarouselView(QGraphicsView):
             super().keyPressEvent(event)
 
 
+class KnightRiderBar(QWidget):
+    """Knight Rider-achtige scanlijn.
+
+    Een gloeiende groene balk die heen en weer over de breedte schuift zolang
+    een game start of draait, met een uitdovende staart achter de kop. Puur
+    visuele "bezig"-indicator; verschijnt boven de terminal en verdwijnt zodra
+    er niets actief is.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setFixedHeight(6)
+        self._pos = 0.0
+        self._dir = 1.0
+        self._timer = QTimer(self)
+        self._timer.setInterval(16)
+        self._timer.timeout.connect(self._tick)
+        self.hide()
+
+    def start(self):
+        if not self._timer.isActive():
+            self._timer.start()
+        self.show()
+
+    def stop(self):
+        self._timer.stop()
+        self.hide()
+
+    def _tick(self):
+        self._pos += self._dir * 0.014
+        if self._pos >= 1.0:
+            self._pos = 1.0
+            self._dir = -1.0
+        elif self._pos <= 0.0:
+            self._pos = 0.0
+            self._dir = 1.0
+        self.update()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        w = float(self.width())
+        h = float(self.height())
+        painter.fillRect(self.rect(), QColor(10, 15, 12))
+        if w <= 0:
+            return
+        head_w = max(48.0, w * 0.16)
+        cx = self._pos * (w - head_w) + head_w / 2.0
+        left = cx - head_w / 2.0
+        painter.setPen(Qt.NoPen)
+        # Uitdovende staart achter de kop, tegengesteld aan de bewegingsrichting.
+        tail_len = w * 0.35
+        if self._dir > 0:
+            tail = QLinearGradient(cx - tail_len, 0.0, cx, 0.0)
+            tail.setColorAt(0.0, QColor(0, 255, 136, 0))
+            tail.setColorAt(1.0, QColor(0, 255, 136, 120))
+            tail_rect = QRectF(cx - tail_len, 0.0, tail_len, h)
+        else:
+            tail = QLinearGradient(cx, 0.0, cx + tail_len, 0.0)
+            tail.setColorAt(0.0, QColor(0, 255, 136, 120))
+            tail.setColorAt(1.0, QColor(0, 255, 136, 0))
+            tail_rect = QRectF(cx, 0.0, tail_len, h)
+        painter.setBrush(tail)
+        painter.drawRoundedRect(tail_rect, h / 2.0, h / 2.0)
+        glow = QLinearGradient(left, 0.0, left + head_w, 0.0)
+        glow.setColorAt(0.0, QColor(0, 255, 136, 0))
+        glow.setColorAt(0.5, QColor(0, 255, 136, 150))
+        glow.setColorAt(1.0, QColor(0, 255, 136, 0))
+        painter.setBrush(glow)
+        painter.drawRoundedRect(QRectF(left, 0.0, head_w, h), h / 2.0, h / 2.0)
+        core_w = head_w * 0.4
+        core_left = cx - core_w / 2.0
+        core = QLinearGradient(core_left, 0.0, core_left + core_w, 0.0)
+        core.setColorAt(0.0, QColor(0, 255, 136, 0))
+        core.setColorAt(0.5, QColor(200, 255, 230, 255))
+        core.setColorAt(1.0, QColor(0, 255, 136, 0))
+        painter.setBrush(core)
+        painter.drawRoundedRect(QRectF(core_left, 0.0, core_w, h), h / 2.0, h / 2.0)
+
+
 class GameRun:
     _log_lines = 5000
     _GAME_START_MARKER = " [game] Starten:"
@@ -1068,6 +1148,9 @@ class MainWindow(QMainWindow):
         self.run_tabs.hide()
         lay.addWidget(self.run_tabs)
 
+        self.scanner = KnightRiderBar()
+        lay.addWidget(self.scanner)
+
         self.terminal = QPlainTextEdit()
         self.terminal.setReadOnly(True)
         self.terminal.setMaximumBlockCount(GameRun._log_lines)
@@ -1180,6 +1263,7 @@ class MainWindow(QMainWindow):
         self._add_run_tab(run)
         self._focus_run(run)
         run.start()
+        self._update_scanner()
 
     def _attach_tool_output(self, run, tool_path):
         """Draait een read-only tool (bv. gamepad-status.sh) en voegt de output
@@ -1207,6 +1291,16 @@ class MainWindow(QMainWindow):
         tab_idx = self._tab_index_for(run.game.key)
         if tab_idx >= 0:
             self.run_tabs.setTabText(tab_idx, f"{run.game.display_name}  —  {run.status}")
+        self._update_scanner()
+
+    def _update_scanner(self):
+        run = self.current_run
+        active = (run is not None and run.proc is not None
+                  and run.proc.state() != QProcess.NotRunning)
+        if active:
+            self.scanner.start()
+        else:
+            self.scanner.stop()
 
     def _run_output(self, run):
         if self.current_run is run:
@@ -1232,6 +1326,7 @@ class MainWindow(QMainWindow):
             self.run_tabs.setCurrentIndex(idx)
         self.terminal.clear()
         self.terminal.setPlainText("\n".join(run.log))
+        self._update_scanner()
 
     def _on_tab_changed(self, idx):
         if idx < 0:
@@ -1255,6 +1350,7 @@ class MainWindow(QMainWindow):
             self._welcome()
         elif self.runs:
             self._focus_run(next(iter(self.runs.values())))
+        self._update_scanner()
 
     def closeEvent(self, event):
         running = [r for r in self.runs.values()

@@ -128,6 +128,48 @@ Kernpunten:
 - Launcher weg: `rm .../LINUXLAUNCHERS/witcher3rm.sh` (raakt prefix en game niet).
 - Prefix opnieuw: `rm -rf ~/GAMEPREFIXES/Witcher3RM` (game-bestanden blijven staan).
 
+## Verificatie (Launcher-Builder) — 2026-10-15 18:15
+
+Live run van `LINUXLAUNCHERS/witcher3rm.sh` (achtergrond, log `/tmp/witcher3rm-run.log`).
+Verse prefix `~/GAMEPREFIXES/Witcher3RM` (marker v1), desktop-shortcut aangemaakt.
+
+**Resultaat: de game start tot en met het menu.** De SLR4-wrapper is aantoonbaar actief:
+
+```
+[game] Start via Proton-runner: .../GE-Proton11-7/proton
+[game] Steam Linux Runtime-wrapper: .../SteamLinuxRuntime_4/_v2-entry-point
+Proton: Upgrading prefix from None to GE-Proton11-7 (.../compatdata/1495134320/)
+fsync: up and running.
+```
+
+- Proces `witcher3.exe` liep (≈93% CPU, ≈2.3 GB RSS); venster `The Witcher 3` zichtbaar.
+- De game is in het menu door de gebruiker afgesloten (bewuste exit, geen crash).
+- De oude fout `Failed loading SDL3 library.` (kale `proton run`) is weg — de wrapper lost het op.
+- Restwaarschuwing (niet-fataal): `SDL Dynamic API Failure! ... Using the default SDL.`
+  De game valt terug op de ingesloten SDL en loopt door naar het menu. Geen actie nodig.
+
+Geen wijzigingen aan launcher/core na deze run (werkt zoals bedoeld).
+
+## Opstart-indicator (2026-10-15)
+
+Tussen de Proton-start (`fsync: up and running`) en het spelvenster zit ~20 s
+zonder enige terugkoppeling; de gebruiker denkt dan dat de launcher hangt. De
+core toont nu tijdens die wachttijd een indicator:
+
+- **Echte terminal**: spinner (`|/-\`) op één regel (CR).
+- **GUI-terminal / log**: statusregel "Spel wordt gestart, wachten op spelvenster...".
+
+De indicator stopt zodra het spelvenster verschijnt — detectie via `xdotool`
+op het spelproces (`pgrep -f <exe>` → `xdotool search --pid`), met een
+nieuw-venster-fallback — of na `GAME_STARTUP_TIMEOUT` (default 60 s). Uit te
+zetten met `GAME_STARTUP_INDICATOR=0`; procesnaam te overrulen met
+`GAME_PROCESS_NAME`.
+
+Implementatie: `game-core/game-common.sh` (`_game_window_present`,
+`_startup_indicator_start`/`_startup_indicator_stop`), aangeroepen in
+`game_launch` (Proton- én wine-tak). Native games (vroege return) blijven
+onveranderd.
+
 ## Zie ook
 
 - `WERKWIJZE.md` — algemene werkmethode.
