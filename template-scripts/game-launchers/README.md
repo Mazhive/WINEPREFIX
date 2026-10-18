@@ -32,7 +32,10 @@ export GAME_LAUNCHER="$(readlink -f "$0")"
 export VC_RUNTIME_METHOD="winetricks"
 export STEAM_APPID="12345"
 
-# Provision hooks (alleen bij verse prefix)
+# Pre-provision hooks (VÓÓR wineboot -i, alleen bij verse prefix)
+PRE_PROVISION_HOOKS=("install_wine32")
+
+# Provision hooks (NA wineboot -i, alleen bij verse prefix)
 PROVISION_HOOKS=("install_dxvk" "install_d3dx9" "game_vcrun2019")
 
 # Pre-launch hooks (bij ELKE start)
@@ -57,17 +60,53 @@ game_main "$@"
 | `SCRIPT_VERSION` | Versie voor provisioning cache invalidatie |
 | `VC_RUNTIME_METHOD` | `winetricks` of `redist` |
 | `STEAM_APPID` | Steam AppID voor ProtonFixes herkenning |
-| `PROVISION_HOOKS` | Array met hook-namen voor verse prefix setup |
+| `PRE_PROVISION_HOOKS` | Array met hook-namen die VÓÓR `wineboot -i` lopen (verse prefix) |
+| `PROVISION_HOOKS` | Array met hook-namen voor verse prefix setup (na `wineboot -i`) |
 | `PRE_LAUNCH_HOOKS` | Array met hook-namen voor bij elke start |
 | `GAME_SETUP_TOOL` | Bestandsnaam van 3rd-party tool in `tools/3rdparty/` |
 | `GAME_SETUP_TOOL_NAME` | Weergavenaam voor GUI knop |
 
 ## Hooks
 
-Hooks staan in `game-core/hooks/` en worden geladen via naam:
+Hooks staan in `game-core/hooks/` en worden geladen via naam. Elke module
+definieert `hook_run()`. Er zijn **drie fasen**, in deze volgorde:
 
-- **Provision hooks** (1x per verse prefix): `install_dxvk`, `install_d3dx9`, `install_vcrun2019`, `game_vcrun2019`, etc.
-- **Pre-launch hooks** (elke start): `game_steam_registry`, `game_ubi_config`, `wacom-detect`, etc.
+| Fase | Variabele | Wanneer | Voorbeeld |
+|------|-----------|---------|-----------|
+| 1. Pre-provision | `PRE_PROVISION_HOOKS` | Vóór `wineboot -i`, alleen bij verse prefix | `install_wine32` |
+| 2. Provision | `PROVISION_HOOKS` | Ná `wineboot -i`, alleen bij verse prefix | `install_dxvk`, `install_d3dx9`, `install_vcrun2019` |
+| 3. Pre-launch | `PRE_LAUNCH_HOOKS` | Bij **elke** start, vóór `game_launch` | `game_steam_registry`, `wacom-detect` |
+
+- **Pre-provision** gebruik je voor checks die de prefix-aanmaak zelf moeten
+  bewaken — bijv. `install_wine32`, dat vóór `wineboot -i` controleert of 32-bit
+  Wine beschikbaar is voor een `win32`-prefix en anders een popup toont. Een
+  falende hook breekt de provisioning af.
+- **Provision** en **pre-launch** werken met dezelfde module-mechaniek; het
+  per-game script kiest welke het nodig heeft. Pre-launch-hooks moeten strikt
+  idempotent zijn (ze lopen bij elke start).
+
+### Verifiëren dat een hook-fase echt draait
+
+Een `*_HOOKS`-variabele die de core **niet** dispatcht, is onzichtbaar dood: het
+script start gewoon, maar de hook wordt nooit uitgevoerd. Zo controleer je dat
+een fase bestaat (voorkomt het opnieuw uitzoeken van een dode fase):
+
+```bash
+# Elke fase moet in game-common.sh voorkomen:
+grep -nE 'PRE_PROVISION_HOOKS|PRE_PROV_HOOKS|PROVISION_HOOKS|PRE_LAUNCH_HOOKS' \
+  template-scripts/game-core/game-common.sh
+```
+
+Verwacht (de core flattent de arrays in `game_init`):
+
+| Fase | In `game_init` | Loop in |
+|------|----------------|---------|
+| Pre-provision | `PRE_PROVISION_HOOKS` → `PRE_PROV_HOOKS` | `game_provision` (vóór `_provision_fresh`) |
+| Provision | `PROVISION_HOOKS` → `HOOKS` | `_provision_fresh` (na `wineboot -i`) |
+| Pre-launch | `PRE_LAUNCH_HOOKS` → `PRE_HOOKS` | `game_main` (vóór `game_launch`) |
+
+Ontbreekt een fase in de core, dan is de bijbehorende variabele in een launcher
+een no-op.
 
 ## 3rd-party Configuratie Tools
 

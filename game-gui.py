@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Game Launcher - roller-GUI voor de WINEPREFIX launcher-scripts.
 
 De GUI scant template-scripts/game-launchers/*.sh, koppelt elk script aan zijn
 icoon in game-launchers/gameicons/ en toont ze in een horizontale roller.
 Een klik op een icoon start de launcher als QProcess; de output stroomt live
-naar het status-frame rechts. De namen- en icoon-mapping staat onderaan in de
-dicts DISPLAY_NAMES en ICON_OVERRIDES - daaronder vrije aanpassing mogelijk.
+naar het status-frame rechts.
 """
 
 import os
+import platform
 import re
 import signal
 import subprocess
@@ -34,7 +35,7 @@ LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
 ICONS_DIR = LAUNCHERS_DIR / "gameicons"
 
-APP_VERSION = "1.9.6"
+APP_VERSION = "1.9.8"
 
 CARD_W = 200.0
 CARD_H = 200.0
@@ -43,38 +44,6 @@ CARD_CORNER = 18.0
 SPACING = 195.0
 SCENE_H = 470.0
 CARD_Y = SCENE_H / 2.0 - 45.0
-
-DISPLAY_NAMES = {
-    "angry-birds": "Angry Birds",
-    "anno1800": "Anno 1800",
-    "aow-planetfall": "AOW: Planetfall",
-    "astroidbountyhunter": "Asteroid Bounty Hunter",
-    "automationempire": "Automation Empire",
-    "callofdutyvanguard": "Call of Duty Vanguard",
-    "celeste": "Celeste",
-    "citiesskylines": "Cities: Skylines",
-    "cyberpunk2077": "Cyberpunk 2077",
-    "gta5": "GTA V",
-    "oilrush": "Oil Rush",
-    "ori-blindforest": "Ori and the Blind Forest",
-    "ori-willofthewisps": "Ori and the Will of the Wisps",
-    "shadwen": "Shadwen",
-    "silence": "Silence",
-    "ut2004": "Unreal Tournament 2004",
-    "xonotic": "Xonotic",
-}
-
-ICON_OVERRIDES = {
-    "angry-birds": "angrybirds.png",
-    "callofdutyvanguard": "callofdutyvanguard.png",
-    "cyberpunk2077": "Cyberpunk.png",
-    "citiesskylines": "Cities&Skylines.png",
-    "aow-planetfall": "AOW-planetfall.png",
-    "astroidbountyhunter": "astroid.bounty.hunter.png",
-    "automationempire": "AutomationEmpire.png",
-    "ori-blindforest": "ori-blindforest.png",
-    "ori-willofthewisps": "ori-willofthewisps.png",
-}
 
 STYLE = """
 QMainWindow, QWidget { background-color: #171a20; }
@@ -87,7 +56,7 @@ QMenu::item { padding: 6px 22px; border-radius: 6px; }
 QMenu::item:selected { background-color: #35404f; }
 QLabel { color: #e8ecf2; }
 QLabel#title { font-size: 22px; font-weight: 700; color: #ffffff; letter-spacing: 2px; }
-QLabel#subtitle { color: #9aa4b2; }
+QLabel#subtitle { color: #00ff88; font-size: 13px; font-weight: 600; }
 QLabel#panelTitle { font-size: 14px; font-weight: 600; color: #ffffff; }
 QFrame#optionsFrame {
     background-color: #1b202a; border-radius: 12px;
@@ -119,7 +88,7 @@ QListWidget::item { padding: 7px 8px; border-radius: 5px; }
 QListWidget::item:selected { background-color: #35404f; }
 QPlainTextEdit {
     background-color: #0c0e12; color: #b9c4d4; border: 1px solid #2a2f3a;
-    border-radius: 8px; padding: 6px; selection-background-color: #35404f;
+    border-radius: 8px; padding: 6px; selection-background-color: #004422;
 }
 QSplitter::handle { background-color: #2a2f3a; }
 """
@@ -130,9 +99,47 @@ SETTINGS_PATH = Path.home() / ".config" / "gamelauncher" / "settings.conf"
 GAMEPAD_STATUS_TOOL = TEMPLATE_ROOT / "tools" / "gamepad-status.sh"
 
 
+def detect_os_name():
+    """Robuuste OS-detectie voor zowel Linux (/etc/os-release) als Windows (platform)."""
+    system = platform.system()
+    if system == "Windows":
+        try:
+            win_ver = platform.win32_ver()
+            edition = win_ver[2] or "Release"
+            version_str = win_ver[0]
+            if version_str == "10":
+                build = win_ver[1]
+                if build:
+                    try:
+                        build_num = int(build.split(".")[2])
+                        if build_num >= 22000:
+                            version_str = "11"
+                    except (IndexError, ValueError):
+                        pass
+            return f"Windows {version_str} ({edition})"
+        except Exception:
+            return "Windows"
+    elif system == "Linux":
+        os_release = Path("/etc/os-release")
+        if os_release.is_file():
+            try:
+                pretty = ""
+                for line in os_release.read_text(encoding="utf-8").splitlines():
+                    if line.startswith("PRETTY_NAME="):
+                        return line.split("=", 1)[1].strip('"\'')
+                    elif line.startswith("NAME=") and not pretty:
+                        pretty = line.split("=", 1)[1].strip('"\'')
+                if pretty:
+                    return pretty
+            except Exception:
+                pass
+        return "Linux"
+    elif system == "Darwin":
+        return f"macOS {platform.mac_ver()[0]}"
+    return f"{system} OS"
+
+
 def load_paths():
-    """Leest GAME_DIR_<GAME_NAME>="<pad>" uit installpaths.conf (zelfde bestand
-    en key-formaat als game-conf.sh aan de shell-kant)."""
     paths = {}
     if not CONF_PATH.is_file():
         return paths
@@ -152,7 +159,6 @@ def load_paths():
 
 
 def save_paths(paths):
-    """Schrijft alle installatiepaden naar installpaths.conf (idempotent)."""
     try:
         CONF_PATH.parent.mkdir(parents=True, exist_ok=True)
         lines = [f'GAME_DIR_{k.upper()}="{v}"' for k, v in sorted(paths.items())]
@@ -163,7 +169,6 @@ def save_paths(paths):
 
 
 def load_settings():
-    """Leest globale GUI-instellingen uit settings.conf (GPAD=<0|1> e.d.)."""
     opts = {}
     if not SETTINGS_PATH.is_file():
         return opts
@@ -180,7 +185,6 @@ def load_settings():
 
 
 def save_settings(opts):
-    """Schrijft de globale GUI-instellingen naar settings.conf (idempotent)."""
     try:
         SETTINGS_PATH.parent.mkdir(parents=True, exist_ok=True)
         lines = [f"{k}={v}" for k, v in sorted(opts.items())]
@@ -195,8 +199,6 @@ def _norm(name):
 
 
 def _read_launcher_meta(script_path):
-    """Leest GAME_ICON, GAME_DISPLAY_NAME en GAME_NATIVE uit een launcher-script.
-    Retourneert (icon_name, display_name, is_native) of (None, None, False) bij fout/ontbrekend."""
     try:
         text = script_path.read_text(encoding="utf-8")
     except OSError:
@@ -229,7 +231,7 @@ class Game:
         self.script = script_path
         self._icon = None
         self._default_dir = None
-        self._meta = None  # (icon_name, display_name, is_native) cache
+        self._meta = None
 
     @property
     def _meta_cached(self):
@@ -249,8 +251,6 @@ class Game:
 
     @property
     def stored_dir(self):
-        # Conf-file-key = GAME_DIR_<GAME_NAME> (mixed case, zoals geëxporteerd
-        # door het launcher-script); game.key is de lowercased bestandsnaam.
         return load_paths().get(self.key.upper())
 
     def _extract_default_dir(self):
@@ -266,7 +266,7 @@ class Game:
         meta_display = self._meta_cached[1]
         if meta_display:
             return meta_display
-        return DISPLAY_NAMES.get(self.key, self._prettify(self.key))
+        return self._prettify(self.key)
 
     @staticmethod
     def _prettify(key):
@@ -291,19 +291,11 @@ class Game:
         return self._icon
 
     def _resolve_icon(self):
-        # 1. Expliciet GAME_ICON uit launcher-script (exacte bestandsnaam)
         meta_icon = self._meta_cached[0]
         if meta_icon:
             cand = ICONS_DIR / meta_icon
             if cand.exists():
                 return cand
-        # 2. Legacy ICON_OVERRIDES dict
-        override = ICON_OVERRIDES.get(self.key)
-        if override:
-            cand = ICONS_DIR / override
-            if cand.exists():
-                return cand
-        # 3. Fuzzy match op genormaliseerde stempjes (bestaande logica)
         if not ICONS_DIR.exists():
             return None
         files = list(ICONS_DIR.iterdir())
@@ -350,11 +342,6 @@ def _placeholder_pixmap(name):
     return pm
 
 
-# ── Wielmuis-geluid ──────────────────────────────────────────
-# Subtiel "tick"-geluid bij het wisselen van icoon met de wielmuis.
-# QtMultimedia is niet geïnstalleerd, dus het WAV-bestand wordt eenmalig
-# gegenereerd (BASE/scroll.wav) en afgespeeld via paplay/pw-play/aplay.
-# Aan/uit via de GUI-checkbox (SOUND=1|0 in settings.conf).
 _SOUND_WAV = BASE / "scroll.wav"
 _SOUND_PLAYERS = ("paplay", "pw-play", "aplay")
 _sound_enabled = True
@@ -415,10 +402,6 @@ def _play_scroll_sound():
             continue
 
 
-# ── Soundtrack ───────────────────────────────────────────────
-# Achtergrondmuziek uit soundtrack/st*.mp3 (st1, st2, ...). Afspelen via
-# cvlc --loop (VLC) zodat de tracks doorlopen. Aan/uit via de GUI-checkbox
-# (SOUNDTRACK=1|0 in settings.conf).
 _SOUNDTRACK_DIR = BASE / "soundtrack"
 _soundtrack_enabled = False
 _soundtrack_process = None
@@ -458,8 +441,6 @@ def _stop_soundtrack():
 
 
 class CoverItem(QGraphicsObject):
-    """Eén game-kaart in de roller: icoon + naam, gecentreerd op (0,0)."""
-
     BADGE_SIZE = 24
 
     def __init__(self, game, index):
@@ -468,7 +449,6 @@ class CoverItem(QGraphicsObject):
         self.index = index
         self.selected = False
         self.pix = game.pixmap()
-        # Badge voor native (penguin) of Windows (windows logo)
         badge_name = "penguin.png" if game.is_native else "windows.png"
         badge_path = ICONS_DIR / badge_name
         self.badge_pix = None
@@ -479,11 +459,6 @@ class CoverItem(QGraphicsObject):
                     self.BADGE_SIZE, self.BADGE_SIZE,
                     Qt.KeepAspectRatio, Qt.SmoothTransformation
                 )
-                print(f"[BADGE] {game.key}: loaded {badge_name} -> {self.badge_pix.width()}x{self.badge_pix.height()}")
-            else:
-                print(f"[BADGE] {game.key}: {badge_name} isNull!")
-        else:
-            print(f"[BADGE] {game.key}: {badge_name} NOT FOUND at {badge_path}")
         self.setCursor(Qt.PointingHandCursor)
 
     def boundingRect(self):
@@ -512,7 +487,6 @@ class CoverItem(QGraphicsObject):
         painter.fillRect(strip, grad)
         painter.restore()
 
-        # Badge (penguin/windows) in rechterbovenhoek van de kaart
         if self.badge_pix and not self.badge_pix.isNull():
             margin = 4
             br = QRect(
@@ -520,10 +494,7 @@ class CoverItem(QGraphicsObject):
                 int(card.top() + margin),
                 self.BADGE_SIZE, self.BADGE_SIZE
             )
-            print(f"[BADGE PAINT] {self.game.key}: drawing badge at {br}")
             painter.drawPixmap(br, self.badge_pix)
-        else:
-            print(f"[BADGE PAINT] {self.game.key}: NO BADGE (badge_pix={self.badge_pix})")
 
         fm = QFontMetrics(self._name_font())
         painter.setFont(self._name_font())
@@ -549,13 +520,6 @@ class CoverItem(QGraphicsObject):
 
 
 class HaloBackdrop(QGraphicsObject):
-    """Subtiel omgevingslicht achter de rollerkaarten.
-
-    Zachte radiale gradient zonder harde rand — vervaagt naar alpha 0 aan de
-    randen. Gepositioneerd onder alle items in de scene; volgt de breedte via
-    set_bounds() vanuit CarouselView._layout().
-    """
-
     def __init__(self):
         super().__init__()
         self._rect = QRectF()
@@ -576,9 +540,6 @@ class HaloBackdrop(QGraphicsObject):
         h = self._rect.height()
         painter.save()
         painter.translate(self._rect.center())
-        # Y-as schalen zodat een cirkel visueel de platte band-ellips wordt.
-        # De gradient rekent dan mee in de geschaalde ruimte: ieder punt op de
-        # omtrek ligt exact op straal w/2 → stop 1.0 → alpha 0, zonder harde rand.
         painter.scale(1.0, h / w)
         grad = QRadialGradient(0.0, 0.0, w / 2.0)
         grad.setColorAt(0.0, QColor(255, 255, 255, 36))
@@ -726,14 +687,6 @@ class CarouselView(QGraphicsView):
 
 
 class KnightRiderBar(QWidget):
-    """Knight Rider-achtige scanlijn.
-
-    Een gloeiende groene balk die heen en weer over de breedte schuift zolang
-    een game start of draait, met een uitdovende staart achter de kop. Puur
-    visuele "bezig"-indicator; verschijnt boven de terminal en verdwijnt zodra
-    er niets actief is.
-    """
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedHeight(6)
@@ -775,7 +728,6 @@ class KnightRiderBar(QWidget):
         cx = self._pos * (w - head_w) + head_w / 2.0
         left = cx - head_w / 2.0
         painter.setPen(Qt.NoPen)
-        # Uitdovende staart achter de kop, tegengesteld aan de bewegingsrichting.
         tail_len = w * 0.35
         if self._dir > 0:
             tail = QLinearGradient(cx - tail_len, 0.0, cx, 0.0)
@@ -858,8 +810,7 @@ class GameRun:
         else:
             self._set_status(f"Gestopt (exit {exit_code})")
 
-        # Show messagebox for non-zero exit codes (game start failed)
-        if exit_code != 0 and exit_code != 130:  # 130 = SIGINT (Ctrl+C), ignore
+        if exit_code != 0 and exit_code != 130:
             QMessageBox.warning(
                 self.window(),
                 "Game start mislukt",
@@ -947,10 +898,19 @@ class MainWindow(QMainWindow):
         header.setObjectName("header")
         lay = QVBoxLayout(header)
         lay.setContentsMargins(0, 6, 0, 2)
+        
         title = QLabel("WWN GAME LAUNCHER")
         title.setObjectName("title")
         title.setAlignment(Qt.AlignCenter)
         lay.addWidget(title)
+
+        # Robuuste OS/distro-detectie label onder de header
+        os_info = detect_os_name()
+        subtitle = QLabel(f"Systeem: {os_info}")
+        subtitle.setObjectName("subtitle")
+        subtitle.setAlignment(Qt.AlignCenter)
+        lay.addWidget(subtitle)
+
         return header
 
     def _build_carousel_banner(self):
@@ -1005,15 +965,12 @@ class MainWindow(QMainWindow):
             "Alleen via Proton; standaard uit."
         )
 
-        # Native renderer checkboxes (altijd zichtbaar, standaard uit)
         self.cb_native_vulkan = QCheckBox("Vulkan (Zink)")
         self.cb_native_opengl = QCheckBox("OpenGL")
         self.cb_soundtrack = QCheckBox("Soundtrack")
         self.cb_soundtrack.toggled.connect(self._on_soundtrack_toggled)
         self.cb_soundtrack.setChecked(load_settings().get("SOUNDTRACK", "1") == "1")
 
-        # Grid van 3 kolommen: schaalt vanzelf naar rechts voor extra
-        # checkboxen (een 6e valt in kolom 3, een 7e/8e start een nieuwe rij).
         grid = QGridLayout()
         grid.setHorizontalSpacing(24)
         grid.setVerticalSpacing(6)
@@ -1022,13 +979,10 @@ class MainWindow(QMainWindow):
                   self.cb_mangohud, self.cb_native_vulkan, self.cb_native_opengl)
         for i, cb in enumerate(checks):
             grid.addWidget(cb, i // 3, i % 3)
-# Soundtrack-checkbox direct onder "Vulkan (Zink)" (rij 3, kolom 1)
         grid.addWidget(self.cb_soundtrack, 3, 1)
-        # vkBasalt-checkbox in de vrije cel onder MangoHud (rij 3, kolom 0)
         grid.addWidget(self.cb_vkbasalt, 3, 0)
         lay.addLayout(grid)
 
-        # Volume effect regel onder vkBasalt, halve hoogte, 2 kolommen
         vol_grid = QGridLayout()
         vol_grid.setHorizontalSpacing(6)
         vol_grid.setVerticalSpacing(2)
@@ -1198,7 +1152,6 @@ class MainWindow(QMainWindow):
             if answer != QMessageBox.Yes:
                 return
 
-        # Vulkan/OpenGL conflict dialog (altijd beschikbaar, standaard uit)
         vulkan_checked = self.cb_native_vulkan.isChecked()
         opengl_checked = self.cb_native_opengl.isChecked()
 
@@ -1243,9 +1196,6 @@ class MainWindow(QMainWindow):
             extra_env["GUI_GAME_DIR"] = chosen_dir
         else:
             paths.pop(conf_key, None)
-            # Geen GUI_GAME_DIR bij standaard-pad; de core lost dan de
-            # script-default op. stored_dir mag NIET terugvallen naar
-            # een oude conf-waarde die we zojuist verwijderden.
         self._dir_edits.pop(game.key, None)
         save_paths(paths)
 
@@ -1266,8 +1216,6 @@ class MainWindow(QMainWindow):
         self._update_scanner()
 
     def _attach_tool_output(self, run, tool_path):
-        """Draait een read-only tool (bv. gamepad-status.sh) en voegt de output
-        toe aan dezelfde run-tab, zonder de game-launch te blokkeren."""
         if not tool_path.is_file():
             return
         proc = QProcess(self)
@@ -1387,12 +1335,6 @@ def scan_games():
 
 
 def _ensure_desktop_icon():
-    """Zet bij de eerste start het Game Launcher-icoon op het bureaublad.
-
-    Bestaat ~/Desktop/GameLauncher.desktop al, dan blijft die ongemoeid
-    (idempotent). Anders maken, inclusief chmod +x zodat KDE/GNOME de
-    shortcut direct klikbaar toont zonder uitroepteken-dialog.
-    """
     desktop_dir = Path.home() / "Desktop"
     if not desktop_dir.is_dir():
         return

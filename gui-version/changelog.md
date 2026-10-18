@@ -1,5 +1,27 @@
 # Changelog voor game-gui.py
 
+
+## v1.9.8 (2026-10-17)
+
+- Robuuste Multi-Platform OS-detectie: 
+- De OS-detectie (detect_os_name()) is geoptimaliseerd voor zowel Linux (via /etc/os-release) 
+- als Windows-systemen (via platform.win32_ver(), inclusief automatische build-gebaseerde herkenning van Windows 11).   Code Opschoning: Volledig verwijderd van overbodige, verouderde hardcoded dictionaries (DISPLAY_NAMES en ICON_OVERRIDES). Game-titels en iconen 
+- worden nu volledig dynamisch opgelost via script-metadata, _prettify() en fuzzy matching.
+
+
+## v1.9.7 (2026-10-16)
+
+- Integratie van de gedetecteerde systeem-/distributienaam 
+- als subtitel onder de "WWN GAME LAUNCHER" header. 
+
+
+## v1.9.6 (2026-10-16)
+
+- Case-insensitive sortering voor launcher-lijst en soundtrack-bestanden 
+- (fix: ThelastofusiiRM stond vooraan door hoofdletter T)
+
+
+
 ## v1.9.5 (2026-10-15)
 
 - Knight Rider-scanlijn groen gemaakt (matcht terminal `#00ff88`)
@@ -30,6 +52,3 @@
 - Gamepad-modus toggling
 - MangoHud overlay checkbox
 - Snapshot backup checkbox
-## v1.9.6 (2026-10-16)
-
-- Case-insensitive sortering voor launcher-lijst en soundtrack-bestanden (fix: ThelastofusiiRM stond vooraan door hoofdletter T)

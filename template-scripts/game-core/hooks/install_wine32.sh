@@ -4,33 +4,35 @@
 # Nieuwe WoW64-wine (10.8+/11+) weigert win32-prefixes ("WINEARCH is set to
 # 'win32' but this is not supported in wow64 mode"). Die build herkent deze
 # hook en adviseert dan een win64-prefix (WoW64 draait 32-bit exe's native,
-# zonder lib32-pakketten) — installeren helpt daar niet.
+# zonder lib32-pakketten).
 #
-# Alleen op legacy-systemen (bv. Debian met echte 32-bit wine) valt de hook
-# terug op de OS-specifieke popup (kdialog/zenity, via _gui_confirm in
-# game-common.sh) met de installatie-opdracht voor de gedetecteerde distro en
-# biedt "Installeer nu" aan (sudo/pkexec, zelfde patroon als
-# install_gamescope.sh). Installatie is vrijwillig: "Nee"/annuleren stopt
-# provisioning met exit 1 en de gebruiker installeert handmatig.
+# Op legacy-systemen (bv. Debian met echte 32-bit wine) vraagt de hook via
+# ask-yesno.sh om bevestiging aan de gebruiker en installeert 32-bit Wine
+# via de distro-pakketbeheerder (sudo/pkexec).
+
+_wine32_probe() {
+  local probe rc
+  probe="$(mktemp -d)"
+  _WINE32_PROBE_OUT="$(WINEPREFIX="$probe" WINEARCH=win32 wineboot --help 2>&1)"
+  rc=$?
+  WINEPREFIX="$probe" wineserver -k 2>/dev/null || true
+  rm -rf "$probe"
+  return "$rc"
+}
 
 hook_run() {
   [ "${PREFIX_ARCH:-win64}" = "win32" ] || return 0
 
   # Test of 32-bit Wine al werkt
-  if WINEARCH=win32 wineboot --help >/dev/null 2>&1; then
+  if _wine32_probe; then
     _log "hook(install-wine32): 32-bit Wine al beschikbaar."
     return 0
   fi
 
-  # WoW64-build: win32-prefix wordt structureel geweigerd. lib32-pakketten
-  # installeren lost dat niet op — de launcher moet een win64-prefix gebruiken.
-  if WINEARCH=win32 wineboot --help 2>&1 | grep -qi "wow64"; then
+  # WoW64-build: win32-prefix wordt structureel geweigerd.
+  if printf '%s' "$_WINE32_PROBE_OUT" | grep -qi "wow64"; then
     _log "hook(install-wine32): wine is een WoW64-build; win32-prefix niet ondersteund."
-    _gui_message "32-bit prefix niet ondersteund — ${GAME_DISPLAY_NAME:-$GAME_NAME}" \
-      "Deze Wine is een WoW64-build en ondersteunt geen win32-prefixes meer.
-
-Zet PREFIX_ARCH=\"win64\" in het launcher-script: een win64-prefix draait
-32-bit exe's via WoW64, zonder extra lib32-pakketten."
+    _log "hook(install-wine32): zet PREFIX_ARCH=\"win64\" in het launcher-script (win64 draait 32-bit exe's via WoW64, zonder lib32-pakketten)."
     return 1
   fi
 
@@ -55,46 +57,48 @@ Zet PREFIX_ARCH=\"win64\" in het launcher-script: een win64-prefix draait
       ;;
     *)
       _log "hook(install-wine32): pakketbeheerder '$pkgmgr' niet herkend; installeer 32-bit Wine handmatig."
-      _gui_message "32-bit Wine ontbreekt — ${GAME_DISPLAY_NAME:-$GAME_NAME}" \
-        "Gedetecteerd OS: ${os_name}
-
-Deze game vereist 32-bit Wine, maar die is niet beschikbaar.
-Installeer 32-bit Wine handmatig voor jouw distributie (wine32, wine.i686, wine-32bit of wine[abi_x86_32]) en herstart daarna de launcher."
+      _log "hook(install-wine32): OS: ${os_name}. Installeer wine32 / wine.i686 / wine-32bit / wine[abi_x86_32] en herstart de launcher."
       return 1
       ;;
   esac
 
-  local body="Gedetecteerd OS: ${os_name}
+  _log "hook(install-wine32): 32-bit Wine is nodig voor deze game, maar ontbreekt (OS: ${os_name})."
 
-Deze game vereist 32-bit Wine, maar die is niet beschikbaar.
-${manual:+$manual
-}Installeer het nu?
-
-  $cmd
-
-(Herstart daarna de launcher.)"
-
-  _log "hook(install-wine32): 32-bit Wine NIET beschikbaar."
-  _log "Installatie-opdracht: $cmd"
-
-  if ! _gui_confirm "32-bit Wine ontbreekt — ${GAME_DISPLAY_NAME:-$GAME_NAME}" "$body"; then
-    _log "hook(install-wine32): installatie geweigerd/geannuleerd. Installeer 32-bit Wine handmatig en herstart de launcher."
-    return 1
+  # Vraag interactief om toestemming via ask-yesno.sh (GUI / CLI)
+  local base_dir
+  base_dir="$(dirname "$(readlink -f "$0")")/.."
+  if [ -x "$base_dir/tools/ask-yesno.sh" ]; then
+    if ! "$base_dir/tools/ask-yesno.sh" --title "32-bit Wine vereist" \
+         --message "32-bit Wine ontbreekt op ${os_name}.\n\nMogen de vereiste 32-bit pakketten nu geïnstalleerd worden? (Hierbij wordt om je wachtwoord gevraagd)"; then
+      _log "hook(install-wine32): Installatie van 32-bit Wine geannuleerd door gebruiker."
+      return 1
+    fi
   fi
 
-  _log "hook(install-wine32): installatie gestart via sudo/pkexec..."
+  _log "hook(install-wine32): Het wordt nu geïnstalleerd; er wordt zo om je wachtwoord gevraagd."
+  _log "hook(install-wine32): Opdracht: $cmd"
+  if [ -n "$manual" ]; then
+    _log "hook(install-wine32): $manual"
+  fi
+
+  local rc=0
   if [ "$(id -u)" -eq 0 ]; then
-    bash -c "$cmd"
+    bash -c "$cmd" || rc=$?
   elif command -v sudo >/dev/null 2>&1; then
-    sudo bash -c "$cmd"
+    sudo bash -c "$cmd" || rc=$?
   elif command -v pkexec >/dev/null 2>&1; then
-    pkexec bash -c "$cmd"
+    pkexec bash -c "$cmd" || rc=$?
   else
     _log "hook(install-wine32): geen root en geen sudo/pkexec — installeer 32-bit Wine handmatig."
     return 1
   fi
 
-  if WINEARCH=win32 wineboot --help >/dev/null 2>&1; then
+  if [ "$rc" -ne 0 ]; then
+    _log "hook(install-wine32): installatie-opdracht faalde (rc=$rc)."
+    return 1
+  fi
+
+  if _wine32_probe; then
     _log "hook(install-wine32): 32-bit Wine nu beschikbaar."
     return 0
   fi

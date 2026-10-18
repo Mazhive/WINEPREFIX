@@ -49,4 +49,6 @@ fi
 # --- Launch game (met gamescope-wrap indien gewenst/actief) ---
 echo "[game] Starten: $GAME_EXE"
 _gscope_argv
-exec env WINEPREFIX="$PREFIX_DIR" "${GSCOPE_ARGV[@]}" wine64 "$GAME_EXE"
+# _gscope_run i.p.v. exec: achtergrond + hang-watcher (winedevice/reaper)
+# zodat gamescope netjes stopt na game-einde; exit-code blijft gelijk.
+_gscope_run env WINEPREFIX="$PREFIX_DIR" "${GSCOPE_ARGV[@]}" wine64 "$GAME_EXE"

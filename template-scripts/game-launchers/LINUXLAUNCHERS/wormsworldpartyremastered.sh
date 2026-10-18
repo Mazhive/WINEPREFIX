@@ -1,32 +1,35 @@
 #!/usr/bin/env bash
 # Worms World Party Remastered — Launcher script
+#
+# Start via Proton (GE-Proton11-7), net als Siberia/Ori: de vroege
+# wine-aanpak (virtual desktop + DXVK) is vervangen. Het spel staat in
+# WINDOWSGAMES/WWP (wwp.exe, 32-bit DirectDraw) met cnc-ddraw als
+# scaling-/window-laag (ddraw.dll + ddraw.ini in de gamemap).
+# WINEDLLOVERRIDES="ddraw=n,b" zorgt dat cnc-ddraw native laadt — dit
+# werkt zowel onder Proton als onder wine.
 set -euo pipefail
 
 export GAME_NAME="WormsWorldPartyRemastered"
 export GAME_DISPLAY_NAME="Worms World Party Remastered"
-export GAME_DIR="/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINDOWSGAMES/WormsWorldPartyRemastered"
-export GAME_EXE="$GAME_DIR/w2.exe"
+export GAME_DIR="/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINDOWSGAMES/WWP"
+export GAME_EXE="$GAME_DIR/wwp.exe"
 export GAME_ICON="WormsWorldPartyRemastered.png"
-export PREFIX_ARCH="win64"
 export SCRIPT_VERSION="1"
 export CREATE_DESKTOP_SHORTCUT="1"
 export GAME_LAUNCHER="$(readlink -f "$0")"
 
-export PROVISION_HOOKS=("install_dxvk" "install_d3dx9" "disable_winebus" "set_graphics_resolution")
+# Proton-pad: GE-Proton9-11 11-9 is geprobeert (32-bit loopt via wow64, geen lib32 nodig).
+export PROTON_ENABLED="1"
+export PROTON_PIN="GE-Proton9-11"
+export STEAM_APPID="0"
 
-# DXVK instellingen (dwing venstermodus + schakel VSync uit)
-export DXVK_WND_FORCE_ALPHA="1"
-export DXVK_CONFIG="d3d9.forceWindowed=True; d3d9.presentInterval=0; d3d9.shaderModel=1"
-
-# DirectDraw wrapper inschakelen
+# cnc-ddraw (ddraw.dll in de gamemap) moet native laden, niet wine's ddraw.
 export WINEDLLOVERRIDES="ddraw=n,b"
 
-# Wine Virtual Desktop AAN: forceert windowed mode (1024x768), omzeilt fullscreen-moduswissel op Wayland.
-# KWin schaalt het venster naar fullscreen. Geen gamescope nodig.
-export GAME_GAMESCOPE="0"
-export WINE_VIRTUAL_DESKTOP="1"
-export WINE_DESKTOP_W="1024"
-export WINE_DESKTOP_H="768"
+# Geen PROVISION_HOOKS: install_dxvk/install_d3dx9 waren winetricks-
+# wrappers voor de oude D3D9-build; de huidige build is DirectDraw en
+# krijgt beeld/schaling via cnc-ddraw (ddraw.ini). Resolutie-/
+# registersleutels (Team17DigitalLTD) zijn in-game instelbaar.
 
 source "$(dirname "${BASH_SOURCE[0]}")/../../game-core/game-common.sh"
 game_main "$@"

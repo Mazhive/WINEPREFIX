@@ -29,6 +29,16 @@ done 2>/dev/null || true
 #                     NIET exporteren als je de array-vorm gebruikt — bash-arrays
 #                     overleven `export` niet naar subprocessen, wél binnen dit
 #                     script omdat game-common.sh gesourced wordt, niet uitgevoerd.
+#   PRE_PROVISION_HOOKS=( "install_wine32" ) — extra modules die VÓÓR wineboot -i
+#                     lopen, dus vóór de prefix bestaat (i.p.v. erna, zoals
+#                     PROVISION_HOOKS). Zelfde module-mechaniek (game-core/hooks/
+#                     <naam>.sh, hook_run()); gebruikt voor checks die de prefix-
+#                     aanmaak zelf moeten bewaken — bijv. install_wine32, dat
+#                     controleert of 32-bit Wine beschikbaar is voor een win32-
+#                     prefix en anders een popup toont. Draait alleen wanneer er
+#                     geprovisiond wordt (net als PROVISION_HOOKS). Een falende
+#                     hook breekt de provisioning af. Zelfde regel: array-vorm
+#                     NIET exporteren.
 #   PRE_LAUNCH_HOOKS=( "wacom-detect" ) — extra modules die BIJ ÉLKE START vóór
 #                     game_launch lopen (i.p.v. alleen bij provision). Zelfde
 #                     module-mechaniek als PROVISION_HOOKS; gebruikt voor
@@ -290,6 +300,70 @@ _distro_pkg() {
   esac
 }
 
+# Leesbare OS-naam uit /etc/os-release (PRETTY_NAME), met ID als terugval.
+_os_pretty_name() {
+  local name=""
+  if [ -r /etc/os-release ]; then
+    name="$(awk -F= '/^PRETTY_NAME=/{gsub(/^"|"$/, "", $2); print $2}' /etc/os-release 2>/dev/null)"
+    [ -n "$name" ] || name="$(awk -F= '/^ID=/{gsub(/["\r]/, "", $2); print $2}' /etc/os-release 2>/dev/null)"
+  fi
+  echo "${name:-onbekend}"
+}
+
+# ── Host-pakketten per distro (centrale bron) ────────────────
+# Eén plek voor host-level installatie-opdrachten, herbruikbaar door elke
+# hook/script (32-bit Wine, gamescope, ...). _pkg_install_cmd <component>
+# print de opdracht voor de gedetecteerde distro; leeg + rc 1 als de component
+# of de distro onbekend is. De caller beslist over sudo/pkexec.
+# _pkg_install_note <component> geeft een optionele vooraf-melding (bv. de
+# [multilib]-stap op Arch); rc 1 als er geen noot is.
+_pkg_install_cmd() {
+  local component="$1" family
+  family="$(_distro_pkg)"
+  case "$component:$family" in
+    wine32:apt)
+      echo "dpkg --add-architecture i386 && apt update && apt install -y wine32:i386 libwine:i386 libasound2:i386 libc6:i386 libglib2.0-0:i386 libgphoto2-6:i386 libgstreamer-plugins-base1.0-0:i386 libldap-2.4-2:i386 libopenal1:i386 libpcap0.8:i386 libpulse0:i386 libsane1:i386 libudev1:i386 libvkd3d1:i386 libx11-6:i386 libxext6:i386 libxml2:i386 libxslt1.1:i386 zlib1g:i386"
+      ;;
+    wine32:pacman)
+      echo "pacman -S --needed --noconfirm wine lib32-gnutls lib32-libldap lib32-libgpg-error lib32-sqlite lib32-libpulse lib32-alsa-lib lib32-libx11 lib32-libxext lib32-libxml2 lib32-zlib lib32-vkd3d"
+      ;;
+    wine32:dnf)
+      echo "dnf install -y wine.i686 wine-common.i686 alsa-lib.i686 glibc.i686 libgcc.i686 libstdc++.i686 libX11.i686 libXext.i686 libxml2.i686 libxslt.i686 zlib.i686 vkd3d.i686 gstreamer1-plugins-base.i686"
+      ;;
+    wine32:zypper)
+      echo "zypper install -y wine-32bit"
+      ;;
+    gamescope:apt)
+      echo "apt-get install -y gamescope"
+      ;;
+    gamescope:pacman)
+      echo "pacman -S --noconfirm gamescope"
+      ;;
+    gamescope:dnf)
+      echo "dnf install -y gamescope"
+      ;;
+    gamescope:zypper)
+      echo "zypper install -y gamescope"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+_pkg_install_note() {
+  local component="$1" family
+  family="$(_distro_pkg)"
+  case "$component:$family" in
+    wine32:pacman)
+      echo "Zet eerst [multilib] aan in /etc/pacman.conf (Include = /etc/pacman.d/mirrorlist) en draai 'pacman -Sy'."
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 # ── Initialisatie ────────────────────────────────────────────
 game_init() {
   _require_var GAME_NAME
@@ -307,6 +381,8 @@ game_init() {
   HOOKS="${PROVISION_HOOKS[*]:-}"
   # Zelfde array/string-regel voor de pre-launch-hooks (bij élke start).
   PRE_HOOKS="${PRE_LAUNCH_HOOKS[*]:-}"
+  # En voor de pre-provision-hooks (vóór wineboot -i, alleen bij provision).
+  PRE_PROV_HOOKS="${PRE_PROVISION_HOOKS[*]:-}"
 
   # Native Linux-games (GAME_NATIVE=1) hebben géén Wine-prefix nodig,
   # dus ook geen wine in PATH en geen GAME_EXE — alleen GAME_DIR.
@@ -360,10 +436,6 @@ _proton_builtin_dll() {
 # Controleer of een PE-DLL de juiste (x86_64) architectuur heeft. Een
 # verkeerde (ARM64-)msvcp140.dll in system32 laat x64-processen falen met
 # c000007b → icuuc/icuin niet gevonden → game-exit c0000135. Daarom
-# arch-validatie vóór alles.
-# Controleer of een PE-DLL de juiste (x86_64) architectuur heeft. Een
-# verkeerde (ARM64-)msvcp140.dll in system32 laat x64-processen falen met
-# c000007b → icuuc/icuin niet gevonden → game-exit c0000135. Daarom
 # arch-validatie vóór alles. Positief controleren (moet aantoonbaar
 # PE32+/x86-64 zijn), niet alleen "geen ARM64" — anders keurt een compleet
 # corrupt/leeg bestand ("data") ten onrechte goed.
@@ -410,8 +482,14 @@ _run_hook() {
   . "$module"
   if declare -f hook_run >/dev/null 2>&1; then
     _busy_start "hook $name"
-    hook_run
+    # Status van hook_run expliciet vasthouden: anders bepaalt _busy_stop de
+    # return-waarde en wordt een hook-fout gemaskeerd (of blijft de spinner
+    # hangen doordat set -e al bij hook_run afbreekt). Zo stopt de spinner
+    # altijd én breekt een falende hook de aanroeper af.
+    local rc=0
+    hook_run || rc=$?
     _busy_stop
+    return "$rc"
   else
     _log "Hook-module '$name' definieert geen hook_run()."
     return 1
@@ -419,6 +497,15 @@ _run_hook() {
 }
 
 game_provision() {
+  # Pre-provision-hooks draaien VÓÓR wineboot -i (bv. install_wine32, dat
+  # controleert of 32-bit Wine beschikbaar is voor een win32-prefix). Zelfde
+  # array/string-mechaniek als PROVISION_HOOKS/PRE_LAUNCH_HOOKS; een falende
+  # hook breekt de provisioning af (set -e).
+  for hook in ${PRE_PROV_HOOKS:-}; do
+    _log "Pre-provision-hook: $hook"
+    _run_hook "$hook"
+  done
+
   _provision_fresh
 
   # Registry volledig naar disk flushen vóór de game start. Wine schrijft
@@ -742,6 +829,13 @@ _gscope_argv() {
   # auto-detect van de actieve monitormode (xrandr); ook dat mislukt? →
   # gamescope laat zelf kiezen.
   GSCOPE_ARGV=( gamescope -f )
+  # Muis-capture: gamescope flip't relative-mouse-modus afhankelijk van
+  # cursor-zichtbaarheid; windowed games (bv. Halo met -windowed) krijgen
+  # dan géén muis in de game. Forceren: altijd relative modus.
+  # Uit: GAME_GAMESCOPE_FORCE_GRAB="0".
+  if [ "${GAME_GAMESCOPE_FORCE_GRAB:-1}" = "1" ]; then
+    GSCOPE_ARGV+=( --force-grab-cursor )
+  fi
   local _gcalc=""
   if [[ "${GAME_GAMESCOPE_RES:-}" =~ ^[0-9]+x[0-9]+$ ]]; then
     _gcalc="$GAME_GAMESCOPE_RES"
@@ -758,7 +852,114 @@ _gscope_argv() {
     GSCOPE_ARGV+=( -W "${_gcalc%x*}" -H "${_gcalc#*x}" )
   fi
   GSCOPE_ARGV+=( -- )
-  _log "Gamescope-wrap actief (Wayland-sessie): $(command -v gamescope) res=${_gcalc:-auto}"
+  _log "Gamescope-wrap actief (Wayland-sessie): $(command -v gamescope) res=${_gcalc:-auto} force-grab=${GAME_GAMESCOPE_FORCE_GRAB:-1}"
+}
+
+# Draait er nog een wineserver voor ONZE prefix? (via /proc/*/environ;
+# PREFIX_PATH is de prefix van de huidige launch). Leeg/onzeker PREFIX_PATH
+# telt als "nee" → opruimen mag dan doorgaan.
+_gscope_wineserver_own_alive() {
+  local p
+  for p in $(pgrep -x wineserver 2>/dev/null); do
+    if tr '\0' '\n' < "/proc/$p/environ" 2>/dev/null | grep -qx "WINEPREFIX=${PREFIX_PATH:-/__onbekend__}"; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Waakt over een achtergrond-gamescope-launch (_gscope_run).
+# Fasen: (1) wacht tot het game-proces (exe-naam als comm, max 15 tekens,
+# exact) verschenen is; (2) wacht tot het verdwenen is; (3) als gamescope
+# dán nog leeft is er sprake van de hang-bug: Wine's winedevice.exe slaapt
+# na game-einde op een dode pipe (negeert SIGTERM) en Debian's
+# gamescopereaper wacht op álle nakomelingen → gamescope/launcher/GUI
+# blijven hangen en het taakbalk-icoon blijft.
+# Slechts opruimen als onze wineserver zélf al weg is (droge shutdown);
+# anders eerst extra gratie, en anders niet ingrijpen (Stop-knop is veilig).
+# Maakt $2 (= flag-bestand) aan ná geforceerde cleanup zodat _gscope_run
+# de exit-code kan normaliseren naar 0 (de game is immers netjes afgelopen).
+_gscope_watch_game() {
+  local gpid="$1" flag="$2" name seen=0 k k2
+  name="$(basename "${GAME_EXE:-}")"
+  name="${name:0:15}"
+  [ -n "$name" ] || return 0
+  # Fase 1+2 (kill -0 als levendigheids-check: gamescope zelf stopt → klaar).
+  while kill -0 "$gpid" 2>/dev/null; do
+    if [ "$seen" -eq 0 ]; then
+      pgrep -x "$name" >/dev/null 2>&1 && seen=1
+    elif ! pgrep -x "$name" >/dev/null 2>&1; then
+      break
+    fi
+    sleep 1
+  done
+  kill -0 "$gpid" 2>/dev/null || return 0
+  [ "$seen" -eq 1 ] || return 0
+  # Fase 3: game weg — eerst gratie voor de normale wine-afsluiting.
+  sleep 5
+  kill -0 "$gpid" 2>/dev/null || return 0
+  if _gscope_wineserver_own_alive; then
+    _log "gamescope-hangcheck: onze wineserver draait nog — 10 s extra gratie."
+    sleep 10
+    kill -0 "$gpid" 2>/dev/null || return 0
+    if _gscope_wineserver_own_alive; then
+      _log "gamescope-hangcheck: wineserver nog actief → NIET geforceerd; ruim handmatig op met de Stop-knop."
+      return 0
+    fi
+  fi
+  _log "Game beëindigd maar gamescope hangt nog (wine-dienst op dode pipe) — cleanup."
+  # Flag als EERSTE: zodra de kleinkinderen gedood zijn stopt gamescope
+  # vanzelf en killt _gscope_run de watcher mogelijk vóór hij hier verder komt.
+  touch "$flag" 2>/dev/null || true
+  # Kleinkinderen (= winedevice.exe e.d.): die negeren SIGTERM → KILL.
+  for k in $(pgrep -P "$gpid" 2>/dev/null); do
+    for k2 in $(pgrep -P "$k" 2>/dev/null); do
+      _log "cleanup: kleinkind-proces $k2 killen."
+      kill -KILL "$k2" 2>/dev/null || true
+    done
+    # Reaper zelf: weg is weg zodra z'n kinderen weg zijn; anders TERM.
+    kill -TERM "$k" 2>/dev/null || true
+  done
+  sleep 3
+  if kill -0 "$gpid" 2>/dev/null; then
+    _log "cleanup: gamescope nog actief → SIGTERM; daarna KILL."
+    kill -TERM "$gpid" 2>/dev/null || true
+    sleep 2
+    kill -KILL "$gpid" 2>/dev/null || true
+  fi
+  touch "$flag" 2>/dev/null || true
+  _log "cleanup: gamescope-boom opgeruimd."
+}
+
+# Start een (gamescope-wrappende) launch op de achtergrond, wacht tot die
+# klaar is en start de hang-watcher als gamescope actief is. Zonder
+# gamescope gedraagt dit zich exact als een gewone voorgrond-launch.
+# Basis: het globale GSCOPE_ARGV (altijd gedeclareerd in dit bestand), zodat
+# ook eigen launch-scripts zonder game_main (bv. automationempire) dit
+# kunnen gebruiken.
+_gscope_run() {
+  local gpid rc=0 wpid flag
+  "$@" &
+  gpid=$!
+  flag="${TMPDIR:-/tmp}/gscleanup.$gpid"
+  rm -f "$flag"
+  if [ "${#GSCOPE_ARGV[@]}" -gt 0 ]; then
+    _gscope_watch_game "$gpid" "$flag" &
+    wpid=$!
+  fi
+  wait "$gpid" || rc=$?
+  if [ -n "${wpid:-}" ]; then
+    kill "$wpid" 2>/dev/null || true
+    wait "$wpid" 2>/dev/null || true
+  fi
+  if [ -f "$flag" ]; then
+    rm -f "$flag"
+    if [ "$rc" -ne 0 ]; then
+      _log "exit-code $rc genormaliseerd naar 0 (game beëindigd, gamescope-opgeruimd)."
+    fi
+    rc=0
+  fi
+  return "$rc"
 }
 
 # ── Native GUI-checkboxes (blackscreen-workarounds) ─────────
@@ -949,7 +1150,7 @@ gamepad_begin() {
   _GPAD_PREEXIST=0
   local marker="${PREFIX_PATH%/pfx}/.pad-mode"
   [ -f "$marker" ] && _GPAD_PREEXIST=1
-  [ "$_GPAD_PREEXIST" = "1" ] || touch "$marker"
+  [ "$_GPAD_PREEXIST" = "1" ] \vert{}\vert{} touch "$marker"
   _gamepad_reg 1
   _log "Gamepad-modus (SDL) AAN — Enable SDL=1; toetsenbord kan uitvallen in de game. XInput-only-games zien de pad NIET zonder root-route."
   return 0
@@ -958,7 +1159,7 @@ gamepad_begin() {
 # Gamepad-modus na de launch: marker (alleen als wij 'm maakten) + SDL=0.
 gamepad_end() {
   local marker="${PREFIX_PATH%/pfx}/.pad-mode"
-  [ "${_GPAD_PREEXIST:-0}" = "1" ] || rm -f "$marker"
+  [ "${_GPAD_PREEXIST:-0}" = "1" ] \vert{}\vert{} rm -f "$marker"
   _gamepad_reg 0
   _log "Gamepad-modus (SDL) UIT — Enable SDL=0 hersteld."
   return 0
@@ -968,7 +1169,7 @@ game_launch() {
   _neutralize_overlays
   _neutralize_xalia
   _neutralize_sdl3_dynapi
-  _log "Starten: ${GAME_EXE:-${GAME_NATIVE_SHELL:-} ${GAME_NATIVE_CMD}} (prefix: $PREFIX_PATH)"
+  _log "Starten: ${GAME_EXE:-${GAME_NATIVE_SHELL:-} ${GAME_NATIVE_CMD}} (prefix:$PREFIX_PATH)"
 
   # GAME_WORKDIR: sommige games verwachten een specifieke werkmap (bv. de
   # map van de exe) i.p.v. de game-root. Default = GAME_DIR.
@@ -1100,13 +1301,13 @@ game_launch() {
       # WINEPREFIX zou dat overschrijven → unset (bewezen recipe).
       unset WINEPREFIX
       export SteamGameId="$appid"
-      "${gscope[@]}" "$slr_entry" --verb=run -- "$runner" run "$GAME_EXE" "$@"
+      _gscope_run "${gscope[@]}" "$slr_entry" --verb=run -- "$runner" run "$GAME_EXE" "$@"
     elif [ "${runner##*/}" = "umu-run" ]; then
       # umu-run regelt de Steam Linux Runtime zélf en neemt de exe direct
       # (geen proton-verb, geen losse _v2-entry-point).
-      "${gscope[@]}" "$runner" "$GAME_EXE" "$@"
+      _gscope_run "${gscope[@]}" "$runner" "$GAME_EXE" "$@"
     else
-      "${gscope[@]}" "$runner" waitforexitandrun "$GAME_EXE" "$@"
+      _gscope_run "${gscope[@]}" "$runner" waitforexitandrun "$GAME_EXE" "$@"
     fi
     rc=$?
     _startup_indicator_stop
@@ -1115,7 +1316,7 @@ game_launch() {
   else
     _gamepad_enabled && gamepad_begin
     _startup_indicator_start
-    WINEPREFIX="$PREFIX_PATH" "${gscope[@]}" ${WINE_CMD:-wine} "$GAME_EXE" "$@"
+    _gscope_run env WINEPREFIX="$PREFIX_PATH" "${gscope[@]}" ${WINE_CMD:-wine} "$GAME_EXE" "$@"
     rc=$?
     _startup_indicator_stop
     _gamepad_enabled && gamepad_end
@@ -1196,7 +1397,7 @@ Terminal=false
 Categories=Game;
 EOF
   chmod +x "$apps_dir/$GAME_NAME.desktop"
-  _log "Shortcut aangemaakt: $apps_dir/$GAME_NAME.desktop${icon_path:+ (icon: $icon_path)}"
+  _log "Shortcut aangemaakt: $apps_dir/$GAME_NAME.desktop${icon_path:+ (icon:$icon_path)}"
 
   # Native-only extra-icoon: "Instellingen" roept de GUI-checkboxes op
   # (windowed / gamescope) zonder de game te starten.
@@ -1217,7 +1418,6 @@ EOF
   fi
 }
 
-# ── Backup-rotatie ───────────────────────────────────────────
 # ── Backup-rotatie ───────────────────────────────────────────
 # Snapshot van de projectmap naar backup/ver1_<datum>_<tijd>; ver1→ver2→ver3,
 # oudste weg (max 3). Enkel door de testomgeving: env SNAPSHOT_BACKUP=1 of de
@@ -1251,6 +1451,9 @@ _snapshot_backup() {
 # ── Hoofd-flow ───────────────────────────────────────────────
 game_main() {
   game_init
+
+  # Log gedetecteerd OS en pakketbeheerder in de CLI-log tijdens de opstartfase
+  _log "Gedetecteerd OS: $(_os_pretty_name) (Pakketbeheerder:$(_distro_pkg))"
 
   # GUI-checkbox-editor: alleen expliciet via --gui-flags of het
   # "Instellingen"-desktop-icoon. Géén automatische popup bij start.

@@ -129,13 +129,34 @@ GE-Proton naar `~/.config/heroic/tools/proton/`, en maakt een
 ### Optionele extra stappen per game (hooks)
 
 Sommige games hebben extra onderdelen nodig in de prefix. Dit regelen we via
-`PROVISION_HOOKS`, bijvoorbeeld:
+hooks in `game-core/hooks/<naam>.sh` (elke module definieert `hook_run()`). Er
+zijn **drie fasen**, in deze volgorde:
+
+| Fase | Variabele | Wanneer |
+|------|-----------|---------|
+| Pre-provision | `PRE_PROVISION_HOOKS` | Vóór `wineboot -i`, alleen bij verse prefix |
+| Provision | `PROVISION_HOOKS` | Ná `wineboot -i`, alleen bij verse prefix |
+| Pre-launch | `PRE_LAUNCH_HOOKS` | Bij **elke** start, vóór `game_launch` |
 
 ```bash
+export PRE_PROVISION_HOOKS=("install_wine32")   # vóór wineboot -i (bv. 32-bit Wine-check)
 export PROVISION_HOOKS=("install_vcrun2019" "install_vkd3d")
+export PRE_LAUNCH_HOOKS=("disable_winebus")
 ```
 
-De core definieert de hooks; het per-game script kiest welke het nodig heeft.
+De core definieert de fasen; het per-game script kiest welke hooks het nodig
+heeft. **Let op:** een `*_HOOKS`-variabele die de core niet dispatcht is een
+stille no-op (script start, hook draait nooit). Verifieer bij twijfel:
+
+```bash
+grep -nE 'PRE_PROVISION_HOOKS|PRE_PROV_HOOKS|PROVISION_HOOKS|PRE_LAUNCH_HOOKS' \
+  template-scripts/game-core/game-common.sh
+```
+
+`PRE_PROVISION_HOOKS` hoort in `game_init` (flattening naar `PRE_PROV_HOOKS`) én
+`PRE_PROV_HOOKS` in `game_provision` (loop vóór `_provision_fresh`);
+`PROVISION_HOOKS` in `game_init` (→ `HOOKS`) én `HOOKS` in `_provision_fresh`;
+`PRE_LAUNCH_HOOKS` in `game_init` (→ `PRE_HOOKS`) én `PRE_HOOKS` in `game_main`.
 
 ## Per-game notities
 
@@ -279,6 +300,14 @@ per-game hack.
 
 Met behulp van de Bevindingen<gamename>.md is vastgelegty hoe de launcher is gemaakt
 Waar op gelet moet worden en andere cruciale bevindingen.
+
+- **Hook-fasen in de core (2026-10-16):** `game-common.sh` dispatcht nu drie fasen:
+  `PRE_PROVISION_HOOKS` (vóór `wineboot -i`), `PROVISION_HOOKS` (erna) en
+  `PRE_LAUNCH_HOOKS` (elke start). Vóór deze datum bestond `PRE_PROVISION_HOOKS`
+  **niet** in de core, terwijl `halopc.sh` en `colinmcrea4.sh` hem al gebruikten →
+  de hook (`install_wine32`) draaide nooit. `_run_hook` houdt nu de hook-status
+  vast (spinner stopt altijd, falende hook breekt af). Zie de launcher-README
+  (`template-scripts/game-launchers/README.md`) voor de verificatie-`grep`.
 
 
 

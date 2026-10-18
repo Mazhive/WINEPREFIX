@@ -115,8 +115,10 @@ export PROTON_ENABLED="1"
 export PROTON_PIN="GE-Proton11-7"
 export STEAM_APPID="123456"
 
-# Optional Hooks
-export PROVISION_HOOKS=("install_vcrun2019")
+# Optional Hooks (three phases, in order)
+export PRE_PROVISION_HOOKS=("install_wine32")   # before wineboot -i (fresh prefix)
+export PROVISION_HOOKS=("install_vcrun2019")    # after wineboot -i (fresh prefix)
+export PRE_LAUNCH_HOOKS=("disable_winebus")     # every launch
 
 # Load central core logic
 source "$(dirname "${BASH_SOURCE[0]}")/../game-core/game-common.sh"
