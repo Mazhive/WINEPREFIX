@@ -142,7 +142,7 @@ hook_run() {
   fi
 
   # Bevestiging vragen (CLI- en desktop-veilig).
-  local ask="$HOOKS_DIR/../tools/ask-yesno.sh"
+  local ask="$HOOKS_DIR/../../tools/ask-yesno.sh"
   if [ -x "$ask" ]; then
     if ! "$ask" --title "$title installeren" \
          --message "$title is nog niet geïnstalleerd.\n\nDownloaden naar:\n$emu\n\nNu installeren?"; then

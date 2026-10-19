@@ -82,7 +82,7 @@ _PLATFORM_ALIASES = {
 # Boven deze grens krijgt een gamelijst een automatisch A-Z bucket-niveau
 BUCKET_THRESHOLD = 500
 
-APP_VERSION = "0.2.2"
+APP_VERSION = "0.2.4"
 
 # Systeem-mapnaam → emulation.conf-sleutel (alleen afwijkingen)
 _SYSTEM_ALIASES = {
@@ -1698,13 +1698,10 @@ class MainWindow(QMainWindow):
                 self, "Rom niet gevonden",
                 f"Bestand of map niet gevonden:\n{rom}")
             return
-        if rom.is_dir() and conf.get("accept_dir") != "1":
-            QMessageBox.warning(
-                self, "Map geen rom",
-                f"{game.display_name} is een map, maar {title} heeft een "
-                "iso-bestand nodig.\n\n"
-                "Maak er een iso van (bv. 'xdvdfs pack <map> <uit.iso>').")
-            return
+        # Mappen (folder-dumps) worden door emu-launch.sh afgehandeld: een
+        # rom-bestand in de map wordt gebruikt, anders wordt de map met
+        # xdvdfs naar een gecachte iso gepackt. Alleen accept_dir=1 emulators
+        # krijgen de map rechtstreeks.
         if game.key in self.runs and self.runs[game.key].proc.state() != QProcess.NotRunning:
             self._focus_run(self.runs[game.key])
             self._append_terminal(f"=> {game.display_name} draait al.")

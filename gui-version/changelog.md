@@ -1,6 +1,27 @@
 # Changelog voor game-gui.py
 
 
+## game-gui-fork v0.2.4 (2026-10-18)
+
+- Preconf-mechanisme: standaard-config naast de AppImage (`<emu-dir>/preconf/`)
+  wordt bij het starten automatisch in de user-config gezet (`cp -rn`, nooit
+  overschrijven). Nieuwe conf-velden `userconf=` en `preconf=`.
+- PCSX2-voorbeeld: preconf met PAL-BIOS + `PCSX2.ini`; `[ps2]` args
+  `-nogui -fullscreen -fastboot %ROM%` → game start direct, geen menu.
+- README-game-gui-fork.md §7: preconf gedocumenteerd.
+
+## game-gui-fork v0.2.3 (2026-10-18)
+
+- PS2-games als map (met daarin een `.iso`) werken nu: `emu-launch.sh` zoekt
+  een rom-bestand in de map en gebruikt dat.
+- Echte folder-dumps (met `SYSTEM.CNF`) worden met `xdvdfs pack` naar een
+  gecachte iso (`~/.cache/gamelauncher/iso/`) gepackt en hergebruikt.
+- GUI blokkeert mappen niet meer; `accept_dir=1`-emulators (RPCS3) krijgen de
+  map nog steeds rechtstreeks.
+- Bugfix: `%ROM%`-substitutie zonder `eval`, zodat paden met spaties/haakjes
+  niet meer stukliepen (was: `printf '%q'` + `sed` + `eval`).
+- README-game-gui-fork.md §4: subsectie "Mappen en iso's".
+
 ## game-gui-fork v0.2.2 (2026-10-18)
 
 - Emulator installeren via de launcher: bij ontbrekende emulator (`status=missing`

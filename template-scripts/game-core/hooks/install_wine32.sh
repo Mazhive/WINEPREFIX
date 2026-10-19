@@ -66,7 +66,7 @@ hook_run() {
 
   # Vraag interactief om toestemming via ask-yesno.sh (GUI / CLI)
   local base_dir
-  base_dir="$(dirname "$(readlink -f "$0")")/.."
+  base_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../.." && pwd)"
   if [ -x "$base_dir/tools/ask-yesno.sh" ]; then
     if ! "$base_dir/tools/ask-yesno.sh" --title "32-bit Wine vereist" \
          --message "32-bit Wine ontbreekt op ${os_name}.\n\nMogen de vereiste 32-bit pakketten nu geïnstalleerd worden? (Hierbij wordt om je wachtwoord gevraagd)"; then
