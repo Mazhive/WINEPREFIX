@@ -45,6 +45,8 @@ TEMPLATE_ROOT = Path("/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINEPREFIX/t
 LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
 ICONS_DIR = LAUNCHERS_DIR / "gameicons"
+# Emulator-covers staan los van de Windows/Linux-covers
+EMU_ICONS_DIR = LAUNCHERS_DIR / "emu-gameicons"
 
 # --- Fork-specifiek -----------------------------------------------------------
 GAMES_ROOT = Path("/mnt/VG_00/PUBLIC-LIBRARY/GAMES/GAMES")
@@ -253,6 +255,21 @@ def save_settings(opts):
 
 def _norm(name):
     return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+_EMU_ICON_INDEX = None
+
+
+def _emu_icon_index():
+    """Genormaliseerde emu-cover-index, één keer ingelezen (duizenden files)."""
+    global _EMU_ICON_INDEX
+    if _EMU_ICON_INDEX is None:
+        if EMU_ICONS_DIR.exists():
+            _EMU_ICON_INDEX = {_norm(f.stem): f
+                               for f in EMU_ICONS_DIR.iterdir() if f.is_file()}
+        else:
+            _EMU_ICON_INDEX = {}
+    return _EMU_ICON_INDEX
 
 
 def _read_launcher_meta(script_path):
@@ -557,21 +574,9 @@ class EmuGame:
         return self._icon
 
     def _resolve_icon(self):
-        if not ICONS_DIR.exists():
-            return None
-        files = [f for f in ICONS_DIR.iterdir() if f.is_file()]
-        norm_icons = {_norm(f.stem): f for f in files}
-        key_norm = _norm(self.display_name)
-        if key_norm in norm_icons:
-            return norm_icons[key_norm]
-        # Losse match: langste overeenkomst wint, zodat korte systeem-iconen
-        # (nes, gb, wii…) geen game-titels overschrijven.
-        best = None
-        for stem, f in norm_icons.items():
-            if stem in key_norm or key_norm in stem:
-                if best is None or len(stem) > len(best[0]):
-                    best = (stem, f)
-        return best[1] if best else None
+        # Covers zijn exact op weergavenaam gedownload; geen losse
+        # substring-match (die gaf bij duizenden covers verkeerde treffers).
+        return _emu_icon_index().get(_norm(self.display_name))
 
 
 _PLACEHOLDER_CACHE = {}
