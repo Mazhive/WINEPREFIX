@@ -16,8 +16,11 @@ EMU-LAUNCHERS (emulator-koppelingen).
 
 v0.2.0: Drill-down navigatie (NavNode/EmuGame), platform-scanning,
         launch-splitsing (_start_pc/_start_emu), navbar met back-knop.
+v0.2.1: emulation.conf + emulators.json in ~/.config/gamelauncher
+        (detectie + ontbrekende-emulator-melding); home-conf fallback.
 """
 
+import json
 import os
 import platform
 import re
@@ -26,8 +29,8 @@ import subprocess
 import time
 from pathlib import Path
 
-from PySide6.QtCore import (QEasingCurve, QProcess, QPointF, QRect, QRectF, Qt,
-                            QTimer, QVariantAnimation, Signal)
+from PySide6.QtCore import (QEasingCurve, QProcess, QProcessEnvironment, QPointF,
+                            QRect, QRectF, Qt, QTimer, QVariantAnimation, Signal)
 from PySide6.QtGui import (QAction, QColor, QFont, QFontDatabase, QFontMetrics,
                            QIcon, QKeySequence, QLinearGradient, QPainter,
                            QPainterPath, QPen, QPixmap, QRadialGradient,
@@ -51,8 +54,22 @@ EMU_ICONS_DIR = LAUNCHERS_DIR / "emu-gameicons"
 # --- Fork-specifiek -----------------------------------------------------------
 GAMES_ROOT = Path("/mnt/VG_00/PUBLIC-LIBRARY/GAMES/GAMES")
 EMU_LAUNCHERS_DIR = LAUNCHERS_DIR / "EMU-LAUNCHERS"
-EMULATION_CONF = EMU_LAUNCHERS_DIR / "emulation.conf"
 EMU_GENERIC_LAUNCHER = EMU_LAUNCHERS_DIR / "emu-launch.sh"
+EMU_INSTALL_SH = EMU_LAUNCHERS_DIR / "emu-install.sh"
+
+# Config staat per PC in de home-map (~/.config/gamelauncher); de repo-versie
+# in EMU-LAUNCHERS dient als sjabloon/fallback. Zie README-game-gui-fork.md.
+CONF_DIR = Path.home() / ".config" / "gamelauncher"
+EMULATION_CONF_HOME = CONF_DIR / "emulation.conf"
+EMULATION_CONF_REPO = EMU_LAUNCHERS_DIR / "emulation.conf"
+EMULATORS_JSON = CONF_DIR / "emulators.json"
+
+
+def emulation_conf_path():
+    """Home-conf indien aanwezig, anders de repo-versie."""
+    if EMULATION_CONF_HOME.is_file():
+        return EMULATION_CONF_HOME
+    return EMULATION_CONF_REPO
 # Platform-mappen die níét gescand worden (eigen catalogus / leeg)
 SKIP_PLATFORM_DIRS = {"WINDOWS", "LINUX"}
 # Plaatsingsvolgorde van de platformen in de hoofdscroller
@@ -65,7 +82,7 @@ _PLATFORM_ALIASES = {
 # Boven deze grens krijgt een gamelijst een automatisch A-Z bucket-niveau
 BUCKET_THRESHOLD = 500
 
-APP_VERSION = "0.2.0"
+APP_VERSION = "0.2.2"
 
 # Systeem-mapnaam → emulation.conf-sleutel (alleen afwijkingen)
 _SYSTEM_ALIASES = {
@@ -388,22 +405,18 @@ class Game:
 # --- Fork: emulator-config, navigatie-nodes, emu-games ------------------------
 
 _EMU_CONF_CACHE = None
+_EMU_STATUS_CACHE = None
 
 
-def load_emulation_conf():
-    """Leest emulation.conf → {systeem-sleutel: {title, emu, args, status, ...}}."""
-    global _EMU_CONF_CACHE
-    if _EMU_CONF_CACHE is not None:
-        return _EMU_CONF_CACHE
+def _parse_conf_file(path):
+    """Parseert één emulation.conf-bestand → {sleutel: {title, emu, ...}}."""
     systems = {}
-    if not EMULATION_CONF.is_file():
-        _EMU_CONF_CACHE = systems
+    if not path.is_file():
         return systems
     current = None
     try:
-        text = EMULATION_CONF.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")
     except OSError:
-        _EMU_CONF_CACHE = systems
         return systems
     for raw in text.splitlines():
         line = raw.strip()
@@ -416,8 +429,67 @@ def load_emulation_conf():
         elif current and "=" in line:
             k, v = line.split("=", 1)
             systems[current][k.strip()] = v.strip()
-    _EMU_CONF_CACHE = systems
     return systems
+
+
+def load_emulation_conf():
+    """Leest emulation.conf → {systeem-sleutel: {title, emu, args, status, ...}}."""
+    global _EMU_CONF_CACHE
+    if _EMU_CONF_CACHE is not None:
+        return _EMU_CONF_CACHE
+    _EMU_CONF_CACHE = _parse_conf_file(emulation_conf_path())
+    return _EMU_CONF_CACHE
+
+
+def detect_emulators(write=True):
+    """Controleert per systeem of de emulator aanwezig is.
+
+    Kandidaten = emu-pad uit de home-conf én uit de repo-conf (bekende
+    alternatieven). Schrijft het resultaat naar ~/.config/gamelauncher/emulators.json.
+    """
+    conf = load_emulation_conf()
+    repo = _parse_conf_file(EMULATION_CONF_REPO)
+    systems = {}
+    for key, info in conf.items():
+        candidates = []
+        for src in (info.get("emu", ""), repo.get(key, {}).get("emu", "")):
+            if src and src not in candidates:
+                candidates.append(src)
+        present = any(Path(c).exists() for c in candidates)
+        chosen = next((c for c in candidates if Path(c).exists()), info.get("emu", ""))
+        systems[key] = {
+            "title": info.get("title", key),
+            "emu": chosen,
+            "present": present,
+            "candidates": candidates,
+        }
+    data = {"generated": int(time.time()), "systems": systems}
+    if write:
+        try:
+            CONF_DIR.mkdir(parents=True, exist_ok=True)
+            EMULATORS_JSON.write_text(
+                json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8")
+        except OSError:
+            pass
+    return data
+
+
+def emulator_status(system):
+    """Status van één systeem (uit de detectie; detecteert lazy bij 1e keer)."""
+    global _EMU_STATUS_CACHE
+    if _EMU_STATUS_CACHE is None:
+        _EMU_STATUS_CACHE = detect_emulators()["systems"]
+    return _EMU_STATUS_CACHE.get(system)
+
+
+def reload_emulators():
+    """Gooi de caches weg en detecteer opnieuw (na een installatie)."""
+    global _EMU_CONF_CACHE, _EMU_STATUS_CACHE
+    _EMU_CONF_CACHE = None
+    _EMU_STATUS_CACHE = None
+    return detect_emulators()["systems"]
+
 
 
 def _conf_key(name):
@@ -1106,7 +1178,7 @@ class GameRun:
                         "  ☑ 'SDL3-fallback aan (standaard SDL)'")
             else:
                 hint = ("Controleer emulation.conf:\n"
-                        f"  {EMULATION_CONF}")
+                        f"  {emulation_conf_path()}")
             QMessageBox.warning(
                 None,
                 "Game start mislukt",
@@ -1422,6 +1494,7 @@ class MainWindow(QMainWindow):
         self.current_items = children
         self.carousel._set_items(self.current_items)
         self._update_navbar()
+        self._notify_missing_emulator(node)
         if self.current_items:
             start = 1 if isinstance(self.current_items[0], BackNode) and len(self.current_items) > 1 else 0
             if select is not None:
@@ -1431,6 +1504,18 @@ class MainWindow(QMainWindow):
                         break
             self._select(start)
         self._sync_dir_field()
+
+    def _notify_missing_emulator(self, node):
+        """Meldt in de terminal als het systeem geen emulator heeft."""
+        sys_key = getattr(node, "system", None)
+        if not sys_key or not hasattr(self, "terminal"):
+            return
+        status = emulator_status(sys_key)
+        if status and not status.get("present"):
+            self._append_terminal(
+                f"[emu] {status['title']}: emulator ontbreekt nog "
+                f"(sectie [{sys_key}] in {emulation_conf_path()}). "
+                "Koppel de emulator in emulation.conf om te starten.")
 
     def _back(self):
         if not self.nav_stack:
@@ -1591,19 +1676,21 @@ class MainWindow(QMainWindow):
     def _start_emu(self, game):
         conf = load_emulation_conf().get(game.system, {})
         title = conf.get("title", game.system)
-        if conf.get("status") == "missing" or not conf.get("emu"):
-            QMessageBox.warning(
-                self, "Emulator niet geconfigureerd",
-                f"{title} is nog niet geconfigureerd.\n\n"
-                f"Zet emu= en args= in:\n{EMULATION_CONF}\n"
-                f"(sectie [{game.system}])")
-            return
-        emu_path = Path(conf["emu"])
-        if not emu_path.exists():
-            QMessageBox.warning(
-                self, "Emulator niet gevonden",
-                f"De emulator bestaat niet:\n{emu_path}\n\n"
-                f"Pas emu= aan in {EMULATION_CONF}")
+        emu_val = conf.get("emu", "")
+        present = bool(emu_val) and conf.get("status") != "missing" and Path(emu_val).exists()
+        if not present:
+            answer = QMessageBox.question(
+                self, "Emulator ontbreekt",
+                f"{title} is nog niet geconfigureerd of niet gevonden.\n\n"
+                f"Nu installeren? (emu-install.sh)",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+            if answer == QMessageBox.Yes:
+                self._install_emulator(game)
+            else:
+                QMessageBox.information(
+                    self, "Handmatig koppelen",
+                    f"Zet emu= en args= in:\n{emulation_conf_path()}\n"
+                    f"(sectie [{game.system}])")
             return
         rom = game.rom_path
         if not rom.exists():
@@ -1635,6 +1722,7 @@ class MainWindow(QMainWindow):
             "GAME_ROM": str(rom),
             "GAME_DISPLAY_NAME": game.display_name,
             "GAME_GUI": "1",
+            "GAME_EMU_CONF": str(emulation_conf_path()),
         }
 
         def _on_game_started():
@@ -1650,6 +1738,43 @@ class MainWindow(QMainWindow):
         self._focus_run(run)
         run.start()
         self._update_scanner()
+
+    def _install_emulator(self, game):
+        """Start emu-install.sh voor dit systeem en hervat daarna de start."""
+        title = load_emulation_conf().get(game.system, {}).get("title", game.system)
+        if not EMU_INSTALL_SH.is_file():
+            QMessageBox.warning(
+                self, "Installatie niet beschikbaar",
+                f"emu-install.sh niet gevonden:\n{EMU_INSTALL_SH}")
+            return
+        self._append_terminal(f"== {title}: emulator installeren ==")
+        proc = QProcess(self)
+        proc.setProcessChannelMode(QProcess.MergedChannels)
+        env = QProcessEnvironment.systemEnvironment()
+        env.insert("GAME_SYSTEM", game.system)
+        env.insert("GAME_EMU_CONF", str(emulation_conf_path()))
+        proc.setProcessEnvironment(env)
+        proc.setProgram("bash")
+        proc.setArguments([str(EMU_INSTALL_SH)])
+
+        def _on_read():
+            data = bytes(proc.readAllStandardOutput()).decode("utf-8", "replace")
+            if data:
+                self._append_terminal(data.rstrip())
+
+        def _on_finished(code, _status):
+            reload_emulators()
+            if code == 0:
+                self._append_terminal(f"[emu] {title} geïnstalleerd. Opnieuw proberen…")
+                self._start_emu(game)
+            else:
+                self._append_terminal(
+                    f"[emu] {title}: installatie mislukt (code {code}). "
+                    f"Koppel handmatig in {emulation_conf_path()}.")
+
+        proc.readyReadStandardOutput.connect(_on_read)
+        proc.finished.connect(_on_finished)
+        proc.start()
 
     def _attach_tool_output(self, run, tool_path):
         if not tool_path.is_file():
@@ -1969,6 +2094,10 @@ def _ensure_desktop_icon():
 def main():
     app = QApplication.instance() or QApplication([])
     app.setApplicationName("Game Launcher Fork")
+    try:
+        detect_emulators()
+    except Exception:
+        pass
     _ensure_desktop_icon()
     window = MainWindow()
     window.show()

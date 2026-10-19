@@ -10,7 +10,16 @@
 set -u
 
 HERE="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
-CONF="$HERE/emulation.conf"
+# Config staat per PC in de home-map; de GUI geeft GAME_EMU_CONF mee.
+# Valt terug op de repo-versie naast dit script.
+HOME_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/gamelauncher/emulation.conf"
+if [ -n "${GAME_EMU_CONF:-}" ]; then
+    CONF="$GAME_EMU_CONF"
+elif [ -f "$HOME_CONF" ]; then
+    CONF="$HOME_CONF"
+else
+    CONF="$HERE/emulation.conf"
+fi
 
 SYS="${GAME_SYSTEM:-}"
 if [ -z "$SYS" ]; then
@@ -26,18 +35,30 @@ if [ ! -f "$CONF" ]; then
     exit 1
 fi
 
-section="$(awk -v s="[$SYS]" 'BEGIN{f=0} /^\[/{f=($0==s)} f' "$CONF")"
-emu="$(printf '%s\n' "$section" | sed -n 's/^emu=//p' | head -1)"
-args="$(printf '%s\n' "$section" | sed -n 's/^args=//p' | head -1)"
-title="$(printf '%s\n' "$section" | sed -n 's/^title=//p' | head -1)"
-status="$(printf '%s\n' "$section" | sed -n 's/^status=//p' | head -1)"
-accept_dir="$(printf '%s\n' "$section" | sed -n 's/^accept_dir=//p' | head -1)"
-[ -n "$title" ] || title="$SYS"
+_parse_section() {
+    section="$(awk -v s="[$SYS]" 'BEGIN{f=0} /^\[/{f=($0==s)} f' "$CONF")"
+    emu="$(printf '%s\n' "$section" | sed -n 's/^emu=//p' | head -1)"
+    args="$(printf '%s\n' "$section" | sed -n 's/^args=//p' | head -1)"
+    title="$(printf '%s\n' "$section" | sed -n 's/^title=//p' | head -1)"
+    status="$(printf '%s\n' "$section" | sed -n 's/^status=//p' | head -1)"
+    accept_dir="$(printf '%s\n' "$section" | sed -n 's/^accept_dir=//p' | head -1)"
+    [ -n "$title" ] || title="$SYS"
+}
+
+_parse_section
 
 if [ -z "$section" ]; then
     echo "[emu] $title: geen sectie [$SYS] in $CONF."
     echo "[emu] Voeg de sectie toe (zie README-game-gui-fork.md)."
     exit 1
+fi
+
+# Ontbreekt de emulator? Probeer te installeren via emu-install.sh en herlees.
+if [ "$status" = "missing" ] || [ -z "$emu" ] || [ ! -e "$emu" ]; then
+    echo "[emu] $title: emulator ontbreekt — installatie wordt geprobeerd."
+    if GAME_SYSTEM="$SYS" GAME_EMU_CONF="$CONF" bash "$HERE/emu-install.sh"; then
+        _parse_section
+    fi
 fi
 
 if [ "$status" = "missing" ] || [ -z "$emu" ]; then

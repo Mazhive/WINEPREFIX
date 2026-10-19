@@ -1,6 +1,33 @@
 # Changelog voor game-gui.py
 
 
+## game-gui-fork v0.2.2 (2026-10-18)
+
+- Emulator installeren via de launcher: bij ontbrekende emulator (`status=missing`
+  of `emu`-pad bestaat niet) vraagt de GUI "Nu installeren? (emu-install.sh)".
+- `_install_emulator()` start `emu-install.sh` (env `GAME_SYSTEM` + `GAME_EMU_CONF`),
+  streamt de output naar de terminal en herstart de game na succes.
+- `reload_emulators()` wist de conf-/statuscaches en herdetecteert na een installatie.
+- `emu-launch.sh` probeert bij een ontbrekende emulator `emu-install.sh` en herleest de conf.
+- README-game-gui-fork.md §6: install-flow gedocumenteerd (was "uitgesteld").
+
+## game-gui-fork v0.2.1 (2026-10-18)
+
+- `emulation.conf` + `emulators.json` verhuisd naar `~/.config/gamelauncher/`
+  (per PC); repo-versie blijft sjabloon/fallback. GUI geeft het pad door via
+  `GAME_EMU_CONF`; `emu-launch.sh` leest de home-conf eerst.
+- Emulator-detectie bij opstarten: alle systemen uit `emulation.conf` worden
+  gecontroleerd (home- + repo-pad als kandidaten) → `emulators.json`.
+- Melding in de terminal wanneer een systeem nog geen (gevonden) emulator heeft.
+- README-game-gui-fork.md toegevoegd.
+
+## game-gui-fork v0.2.0 (2026-10-18)
+
+- Drill-down navigatie (NavNode/EmuGame), platform-scanning,
+  launch-splitsing (`_start_pc`/`_start_emu`), navbar met terug-knop.
+
+---
+
 ## v1.9.8 (2026-10-17)
 
 - Robuuste Multi-Platform OS-detectie: 
