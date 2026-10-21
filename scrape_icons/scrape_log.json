@@ -7614,5 +7614,75 @@
     "status": "ok",
     "source": "bing",
     "matched_name": "Animaniacs Ten Pin Alley 2 [U] [SLUS 00784] psx"
+  },
+  {
+    "timestamp": "2026-10-21T10:45:35.923724Z",
+    "rel_path": "PLAYSTATION/PS2/Ratchet _ Clank 2 - Going Commando PS2 PAL",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Ratchet Clank 2 Going Commando PS2 PAL ps2"
+  },
+  {
+    "timestamp": "2026-10-21T10:46:37.573211Z",
+    "rel_path": "PLAYSTATION/PS2/Ratchet _ Clank PS2 PAL",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Ratchet Clank PS2 PAL ps2"
+  },
+  {
+    "timestamp": "2026-10-21T10:47:29.602930Z",
+    "rel_path": "PLAYSTATION/PSX/Ace_Combat_2",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Ace Combat 2 psx"
+  },
+  {
+    "timestamp": "2026-10-21T10:48:17.106293Z",
+    "rel_path": "PLAYSTATION/PSX/Ace_Combat_3_-_Electrosphere",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Ace Combat 3 Electrosphere psx"
+  },
+  {
+    "timestamp": "2026-10-21T10:48:58.717359Z",
+    "rel_path": "PLAYSTATION/PSX/Air_Combat_(E)_[SCES-00007]",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Air Combat (E) [SCES 00007] psx"
+  },
+  {
+    "timestamp": "2026-10-21T10:49:04.954153Z",
+    "rel_path": "PLAYSTATION/PSX/Alien_Trilogy_PSX",
+    "status": "ok",
+    "source": "wikipedia",
+    "matched_name": "List of PlayStation Portable games"
+  },
+  {
+    "timestamp": "2026-10-21T10:49:45.904817Z",
+    "rel_path": "PLAYSTATION/PSX/Alone_In_The_Dark_-_One_Eyed_Jack's_Revenge_[U]_[SLUS-00239]",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Alone In The Dark One Eyed Jack's Revenge [U] [SLUS 00239] psx"
+  },
+  {
+    "timestamp": "2026-10-21T10:49:50.305565Z",
+    "rel_path": "PLAYSTATION/PSX/Alone_In_The_Dark_-_The_New_Nightmare",
+    "status": "ok",
+    "source": "wikipedia",
+    "matched_name": "Stewart Copeland"
+  },
+  {
+    "timestamp": "2026-10-21T10:50:30.610735Z",
+    "rel_path": "PLAYSTATION/PSX/Alone_in_the_Dark_-_Jack_is_Back_(E)_[SLES-00037]",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Alone In The Dark Jack Is Back (E) [SLES 00037] psx"
+  },
+  {
+    "timestamp": "2026-10-21T10:51:10.881978Z",
+    "rel_path": "PLAYSTATION/PSX/Animaniacs_-_Ten_Pin_Alley_2_[U]_[SLUS-00784]",
+    "status": "ok",
+    "source": "bing",
+    "matched_name": "Animaniacs Ten Pin Alley 2 [U] [SLUS 00784] psx"
   }
 ]
