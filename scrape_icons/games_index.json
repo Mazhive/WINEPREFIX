@@ -1,0 +1,2423 @@
+{
+  "PLAYSTATION/PS2/Fantastic 4 PS2 PAL": {
+    "platform": "PLAYSTATION",
+    "system": "ps2",
+    "system_folder": "PS2",
+    "folder_name": "Fantastic 4 PS2 PAL",
+    "display_name": "Fantastic 4 PS2 PAL",
+    "icon_rel_path": "PLAYSTATION/PS2/Fantastic 4 PS2 PAL.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS2/Fantastic 4 PS2 PAL.png",
+    "search_terms": [
+      "Fantastic 4",
+      "Fantastic 4 ps2",
+      "Fantastic 4 PS2 PAL ps2",
+      "Fantastic 4 PS2 PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS2/Need for Speed - Carbon - Collector_s Edition PS2 PAL": {
+    "platform": "PLAYSTATION",
+    "system": "ps2",
+    "system_folder": "PS2",
+    "folder_name": "Need for Speed - Carbon - Collector_s Edition PS2 PAL",
+    "display_name": "Need For Speed Carbon Collector S Edition PS2 PAL",
+    "icon_rel_path": "PLAYSTATION/PS2/Need For Speed Carbon Collector S Edition PS2 PAL.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS2/Need For Speed Carbon Collector S Edition PS2 PAL.png",
+    "search_terms": [
+      "Need for Speed Carbon",
+      "Need for Speed Carbon ps2",
+      "Need For Speed Carbon Collector S Edition PS2 PAL ps2",
+      "Need For Speed Carbon Collector S Edition PS2 PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS2/OutRun_2006_-_Coast_2_Coast_PS2_PAL": {
+    "platform": "PLAYSTATION",
+    "system": "ps2",
+    "system_folder": "PS2",
+    "folder_name": "OutRun_2006_-_Coast_2_Coast_PS2_PAL",
+    "display_name": "Out Run 2006 Coast 2 Coast PS2 PAL",
+    "icon_rel_path": "PLAYSTATION/PS2/Out Run 2006 Coast 2 Coast PS2 PAL.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS2/Out Run 2006 Coast 2 Coast PS2 PAL.png",
+    "search_terms": [
+      "OutRun 2006 Coast 2 Coast",
+      "OutRun 2006 Coast 2 Coast ps2",
+      "Out Run 2006 Coast 2 Coast PS2 PAL ps2",
+      "Out Run 2006 Coast 2 Coast PS2 PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS2/Pitfall - The Lost Expedition PS2 NTSC": {
+    "platform": "PLAYSTATION",
+    "system": "ps2",
+    "system_folder": "PS2",
+    "folder_name": "Pitfall - The Lost Expedition PS2 NTSC",
+    "display_name": "Pitfall The Lost Expedition PS2 NTSC",
+    "icon_rel_path": "PLAYSTATION/PS2/Pitfall The Lost Expedition PS2 NTSC.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS2/Pitfall The Lost Expedition PS2 NTSC.png",
+    "search_terms": [
+      "Pitfall The Lost Expedition",
+      "Pitfall The Lost Expedition ps2",
+      "Pitfall The Lost Expedition PS2 NTSC ps2",
+      "Pitfall The Lost Expedition PS2 NTSC"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS2/Ratchet _ Clank 2 - Going Commando PS2 PAL": {
+    "platform": "PLAYSTATION",
+    "system": "ps2",
+    "system_folder": "PS2",
+    "folder_name": "Ratchet _ Clank 2 - Going Commando PS2 PAL",
+    "display_name": "Ratchet Clank 2 Going Commando PS2 PAL",
+    "icon_rel_path": "PLAYSTATION/PS2/Ratchet Clank 2 Going Commando PS2 PAL.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS2/Ratchet Clank 2 Going Commando PS2 PAL.png",
+    "search_terms": [
+      "Ratchet Clank 2 Going Commando PS2 PAL ps2",
+      "Ratchet Clank 2 Going Commando PS2 PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:18:30.155108Z"
+  },
+  "PLAYSTATION/PS2/Ratchet _ Clank PS2 PAL": {
+    "platform": "PLAYSTATION",
+    "system": "ps2",
+    "system_folder": "PS2",
+    "folder_name": "Ratchet _ Clank PS2 PAL",
+    "display_name": "Ratchet Clank PS2 PAL",
+    "icon_rel_path": "PLAYSTATION/PS2/Ratchet Clank PS2 PAL.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS2/Ratchet Clank PS2 PAL.png",
+    "search_terms": [
+      "Ratchet Clank PS2 PAL ps2",
+      "Ratchet Clank PS2 PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:18:30.160001Z"
+  },
+  "PLAYSTATION/PS2/X-Men Next Dimension PS2 PAL": {
+    "platform": "PLAYSTATION",
+    "system": "ps2",
+    "system_folder": "PS2",
+    "folder_name": "X-Men Next Dimension PS2 PAL",
+    "display_name": "X Men Next Dimension PS2 PAL",
+    "icon_rel_path": "PLAYSTATION/PS2/X Men Next Dimension PS2 PAL.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS2/X Men Next Dimension PS2 PAL.png",
+    "search_terms": [
+      "X-Men Next Dimension",
+      "X-Men Next Dimension ps2",
+      "X Men Next Dimension PS2 PAL ps2",
+      "X Men Next Dimension PS2 PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BCES01584 - The Last of us": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BCES01584 - The Last of us",
+    "display_name": "BCES01584 The Last Of Us",
+    "icon_rel_path": "PLAYSTATION/PS3/BCES01584 The Last Of Us.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BCES01584 The Last Of Us.png",
+    "search_terms": [
+      "The Last of Us Part II",
+      "The Last of Us Part II ps3",
+      "BCES01584 The Last Of Us ps3",
+      "BCES01584 The Last Of Us"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BLES-01195-Tomb_Raider_Trilogy(PS3)": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BLES-01195-Tomb_Raider_Trilogy(PS3)",
+    "display_name": "BLES 01195 Tomb Raider Trilogy(PS3)",
+    "icon_rel_path": "PLAYSTATION/PS3/BLES 01195 Tomb Raider Trilogy(PS3).png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BLES 01195 Tomb Raider Trilogy(PS3).png",
+    "search_terms": [
+      "Tomb Raider Trilogy",
+      "Tomb Raider Trilogy ps3",
+      "BLES 01195 Tomb Raider Trilogy(PS3) ps3",
+      "BLES 01195 Tomb Raider Trilogy(PS3)"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BLES-01236-SONIC_GENERATIONS(PS3)": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BLES-01236-SONIC_GENERATIONS(PS3)",
+    "display_name": "BLES 01236 SONIC GENERATIONS(PS3)",
+    "icon_rel_path": "PLAYSTATION/PS3/BLES 01236 SONIC GENERATIONS(PS3).png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BLES 01236 SONIC GENERATIONS(PS3).png",
+    "search_terms": [
+      "Sonic Generations",
+      "Sonic Generations ps3",
+      "BLES 01236 SONIC GENERATIONS(PS3) ps3",
+      "BLES 01236 SONIC GENERATIONS(PS3)"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BLES-01863-RAYMAN_LEGENDS(PS3)": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BLES-01863-RAYMAN_LEGENDS(PS3)",
+    "display_name": "BLES 01863 RAYMAN LEGENDS(PS3)",
+    "icon_rel_path": "PLAYSTATION/PS3/BLES 01863 RAYMAN LEGENDS(PS3).png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BLES 01863 RAYMAN LEGENDS(PS3).png",
+    "search_terms": [
+      "Rayman Legends",
+      "Rayman Legends ps3",
+      "BLES 01863 RAYMAN LEGENDS(PS3) ps3",
+      "BLES 01863 RAYMAN LEGENDS(PS3)"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BLES-02200-[TRANSFORMERS Devastation]": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BLES-02200-[TRANSFORMERS Devastation]",
+    "display_name": "BLES 02200 [TRANSFORMERS Devastation]",
+    "icon_rel_path": "PLAYSTATION/PS3/BLES 02200 [TRANSFORMERS Devastation].png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BLES 02200 [TRANSFORMERS Devastation].png",
+    "search_terms": [
+      "Transformers Devastation",
+      "Transformers Devastation ps3",
+      "BLES 02200 [TRANSFORMERS Devastation] ps3",
+      "BLES 02200 [TRANSFORMERS Devastation]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BLES00876-Toy Story 3": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BLES00876-Toy Story 3",
+    "display_name": "BLES00876 Toy Story 3",
+    "icon_rel_path": "PLAYSTATION/PS3/BLES00876 Toy Story 3.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BLES00876 Toy Story 3.png",
+    "search_terms": [
+      "Toy Story 3",
+      "Toy Story 3 ps3",
+      "BLES00876 Toy Story 3 ps3",
+      "BLES00876 Toy Story 3"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BLUS-30536 Driver_San_Francisco": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BLUS-30536 Driver_San_Francisco",
+    "display_name": "BLUS 30536 Driver San Francisco",
+    "icon_rel_path": "PLAYSTATION/PS3/BLUS 30536 Driver San Francisco.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BLUS 30536 Driver San Francisco.png",
+    "search_terms": [
+      "Driver San Francisco",
+      "Driver San Francisco ps3",
+      "BLUS 30536 Driver San Francisco ps3",
+      "BLUS 30536 Driver San Francisco"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PS3/BLUS-30836-RAYMAN_ORIGINS(PS3)": {
+    "platform": "PLAYSTATION",
+    "system": "ps3",
+    "system_folder": "PS3",
+    "folder_name": "BLUS-30836-RAYMAN_ORIGINS(PS3)",
+    "display_name": "BLUS 30836 RAYMAN ORIGINS(PS3)",
+    "icon_rel_path": "PLAYSTATION/PS3/BLUS 30836 RAYMAN ORIGINS(PS3).png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PS3/BLUS 30836 RAYMAN ORIGINS(PS3).png",
+    "search_terms": [
+      "Rayman Origins",
+      "Rayman Origins ps3",
+      "BLUS 30836 RAYMAN ORIGINS(PS3) ps3",
+      "BLUS 30836 RAYMAN ORIGINS(PS3)"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PSP/Final_Fantasy_2_EUR_PSP-pSyPSP": {
+    "platform": "PLAYSTATION",
+    "system": "psp",
+    "system_folder": "PSP",
+    "folder_name": "Final_Fantasy_2_EUR_PSP-pSyPSP",
+    "display_name": "Final Fantasy 2 EUR PSP P Sy PSP",
+    "icon_rel_path": "PLAYSTATION/PSP/Final Fantasy 2 EUR PSP P Sy PSP.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSP/Final Fantasy 2 EUR PSP P Sy PSP.png",
+    "search_terms": [
+      "Final Fantasy II",
+      "Final Fantasy II psp",
+      "Final Fantasy 2 EUR PSP P Sy PSP psp",
+      "Final Fantasy 2 EUR PSP P Sy PSP"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PSP/Tekken_Dark_Resurrection_EUR_RETAIL_PSP-pSyPSP": {
+    "platform": "PLAYSTATION",
+    "system": "psp",
+    "system_folder": "PSP",
+    "folder_name": "Tekken_Dark_Resurrection_EUR_RETAIL_PSP-pSyPSP",
+    "display_name": "Tekken Dark Resurrection EUR RETAIL PSP P Sy PSP",
+    "icon_rel_path": "PLAYSTATION/PSP/Tekken Dark Resurrection EUR RETAIL PSP P Sy PSP.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSP/Tekken Dark Resurrection EUR RETAIL PSP P Sy PSP.png",
+    "search_terms": [
+      "Tekken Dark Resurrection",
+      "Tekken Dark Resurrection psp",
+      "Tekken Dark Resurrection EUR RETAIL PSP P Sy PSP psp",
+      "Tekken Dark Resurrection EUR RETAIL PSP P Sy PSP"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "skipped"
+  },
+  "PLAYSTATION/PSX/Ace_Combat_2": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Ace_Combat_2",
+    "display_name": "Ace Combat 2",
+    "icon_rel_path": "PLAYSTATION/PSX/Ace Combat 2.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Ace Combat 2.png",
+    "search_terms": [
+      "Ace Combat 2 psx",
+      "Ace Combat 2"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.702482Z"
+  },
+  "PLAYSTATION/PSX/Ace_Combat_3_-_Electrosphere": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Ace_Combat_3_-_Electrosphere",
+    "display_name": "Ace Combat 3 Electrosphere",
+    "icon_rel_path": "PLAYSTATION/PSX/Ace Combat 3 Electrosphere.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Ace Combat 3 Electrosphere.png",
+    "search_terms": [
+      "Ace Combat 3 Electrosphere psx",
+      "Ace Combat 3 Electrosphere"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.718040Z"
+  },
+  "PLAYSTATION/PSX/Air_Combat_(E)_[SCES-00007]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Air_Combat_(E)_[SCES-00007]",
+    "display_name": "Air Combat (E) [SCES 00007]",
+    "icon_rel_path": "PLAYSTATION/PSX/Air Combat (E) [SCES 00007].png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Air Combat (E) [SCES 00007].png",
+    "search_terms": [
+      "Air Combat (E) [SCES 00007] psx",
+      "Air Combat (E) [SCES 00007]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.731270Z"
+  },
+  "PLAYSTATION/PSX/Alien_Trilogy_PSX": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Alien_Trilogy_PSX",
+    "display_name": "Alien Trilogy PSX",
+    "icon_rel_path": "PLAYSTATION/PSX/Alien Trilogy PSX.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Alien Trilogy PSX.png",
+    "search_terms": [
+      "Alien Trilogy PSX psx",
+      "Alien Trilogy PSX"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.746333Z"
+  },
+  "PLAYSTATION/PSX/Alone_In_The_Dark_-_One_Eyed_Jack's_Revenge_[U]_[SLUS-00239]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Alone_In_The_Dark_-_One_Eyed_Jack's_Revenge_[U]_[SLUS-00239]",
+    "display_name": "Alone In The Dark One Eyed Jack's Revenge [U] [SLUS 00239]",
+    "icon_rel_path": "PLAYSTATION/PSX/Alone In The Dark One Eyed Jack's Revenge [U] [SLUS 00239].png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Alone In The Dark One Eyed Jack's Revenge [U] [SLUS 00239].png",
+    "search_terms": [
+      "Alone In The Dark One Eyed Jack's Revenge [U] [SLUS 00239] psx",
+      "Alone In The Dark One Eyed Jack's Revenge [U] [SLUS 00239]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.765296Z"
+  },
+  "PLAYSTATION/PSX/Alone_In_The_Dark_-_The_New_Nightmare": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Alone_In_The_Dark_-_The_New_Nightmare",
+    "display_name": "Alone In The Dark The New Nightmare",
+    "icon_rel_path": "PLAYSTATION/PSX/Alone In The Dark The New Nightmare.png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Alone In The Dark The New Nightmare.png",
+    "search_terms": [
+      "Alone In The Dark The New Nightmare psx",
+      "Alone In The Dark The New Nightmare"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.785721Z"
+  },
+  "PLAYSTATION/PSX/Alone_in_the_Dark_-_Jack_is_Back_(E)_[SLES-00037]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Alone_in_the_Dark_-_Jack_is_Back_(E)_[SLES-00037]",
+    "display_name": "Alone In The Dark Jack Is Back (E) [SLES 00037]",
+    "icon_rel_path": "PLAYSTATION/PSX/Alone In The Dark Jack Is Back (E) [SLES 00037].png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Alone In The Dark Jack Is Back (E) [SLES 00037].png",
+    "search_terms": [
+      "Alone In The Dark Jack Is Back (E) [SLES 00037] psx",
+      "Alone In The Dark Jack Is Back (E) [SLES 00037]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.956959Z"
+  },
+  "PLAYSTATION/PSX/Animaniacs_-_Ten_Pin_Alley_2_[U]_[SLUS-00784]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Animaniacs_-_Ten_Pin_Alley_2_[U]_[SLUS-00784]",
+    "display_name": "Animaniacs Ten Pin Alley 2 [U] [SLUS 00784]",
+    "icon_rel_path": "PLAYSTATION/PSX/Animaniacs Ten Pin Alley 2 [U] [SLUS 00784].png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Animaniacs Ten Pin Alley 2 [U] [SLUS 00784].png",
+    "search_terms": [
+      "Animaniacs Ten Pin Alley 2 [U] [SLUS 00784] psx",
+      "Animaniacs Ten Pin Alley 2 [U] [SLUS 00784]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.965791Z"
+  },
+  "PLAYSTATION/PSX/Blazing_Dragons_[U]_[SLUS-00100]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Blazing_Dragons_[U]_[SLUS-00100]",
+    "display_name": "Blazing Dragons [U] [SLUS 00100]",
+    "icon_rel_path": "PLAYSTATION/PSX/Blazing Dragons [U] [SLUS 00100].png",
+    "icon_abs_path": "/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/EMU-ICONS/PLAYSTATION/PSX/Blazing Dragons [U] [SLUS 00100].png",
+    "search_terms": [
+      "Blazing Dragons [U] [SLUS 00100] psx",
+      "Blazing Dragons [U] [SLUS 00100]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "placed",
+    "placed_at": "2026-10-20T19:59:29.975051Z"
+  },
+  "PLAYSTATION/PSX/Blood_Omen_-_Legacy_of_Kain_(E)_[SLES-00075]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Blood_Omen_-_Legacy_of_Kain_(E)_[SLES-00075]",
+    "display_name": "Blood Omen Legacy Of Kain (E) [SLES 00075]",
+    "icon_rel_path": "PLAYSTATION/PSX/Blood Omen Legacy Of Kain (E) [SLES 00075].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Blood Omen Legacy Of Kain (E) [SLES 00075] psx",
+      "Blood Omen Legacy Of Kain (E) [SLES 00075]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Bomberman_(E)_[SLES-01893]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Bomberman_(E)_[SLES-01893]",
+    "display_name": "Bomberman (E) [SLES 01893]",
+    "icon_rel_path": "PLAYSTATION/PSX/Bomberman (E) [SLES 01893].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Bomberman (E) [SLES 01893] psx",
+      "Bomberman (E) [SLES 01893]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Broken_Sword_-_The_Shadow_of_The_Templars_[U]_[SLUS-00484]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Broken_Sword_-_The_Shadow_of_The_Templars_[U]_[SLUS-00484]",
+    "display_name": "Broken Sword The Shadow Of The Templars [U] [SLUS 00484]",
+    "icon_rel_path": "PLAYSTATION/PSX/Broken Sword The Shadow Of The Templars [U] [SLUS 00484].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Broken Sword The Shadow Of The Templars [U] [SLUS 00484] psx",
+      "Broken Sword The Shadow Of The Templars [U] [SLUS 00484]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Broken_Sword_-_The_Shadow_of_the_Templars_(E)_[SCES-00346]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Broken_Sword_-_The_Shadow_of_the_Templars_(E)_[SCES-00346]",
+    "display_name": "Broken Sword The Shadow Of The Templars (E) [SCES 00346]",
+    "icon_rel_path": "PLAYSTATION/PSX/Broken Sword The Shadow Of The Templars (E) [SCES 00346].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Broken Sword The Shadow Of The Templars (E) [SCES 00346] psx",
+      "Broken Sword The Shadow Of The Templars (E) [SCES 00346]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Broken_Sword_2_-_The_Smoking_Mirror_[U]_[SLUS-00812]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Broken_Sword_2_-_The_Smoking_Mirror_[U]_[SLUS-00812]",
+    "display_name": "Broken Sword 2 The Smoking Mirror [U] [SLUS 00812]",
+    "icon_rel_path": "PLAYSTATION/PSX/Broken Sword 2 The Smoking Mirror [U] [SLUS 00812].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Broken Sword 2 The Smoking Mirror [U] [SLUS 00812] psx",
+      "Broken Sword 2 The Smoking Mirror [U] [SLUS 00812]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Bugs_Bunny-Reis_door_de_Tijd_pal_psx": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Bugs_Bunny-Reis_door_de_Tijd_pal_psx",
+    "display_name": "Bugs Bunny Reis Door De Tijd Pal Psx",
+    "icon_rel_path": "PLAYSTATION/PSX/Bugs Bunny Reis Door De Tijd Pal Psx.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Bugs Bunny Reis Door De Tijd Pal Psx psx",
+      "Bugs Bunny Reis Door De Tijd Pal Psx"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Casper_(E)_[SLES-00045]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Casper_(E)_[SLES-00045]",
+    "display_name": "Casper (E) [SLES 00045]",
+    "icon_rel_path": "PLAYSTATION/PSX/Casper (E) [SLES 00045].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Casper (E) [SLES 00045] psx",
+      "Casper (E) [SLES 00045]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Casper_-_Friends_Around_The_World_[U]_[SLUS-01245]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Casper_-_Friends_Around_The_World_[U]_[SLUS-01245]",
+    "display_name": "Casper Friends Around The World [U] [SLUS 01245]",
+    "icon_rel_path": "PLAYSTATION/PSX/Casper Friends Around The World [U] [SLUS 01245].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Casper Friends Around The World [U] [SLUS 01245] psx",
+      "Casper Friends Around The World [U] [SLUS 01245]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Chaos_Control_(JAP)_[SLPS-00168]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Chaos_Control_(JAP)_[SLPS-00168]",
+    "display_name": "Chaos Control (JAP) [SLPS 00168]",
+    "icon_rel_path": "PLAYSTATION/PSX/Chaos Control (JAP) [SLPS 00168].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Chaos Control (JAP) [SLPS 00168] psx",
+      "Chaos Control (JAP) [SLPS 00168]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Command_&_Conquer_-_Red_Alert_-_Retaliation": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Command_&_Conquer_-_Red_Alert_-_Retaliation",
+    "display_name": "Command & Conquer Red Alert Retaliation",
+    "icon_rel_path": "PLAYSTATION/PSX/Command & Conquer Red Alert Retaliation.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Command & Conquer Red Alert Retaliation psx",
+      "Command & Conquer Red Alert Retaliation"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Crash.Bandicoot.2.Cortex.Strikes.Back.PSX.PAL": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Crash.Bandicoot.2.Cortex.Strikes.Back.PSX.PAL",
+    "display_name": "Crash.Bandicoot.2.Cortex.Strikes.Back.PSX.PAL",
+    "icon_rel_path": "PLAYSTATION/PSX/Crash.Bandicoot.2.Cortex.Strikes.Back.PSX.PAL.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Crash.Bandicoot.2.Cortex.Strikes.Back.PSX.PAL psx",
+      "Crash.Bandicoot.2.Cortex.Strikes.Back.PSX.PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Crash.Bandicoot.3.Warped.PSX.PAL": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Crash.Bandicoot.3.Warped.PSX.PAL",
+    "display_name": "Crash.Bandicoot.3.Warped.PSX.PAL",
+    "icon_rel_path": "PLAYSTATION/PSX/Crash.Bandicoot.3.Warped.PSX.PAL.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Crash.Bandicoot.3.Warped.PSX.PAL psx",
+      "Crash.Bandicoot.3.Warped.PSX.PAL"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Crash_Bandicoot_(E)_(EDC)_[SCES-00344]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Crash_Bandicoot_(E)_(EDC)_[SCES-00344]",
+    "display_name": "Crash Bandicoot (E) (EDC) [SCES 00344]",
+    "icon_rel_path": "PLAYSTATION/PSX/Crash Bandicoot (E) (EDC) [SCES 00344].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Crash Bandicoot (E) (EDC) [SCES 00344] psx",
+      "Crash Bandicoot (E) (EDC) [SCES 00344]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Croc_2_(E)_[SLES-02088]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Croc_2_(E)_[SLES-02088]",
+    "display_name": "Croc 2 (E) [SLES 02088]",
+    "icon_rel_path": "PLAYSTATION/PSX/Croc 2 (E) [SLES 02088].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Croc 2 (E) [SLES 02088] psx",
+      "Croc 2 (E) [SLES 02088]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Dead_or_Alive_[U]_[SLUS-00606]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Dead_or_Alive_[U]_[SLUS-00606]",
+    "display_name": "Dead Or Alive [U] [SLUS 00606]",
+    "icon_rel_path": "PLAYSTATION/PSX/Dead Or Alive [U] [SLUS 00606].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Dead Or Alive [U] [SLUS 00606] psx",
+      "Dead Or Alive [U] [SLUS 00606]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Destruction_Derby_(pal)": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Destruction_Derby_(pal)",
+    "display_name": "Destruction Derby (pal)",
+    "icon_rel_path": "PLAYSTATION/PSX/Destruction Derby (pal).png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Destruction Derby (pal) psx",
+      "Destruction Derby (pal)"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Dino_Crisis_2_(E)_[SLES-03221]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Dino_Crisis_2_(E)_[SLES-03221]",
+    "display_name": "Dino Crisis 2 (E) [SLES 03221]",
+    "icon_rel_path": "PLAYSTATION/PSX/Dino Crisis 2 (E) [SLES 03221].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Dino Crisis 2 (E) [SLES 03221] psx",
+      "Dino Crisis 2 (E) [SLES 03221]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Disney's_Buzz_Lightyear_of_Star_Command_[U]_[SLUS-01192]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Disney's_Buzz_Lightyear_of_Star_Command_[U]_[SLUS-01192]",
+    "display_name": "Disney's Buzz Lightyear Of Star Command [U] [SLUS 01192]",
+    "icon_rel_path": "PLAYSTATION/PSX/Disney's Buzz Lightyear Of Star Command [U] [SLUS 01192].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Disney's Buzz Lightyear Of Star Command [U] [SLUS 01192] psx",
+      "Disney's Buzz Lightyear Of Star Command [U] [SLUS 01192]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Disney-Pixar's_Monsters,_Inc._-_Scare_Island_(E)_[SCES-03759]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Disney-Pixar's_Monsters,_Inc._-_Scare_Island_(E)_[SCES-03759]",
+    "display_name": "Disney Pixar's Monsters, Inc. Scare Island (E) [SCES 03759]",
+    "icon_rel_path": "PLAYSTATION/PSX/Disney Pixar's Monsters, Inc. Scare Island (E) [SCES 03759].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Disney Pixar's Monsters, Inc. Scare Island (E) [SCES 03759] psx",
+      "Disney Pixar's Monsters, Inc. Scare Island (E) [SCES 03759]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Diver's_Dream_(E)_[SLES-01535]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Diver's_Dream_(E)_[SLES-01535]",
+    "display_name": "Diver's Dream (E) [SLES 01535]",
+    "icon_rel_path": "PLAYSTATION/PSX/Diver's Dream (E) [SLES 01535].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Diver's Dream (E) [SLES 01535] psx",
+      "Diver's Dream (E) [SLES 01535]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Donald_Duck_-_Goin'_Quackers_[U]_[SLUS-01242]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Donald_Duck_-_Goin'_Quackers_[U]_[SLUS-01242]",
+    "display_name": "Donald Duck Goin' Quackers [U] [SLUS 01242]",
+    "icon_rel_path": "PLAYSTATION/PSX/Donald Duck Goin' Quackers [U] [SLUS 01242].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Donald Duck Goin' Quackers [U] [SLUS 01242] psx",
+      "Donald Duck Goin' Quackers [U] [SLUS 01242]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Duke_Nukem_-_Total_Meltdown_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Duke_Nukem_-_Total_Meltdown_ntsc",
+    "display_name": "Duke Nukem Total Meltdown Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Duke Nukem Total Meltdown Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Duke Nukem Total Meltdown Ntsc psx",
+      "Duke Nukem Total Meltdown Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Extreme_Pinball_[NTSC-U]_[SLUS-00200]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Extreme_Pinball_[NTSC-U]_[SLUS-00200]",
+    "display_name": "Extreme Pinball [NTSC U] [SLUS 00200]",
+    "icon_rel_path": "PLAYSTATION/PSX/Extreme Pinball [NTSC U] [SLUS 00200].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Extreme Pinball [NTSC U] [SLUS 00200] psx",
+      "Extreme Pinball [NTSC U] [SLUS 00200]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/FIFA_99_(E)_[SLES-01584]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "FIFA_99_(E)_[SLES-01584]",
+    "display_name": "FIFA 99 (E) [SLES 01584]",
+    "icon_rel_path": "PLAYSTATION/PSX/FIFA 99 (E) [SLES 01584].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "FIFA 99 (E) [SLES 01584] psx",
+      "FIFA 99 (E) [SLES 01584]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Fear_Effect_[NTSC-U]_[Disc1-2-3-4]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Fear_Effect_[NTSC-U]_[Disc1-2-3-4]",
+    "display_name": "Fear Effect [NTSC U] [Disc1 2 3 4]",
+    "icon_rel_path": "PLAYSTATION/PSX/Fear Effect [NTSC U] [Disc1 2 3 4].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Fear Effect [NTSC U] [Disc1 2 3 4] psx",
+      "Fear Effect [NTSC U] [Disc1 2 3 4]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Final_Fantasy": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Final_Fantasy",
+    "display_name": "Final Fantasy",
+    "icon_rel_path": "PLAYSTATION/PSX/Final Fantasy.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Final Fantasy psx",
+      "Final Fantasy"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Flintstones,_The_-_Bedrock_Bowling_(E)_[SLES-02345]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Flintstones,_The_-_Bedrock_Bowling_(E)_[SLES-02345]",
+    "display_name": "Flintstones, The Bedrock Bowling (E) [SLES 02345]",
+    "icon_rel_path": "PLAYSTATION/PSX/Flintstones, The Bedrock Bowling (E) [SLES 02345].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Flintstones, The Bedrock Bowling (E) [SLES 02345] psx",
+      "Flintstones, The Bedrock Bowling (E) [SLES 02345]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Harry_Potter_-_Steen_der_Wijzen_(dutch)": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Harry_Potter_-_Steen_der_Wijzen_(dutch)",
+    "display_name": "Harry Potter Steen Der Wijzen (dutch)",
+    "icon_rel_path": "PLAYSTATION/PSX/Harry Potter Steen Der Wijzen (dutch).png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Harry Potter Steen Der Wijzen (dutch) psx",
+      "Harry Potter Steen Der Wijzen (dutch)"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Land_Before_Time_-_Big_Water_Adventure_(bin)[SLUS-01481]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Land_Before_Time_-_Big_Water_Adventure_(bin)[SLUS-01481]",
+    "display_name": "Land Before Time Big Water Adventure (bin)[SLUS 01481]",
+    "icon_rel_path": "PLAYSTATION/PSX/Land Before Time Big Water Adventure (bin)[SLUS 01481].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Land Before Time Big Water Adventure (bin)[SLUS 01481] psx",
+      "Land Before Time Big Water Adventure (bin)[SLUS 01481]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Land_Before_Time_-_Return_to_the_Great_Valley_(mdf)[SLUS-01043]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Land_Before_Time_-_Return_to_the_Great_Valley_(mdf)[SLUS-01043]",
+    "display_name": "Land Before Time Return To The Great Valley (mdf)[SLUS 01043]",
+    "icon_rel_path": "PLAYSTATION/PSX/Land Before Time Return To The Great Valley (mdf)[SLUS 01043].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Land Before Time Return To The Great Valley (mdf)[SLUS 01043] psx",
+      "Land Before Time Return To The Great Valley (mdf)[SLUS 01043]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Land_Before_Time_-_The_Great_Valley_Racing_Adventure_(bin)[SLUS-01213]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Land_Before_Time_-_The_Great_Valley_Racing_Adventure_(bin)[SLUS-01213]",
+    "display_name": "Land Before Time The Great Valley Racing Adventure (bin)[SLUS 01213]",
+    "icon_rel_path": "PLAYSTATION/PSX/Land Before Time The Great Valley Racing Adventure (bin)[SLUS 01213].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Land Before Time The Great Valley Racing Adventure (bin)[SLUS 01213] psx",
+      "Land Before Time The Great Valley Racing Adventure (bin)[SLUS 01213]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Legacy_of_Kain_-_Soul_Reaver_(E)_[SLES-01301]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Legacy_of_Kain_-_Soul_Reaver_(E)_[SLES-01301]",
+    "display_name": "Legacy Of Kain Soul Reaver (E) [SLES 01301]",
+    "icon_rel_path": "PLAYSTATION/PSX/Legacy Of Kain Soul Reaver (E) [SLES 01301].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Legacy Of Kain Soul Reaver (E) [SLES 01301] psx",
+      "Legacy Of Kain Soul Reaver (E) [SLES 01301]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Looney_Toons": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Looney_Toons",
+    "display_name": "Looney Toons",
+    "icon_rel_path": "PLAYSTATION/PSX/Looney Toons.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Looney Toons psx",
+      "Looney Toons"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Mickey's_Wild_Adventure_(E)_[SCES-00163]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Mickey's_Wild_Adventure_(E)_[SCES-00163]",
+    "display_name": "Mickey's Wild Adventure (E) [SCES 00163]",
+    "icon_rel_path": "PLAYSTATION/PSX/Mickey's Wild Adventure (E) [SCES 00163].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Mickey's Wild Adventure (E) [SCES 00163] psx",
+      "Mickey's Wild Adventure (E) [SCES 00163]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Micro_Maniacs_(E)_[SLES-01921]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Micro_Maniacs_(E)_[SLES-01921]",
+    "display_name": "Micro Maniacs (E) [SLES 01921]",
+    "icon_rel_path": "PLAYSTATION/PSX/Micro Maniacs (E) [SLES 01921].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Micro Maniacs (E) [SLES 01921] psx",
+      "Micro Maniacs (E) [SLES 01921]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Ms._Pacman_-_Maze_Madness_[NTSC-U]_[SLUS-01018]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Ms._Pacman_-_Maze_Madness_[NTSC-U]_[SLUS-01018]",
+    "display_name": "Ms. Pacman Maze Madness [NTSC U] [SLUS 01018]",
+    "icon_rel_path": "PLAYSTATION/PSX/Ms. Pacman Maze Madness [NTSC U] [SLUS 01018].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Ms. Pacman Maze Madness [NTSC U] [SLUS 01018] psx",
+      "Ms. Pacman Maze Madness [NTSC U] [SLUS 01018]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/QuakeII": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "QuakeII",
+    "display_name": "Quake II",
+    "icon_rel_path": "PLAYSTATION/PSX/Quake II.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Quake II psx",
+      "Quake II"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Ridge_Racer_4_PSX_PAL_NZB2Day.com": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Ridge_Racer_4_PSX_PAL_NZB2Day.com",
+    "display_name": "Ridge Racer 4 PSX PAL NZB2Day.com",
+    "icon_rel_path": "PLAYSTATION/PSX/Ridge Racer 4 PSX PAL NZB2Day.com.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Ridge Racer 4 PSX PAL NZB2Day.com psx",
+      "Ridge Racer 4 PSX PAL NZB2Day.com"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Ridge_Racer_IV_pal_psx": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Ridge_Racer_IV_pal_psx",
+    "display_name": "Ridge Racer IV Pal Psx",
+    "icon_rel_path": "PLAYSTATION/PSX/Ridge Racer IV Pal Psx.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Ridge Racer IV Pal Psx psx",
+      "Ridge Racer IV Pal Psx"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Shrek_-_Treasure_Hunt_(E)_[SLES-03996]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Shrek_-_Treasure_Hunt_(E)_[SLES-03996]",
+    "display_name": "Shrek Treasure Hunt (E) [SLES 03996]",
+    "icon_rel_path": "PLAYSTATION/PSX/Shrek Treasure Hunt (E) [SLES 03996].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Shrek Treasure Hunt (E) [SLES 03996] psx",
+      "Shrek Treasure Hunt (E) [SLES 03996]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Silent.Hill.PSX.PAL-FallenAngel": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Silent.Hill.PSX.PAL-FallenAngel",
+    "display_name": "Silent.Hill.PSX.PAL Fallen Angel",
+    "icon_rel_path": "PLAYSTATION/PSX/Silent.Hill.PSX.PAL Fallen Angel.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Silent.Hill.PSX.PAL Fallen Angel psx",
+      "Silent.Hill.PSX.PAL Fallen Angel"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Spyro_The_Dragon_1_PSX_PAL_NZB2Day.com": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Spyro_The_Dragon_1_PSX_PAL_NZB2Day.com",
+    "display_name": "Spyro The Dragon 1 PSX PAL NZB2Day.com",
+    "icon_rel_path": "PLAYSTATION/PSX/Spyro The Dragon 1 PSX PAL NZB2Day.com.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Spyro The Dragon 1 PSX PAL NZB2Day.com psx",
+      "Spyro The Dragon 1 PSX PAL NZB2Day.com"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Spyro_The_Dragon_2_PSX_PAL_NZB2Day.com": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Spyro_The_Dragon_2_PSX_PAL_NZB2Day.com",
+    "display_name": "Spyro The Dragon 2 PSX PAL NZB2Day.com",
+    "icon_rel_path": "PLAYSTATION/PSX/Spyro The Dragon 2 PSX PAL NZB2Day.com.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Spyro The Dragon 2 PSX PAL NZB2Day.com psx",
+      "Spyro The Dragon 2 PSX PAL NZB2Day.com"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Spyro_The_Dragon_3_PSX_NTSC_NZB2Day.com": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Spyro_The_Dragon_3_PSX_NTSC_NZB2Day.com",
+    "display_name": "Spyro The Dragon 3 PSX NTSC NZB2Day.com",
+    "icon_rel_path": "PLAYSTATION/PSX/Spyro The Dragon 3 PSX NTSC NZB2Day.com.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Spyro The Dragon 3 PSX NTSC NZB2Day.com psx",
+      "Spyro The Dragon 3 PSX NTSC NZB2Day.com"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Spyro_the_dragon-pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Spyro_the_dragon-pal",
+    "display_name": "Spyro The Dragon Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Spyro The Dragon Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Spyro The Dragon Pal psx",
+      "Spyro The Dragon Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Stuart_Little_2_[NTSC-U]_[SCUS-94669]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Stuart_Little_2_[NTSC-U]_[SCUS-94669]",
+    "display_name": "Stuart Little 2 [NTSC U] [SCUS 94669]",
+    "icon_rel_path": "PLAYSTATION/PSX/Stuart Little 2 [NTSC U] [SCUS 94669].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Stuart Little 2 [NTSC U] [SCUS 94669] psx",
+      "Stuart Little 2 [NTSC U] [SCUS 94669]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tekken_2_PSX_PAL_NZB2Day.com": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tekken_2_PSX_PAL_NZB2Day.com",
+    "display_name": "Tekken 2 PSX PAL NZB2Day.com",
+    "icon_rel_path": "PLAYSTATION/PSX/Tekken 2 PSX PAL NZB2Day.com.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tekken 2 PSX PAL NZB2Day.com psx",
+      "Tekken 2 PSX PAL NZB2Day.com"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tekken_3_PSX_PAL_NZB2Day.com": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tekken_3_PSX_PAL_NZB2Day.com",
+    "display_name": "Tekken 3 PSX PAL NZB2Day.com",
+    "icon_rel_path": "PLAYSTATION/PSX/Tekken 3 PSX PAL NZB2Day.com.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tekken 3 PSX PAL NZB2Day.com psx",
+      "Tekken 3 PSX PAL NZB2Day.com"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tetris": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tetris",
+    "display_name": "Tetris",
+    "icon_rel_path": "PLAYSTATION/PSX/Tetris.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tetris psx",
+      "Tetris"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tiny_Toons_Adventures_-_Pluck's_Big_Adventure_[U]_[SLUS-01393]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tiny_Toons_Adventures_-_Pluck's_Big_Adventure_[U]_[SLUS-01393]",
+    "display_name": "Tiny Toons Adventures Pluck's Big Adventure [U] [SLUS 01393]",
+    "icon_rel_path": "PLAYSTATION/PSX/Tiny Toons Adventures Pluck's Big Adventure [U] [SLUS 01393].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tiny Toons Adventures Pluck's Big Adventure [U] [SLUS 01393] psx",
+      "Tiny Toons Adventures Pluck's Big Adventure [U] [SLUS 01393]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tiny_Toons_Adventures_-_The_Great_Beanstalk_[U]_[SLUS-00638]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tiny_Toons_Adventures_-_The_Great_Beanstalk_[U]_[SLUS-00638]",
+    "display_name": "Tiny Toons Adventures The Great Beanstalk [U] [SLUS 00638]",
+    "icon_rel_path": "PLAYSTATION/PSX/Tiny Toons Adventures The Great Beanstalk [U] [SLUS 00638].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tiny Toons Adventures The Great Beanstalk [U] [SLUS 00638] psx",
+      "Tiny Toons Adventures The Great Beanstalk [U] [SLUS 00638]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tiny_Toons_Adventures_-_Toonenstein_-_Dare_to_Scare!_[U]_[SLUS-00967]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tiny_Toons_Adventures_-_Toonenstein_-_Dare_to_Scare!_[U]_[SLUS-00967]",
+    "display_name": "Tiny Toons Adventures Toonenstein Dare To Scare! [U] [SLUS 00967]",
+    "icon_rel_path": "PLAYSTATION/PSX/Tiny Toons Adventures Toonenstein Dare To Scare! [U] [SLUS 00967].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tiny Toons Adventures Toonenstein Dare To Scare! [U] [SLUS 00967] psx",
+      "Tiny Toons Adventures Toonenstein Dare To Scare! [U] [SLUS 00967]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tom_&_Jerry_-_House_Trap_[U]_[SLUS-01191]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tom_&_Jerry_-_House_Trap_[U]_[SLUS-01191]",
+    "display_name": "Tom & Jerry House Trap [U] [SLUS 01191]",
+    "icon_rel_path": "PLAYSTATION/PSX/Tom & Jerry House Trap [U] [SLUS 01191].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tom & Jerry House Trap [U] [SLUS 01191] psx",
+      "Tom & Jerry House Trap [U] [SLUS 01191]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tony_Hawk's_Pro_Skater_3_(E)_[SLES-03645]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tony_Hawk's_Pro_Skater_3_(E)_[SLES-03645]",
+    "display_name": "Tony Hawk's Pro Skater 3 (E) [SLES 03645]",
+    "icon_rel_path": "PLAYSTATION/PSX/Tony Hawk's Pro Skater 3 (E) [SLES 03645].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tony Hawk's Pro Skater 3 (E) [SLES 03645] psx",
+      "Tony Hawk's Pro Skater 3 (E) [SLES 03645]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tony_Hawk's_Pro_Skater_4_[U]_[SLUS-01485]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tony_Hawk's_Pro_Skater_4_[U]_[SLUS-01485]",
+    "display_name": "Tony Hawk's Pro Skater 4 [U] [SLUS 01485]",
+    "icon_rel_path": "PLAYSTATION/PSX/Tony Hawk's Pro Skater 4 [U] [SLUS 01485].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tony Hawk's Pro Skater 4 [U] [SLUS 01485] psx",
+      "Tony Hawk's Pro Skater 4 [U] [SLUS 01485]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Tony_Hawk's_Skateboarding_(E)_[SLES-02055]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Tony_Hawk's_Skateboarding_(E)_[SLES-02055]",
+    "display_name": "Tony Hawk's Skateboarding (E) [SLES 02055]",
+    "icon_rel_path": "PLAYSTATION/PSX/Tony Hawk's Skateboarding (E) [SLES 02055].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tony Hawk's Skateboarding (E) [SLES 02055] psx",
+      "Tony Hawk's Skateboarding (E) [SLES 02055]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/True_Pinball_(E)_[SLES-00052]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "True_Pinball_(E)_[SLES-00052]",
+    "display_name": "True Pinball (E) [SLES 00052]",
+    "icon_rel_path": "PLAYSTATION/PSX/True Pinball (E) [SLES 00052].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "True Pinball (E) [SLES 00052] psx",
+      "True Pinball (E) [SLES 00052]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Vigilante_8_-_Second_Offense_(E)_[SLES-02162]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Vigilante_8_-_Second_Offense_(E)_[SLES-02162]",
+    "display_name": "Vigilante 8 Second Offense (E) [SLES 02162]",
+    "icon_rel_path": "PLAYSTATION/PSX/Vigilante 8 Second Offense (E) [SLES 02162].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Vigilante 8 Second Offense (E) [SLES 02162] psx",
+      "Vigilante 8 Second Offense (E) [SLES 02162]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Walt_Disney's_The_Jungle_Book_-_Groove_Party_(E)_[SCES-03020]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Walt_Disney's_The_Jungle_Book_-_Groove_Party_(E)_[SCES-03020]",
+    "display_name": "Walt Disney's The Jungle Book Groove Party (E) [SCES 03020]",
+    "icon_rel_path": "PLAYSTATION/PSX/Walt Disney's The Jungle Book Groove Party (E) [SCES 03020].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Walt Disney's The Jungle Book Groove Party (E) [SCES 03020] psx",
+      "Walt Disney's The Jungle Book Groove Party (E) [SCES 03020]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/Wild_9_(E)_[SLES-01333]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "Wild_9_(E)_[SLES-01333]",
+    "display_name": "Wild 9 (E) [SLES 01333]",
+    "icon_rel_path": "PLAYSTATION/PSX/Wild 9 (E) [SLES 01333].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Wild 9 (E) [SLES 01333] psx",
+      "Wild 9 (E) [SLES 01333]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/X-Files_[disc1-2-3-4]_[NTSC]": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "X-Files_[disc1-2-3-4]_[NTSC]",
+    "display_name": "X Files [disc1 2 3 4] [NTSC]",
+    "icon_rel_path": "PLAYSTATION/PSX/X Files [disc1 2 3 4] [NTSC].png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "X Files [disc1 2 3 4] [NTSC] psx",
+      "X Files [disc1 2 3 4] [NTSC]"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/armored_core": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "armored_core",
+    "display_name": "Armored Core",
+    "icon_rel_path": "PLAYSTATION/PSX/Armored Core.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Armored Core psx",
+      "Armored Core"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/breath_of_fire_iv": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "breath_of_fire_iv",
+    "display_name": "Breath Of Fire Iv",
+    "icon_rel_path": "PLAYSTATION/PSX/Breath Of Fire Iv.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Breath Of Fire Iv psx",
+      "Breath Of Fire Iv"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/carmageddon": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "carmageddon",
+    "display_name": "Carmageddon",
+    "icon_rel_path": "PLAYSTATION/PSX/Carmageddon.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Carmageddon psx",
+      "Carmageddon"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/castlevania__symphony_of_the_night_-_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "castlevania__symphony_of_the_night_-_pal",
+    "display_name": "Castlevania Symphony Of The Night Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Castlevania Symphony Of The Night Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Castlevania Symphony Of The Night Pal psx",
+      "Castlevania Symphony Of The Night Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/chrono_cross_-_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "chrono_cross_-_ntsc",
+    "display_name": "Chrono Cross Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Chrono Cross Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Chrono Cross Ntsc psx",
+      "Chrono Cross Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/chrono_trigger_-_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "chrono_trigger_-_ntsc",
+    "display_name": "Chrono Trigger Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Chrono Trigger Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Chrono Trigger Ntsc psx",
+      "Chrono Trigger Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/colin_mcrae_rally_2.0": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "colin_mcrae_rally_2.0",
+    "display_name": "Colin Mcrae Rally 2.0",
+    "icon_rel_path": "PLAYSTATION/PSX/Colin Mcrae Rally 2.0.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Colin Mcrae Rally 2.0 psx",
+      "Colin Mcrae Rally 2.0"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/cool_boarders_2_-_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "cool_boarders_2_-_ntsc",
+    "display_name": "Cool Boarders 2 Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Cool Boarders 2 Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Cool Boarders 2 Ntsc psx",
+      "Cool Boarders 2 Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/crash_bandicoot_compilation_-_all_psx_games": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "crash_bandicoot_compilation_-_all_psx_games",
+    "display_name": "Crash Bandicoot Compilation All Psx Games",
+    "icon_rel_path": "PLAYSTATION/PSX/Crash Bandicoot Compilation All Psx Games.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Crash Bandicoot Compilation All Psx Games psx",
+      "Crash Bandicoot Compilation All Psx Games"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/croc_-_legend_of_the_gobbos": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "croc_-_legend_of_the_gobbos",
+    "display_name": "Croc Legend Of The Gobbos",
+    "icon_rel_path": "PLAYSTATION/PSX/Croc Legend Of The Gobbos.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Croc Legend Of The Gobbos psx",
+      "Croc Legend Of The Gobbos"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/dead_or_alive": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "dead_or_alive",
+    "display_name": "Dead Or Alive",
+    "icon_rel_path": "PLAYSTATION/PSX/Dead Or Alive.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Dead Or Alive psx",
+      "Dead Or Alive"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/die_hard_trilogy": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "die_hard_trilogy",
+    "display_name": "Die Hard Trilogy",
+    "icon_rel_path": "PLAYSTATION/PSX/Die Hard Trilogy.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Die Hard Trilogy psx",
+      "Die Hard Trilogy"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/dino_crisis_-_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "dino_crisis_-_pal",
+    "display_name": "Dino Crisis Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Dino Crisis Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Dino Crisis Pal psx",
+      "Dino Crisis Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/disney's_Aladdin_and_Nasira's_Revenge_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "disney's_Aladdin_and_Nasira's_Revenge_pal",
+    "display_name": "Disney's Aladdin And Nasira's Revenge Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Disney's Aladdin And Nasira's Revenge Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Disney's Aladdin And Nasira's Revenge Pal psx",
+      "Disney's Aladdin And Nasira's Revenge Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/disney's_Toy_Story_II_ntsc_psx": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "disney's_Toy_Story_II_ntsc_psx",
+    "display_name": "Disney's Toy Story II Ntsc Psx",
+    "icon_rel_path": "PLAYSTATION/PSX/Disney's Toy Story II Ntsc Psx.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Disney's Toy Story II Ntsc Psx psx",
+      "Disney's Toy Story II Ntsc Psx"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/driver_-_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "driver_-_pal",
+    "display_name": "Driver Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Driver Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Driver Pal psx",
+      "Driver Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/duke_nukem___time_to_kill": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "duke_nukem___time_to_kill",
+    "display_name": "Duke Nukem Time To Kill",
+    "icon_rel_path": "PLAYSTATION/PSX/Duke Nukem Time To Kill.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Duke Nukem Time To Kill psx",
+      "Duke Nukem Time To Kill"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/feareffect-2-psx": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "feareffect-2-psx",
+    "display_name": "Feareffect 2 Psx",
+    "icon_rel_path": "PLAYSTATION/PSX/Feareffect 2 Psx.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Feareffect 2 Psx psx",
+      "Feareffect 2 Psx"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/ghost_in_the_shell": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "ghost_in_the_shell",
+    "display_name": "Ghost In The Shell",
+    "icon_rel_path": "PLAYSTATION/PSX/Ghost In The Shell.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Ghost In The Shell psx",
+      "Ghost In The Shell"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/gran_turismo_2": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "gran_turismo_2",
+    "display_name": "Gran Turismo 2",
+    "icon_rel_path": "PLAYSTATION/PSX/Gran Turismo 2.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Gran Turismo 2 psx",
+      "Gran Turismo 2"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/grand_theft_auto_-_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "grand_theft_auto_-_pal",
+    "display_name": "Grand Theft Auto Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Grand Theft Auto Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Grand Theft Auto Pal psx",
+      "Grand Theft Auto Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/harvest_moon_back_to_nature": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "harvest_moon_back_to_nature",
+    "display_name": "Harvest Moon Back To Nature",
+    "icon_rel_path": "PLAYSTATION/PSX/Harvest Moon Back To Nature.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Harvest Moon Back To Nature psx",
+      "Harvest Moon Back To Nature"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/home": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "home",
+    "display_name": "Home",
+    "icon_rel_path": "PLAYSTATION/PSX/Home.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Home psx",
+      "Home"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/legend_of_mana": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "legend_of_mana",
+    "display_name": "Legend Of Mana",
+    "icon_rel_path": "PLAYSTATION/PSX/Legend Of Mana.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Legend Of Mana psx",
+      "Legend Of Mana"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/marvel_vs._capcom": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "marvel_vs._capcom",
+    "display_name": "Marvel Vs. Capcom",
+    "icon_rel_path": "PLAYSTATION/PSX/Marvel Vs. Capcom.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Marvel Vs. Capcom psx",
+      "Marvel Vs. Capcom"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/medievil_-_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "medievil_-_pal",
+    "display_name": "Medievil Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Medievil Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Medievil Pal psx",
+      "Medievil Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/metal_gear_solid__-_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "metal_gear_solid__-_ntsc",
+    "display_name": "Metal Gear Solid Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Metal Gear Solid Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Metal Gear Solid Ntsc psx",
+      "Metal Gear Solid Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/micro_machines_v3": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "micro_machines_v3",
+    "display_name": "Micro Machines V3",
+    "icon_rel_path": "PLAYSTATION/PSX/Micro Machines V3.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Micro Machines V3 psx",
+      "Micro Machines V3"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/mortal_kombat_trilogy": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "mortal_kombat_trilogy",
+    "display_name": "Mortal Kombat Trilogy",
+    "icon_rel_path": "PLAYSTATION/PSX/Mortal Kombat Trilogy.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Mortal Kombat Trilogy psx",
+      "Mortal Kombat Trilogy"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/need_for_speed_-_porsche_unleashed_-_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "need_for_speed_-_porsche_unleashed_-_ntsc",
+    "display_name": "Need For Speed Porsche Unleashed Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Need For Speed Porsche Unleashed Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Need For Speed Porsche Unleashed Ntsc psx",
+      "Need For Speed Porsche Unleashed Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/oddworld_abe's_exoddus": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "oddworld_abe's_exoddus",
+    "display_name": "Oddworld Abe's Exoddus",
+    "icon_rel_path": "PLAYSTATION/PSX/Oddworld Abe's Exoddus.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Oddworld Abe's Exoddus psx",
+      "Oddworld Abe's Exoddus"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/oddworld_abe's_oddysee": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "oddworld_abe's_oddysee",
+    "display_name": "Oddworld Abe's Oddysee",
+    "icon_rel_path": "PLAYSTATION/PSX/Oddworld Abe's Oddysee.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Oddworld Abe's Oddysee psx",
+      "Oddworld Abe's Oddysee"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/parappa_the_rapper": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "parappa_the_rapper",
+    "display_name": "Parappa The Rapper",
+    "icon_rel_path": "PLAYSTATION/PSX/Parappa The Rapper.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Parappa The Rapper psx",
+      "Parappa The Rapper"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/parasite_eve": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "parasite_eve",
+    "display_name": "Parasite Eve",
+    "icon_rel_path": "PLAYSTATION/PSX/Parasite Eve.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Parasite Eve psx",
+      "Parasite Eve"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/rayman": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "rayman",
+    "display_name": "Rayman",
+    "icon_rel_path": "PLAYSTATION/PSX/Rayman.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Rayman psx",
+      "Rayman"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/rayman_2": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "rayman_2",
+    "display_name": "Rayman 2",
+    "icon_rel_path": "PLAYSTATION/PSX/Rayman 2.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Rayman 2 psx",
+      "Rayman 2"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/resident_evil_-_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "resident_evil_-_pal",
+    "display_name": "Resident Evil Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Resident Evil Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Resident Evil Pal psx",
+      "Resident Evil Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/resident_evil_directors_cut_dual_shock_edition_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "resident_evil_directors_cut_dual_shock_edition_ntsc",
+    "display_name": "Resident Evil Directors Cut Dual Shock Edition Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Resident Evil Directors Cut Dual Shock Edition Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Resident Evil Directors Cut Dual Shock Edition Ntsc psx",
+      "Resident Evil Directors Cut Dual Shock Edition Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/ridge_racer": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "ridge_racer",
+    "display_name": "Ridge Racer",
+    "icon_rel_path": "PLAYSTATION/PSX/Ridge Racer.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Ridge Racer psx",
+      "Ridge Racer"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/silent_hill": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "silent_hill",
+    "display_name": "Silent Hill",
+    "icon_rel_path": "PLAYSTATION/PSX/Silent Hill.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Silent Hill psx",
+      "Silent Hill"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/soul_blade": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "soul_blade",
+    "display_name": "Soul Blade",
+    "icon_rel_path": "PLAYSTATION/PSX/Soul Blade.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Soul Blade psx",
+      "Soul Blade"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/spyro_the_dragon": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "spyro_the_dragon",
+    "display_name": "Spyro The Dragon",
+    "icon_rel_path": "PLAYSTATION/PSX/Spyro The Dragon.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Spyro The Dragon psx",
+      "Spyro The Dragon"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/star_wars___jedi_power_battles": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "star_wars___jedi_power_battles",
+    "display_name": "Star Wars Jedi Power Battles",
+    "icon_rel_path": "PLAYSTATION/PSX/Star Wars Jedi Power Battles.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Star Wars Jedi Power Battles psx",
+      "Star Wars Jedi Power Battles"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/street_fighter_alpha_3": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "street_fighter_alpha_3",
+    "display_name": "Street Fighter Alpha 3",
+    "icon_rel_path": "PLAYSTATION/PSX/Street Fighter Alpha 3.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Street Fighter Alpha 3 psx",
+      "Street Fighter Alpha 3"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/syphon_filter_-_pal": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "syphon_filter_-_pal",
+    "display_name": "Syphon Filter Pal",
+    "icon_rel_path": "PLAYSTATION/PSX/Syphon Filter Pal.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Syphon Filter Pal psx",
+      "Syphon Filter Pal"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/tekken_3_-_ntsc": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "tekken_3_-_ntsc",
+    "display_name": "Tekken 3 Ntsc",
+    "icon_rel_path": "PLAYSTATION/PSX/Tekken 3 Ntsc.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tekken 3 Ntsc psx",
+      "Tekken 3 Ntsc"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/tenchu": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "tenchu",
+    "display_name": "Tenchu",
+    "icon_rel_path": "PLAYSTATION/PSX/Tenchu.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tenchu psx",
+      "Tenchu"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/the_simpsons_wrestling": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "the_simpsons_wrestling",
+    "display_name": "The Simpsons Wrestling",
+    "icon_rel_path": "PLAYSTATION/PSX/The Simpsons Wrestling.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "The Simpsons Wrestling psx",
+      "The Simpsons Wrestling"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/tomb_raider": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "tomb_raider",
+    "display_name": "Tomb Raider",
+    "icon_rel_path": "PLAYSTATION/PSX/Tomb Raider.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tomb Raider psx",
+      "Tomb Raider"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/tomba": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "tomba",
+    "display_name": "Tomba",
+    "icon_rel_path": "PLAYSTATION/PSX/Tomba.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tomba psx",
+      "Tomba"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/tony_hawk's_pro_skater_2": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "tony_hawk's_pro_skater_2",
+    "display_name": "Tony Hawk's Pro Skater 2",
+    "icon_rel_path": "PLAYSTATION/PSX/Tony Hawk's Pro Skater 2.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Tony Hawk's Pro Skater 2 psx",
+      "Tony Hawk's Pro Skater 2"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/wipeout_2097": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "wipeout_2097",
+    "display_name": "Wipeout 2097",
+    "icon_rel_path": "PLAYSTATION/PSX/Wipeout 2097.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Wipeout 2097 psx",
+      "Wipeout 2097"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  },
+  "PLAYSTATION/PSX/wwf_smackdown": {
+    "platform": "PLAYSTATION",
+    "system": "psx",
+    "system_folder": "PSX",
+    "folder_name": "wwf_smackdown",
+    "display_name": "Wwf Smackdown",
+    "icon_rel_path": "PLAYSTATION/PSX/Wwf Smackdown.png",
+    "icon_abs_path": null,
+    "search_terms": [
+      "Wwf Smackdown psx",
+      "Wwf Smackdown"
+    ],
+    "source": null,
+    "matched_name": null,
+    "scraped_at": null,
+    "status": "pending"
+  }
+}

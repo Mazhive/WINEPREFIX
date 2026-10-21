@@ -47,13 +47,17 @@ BASE = Path(__file__).resolve().parent
 TEMPLATE_ROOT = Path("/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINEPREFIX/template-scripts")
 LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
-ICONS_DIR = LAUNCHERS_DIR / "gameicons"
-# Emulator-covers staan los van de Windows/Linux-covers
-EMU_ICONS_DIR = LAUNCHERS_DIR / "emu-gameicons"
+
+# Standaard icon-map (nieuwe centrale locatie) met fallback naar template-scripts
+ICONS_ROOT_DEFAULT = Path("/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS")
+ICONS_DIR = ICONS_ROOT_DEFAULT
+EMU_ICONS_DIR = ICONS_ROOT_DEFAULT / "emu-gameicons"
+EMU_ICONS_TREE_DIR = ICONS_ROOT_DEFAULT / "EMU-ICONS"
+EMU_ICONS_INDEX = EMU_ICONS_TREE_DIR / "_index.json"
 
 # --- Fork-specifiek -----------------------------------------------------------
 GAMES_ROOT = Path("/mnt/VG_00/PUBLIC-LIBRARY/GAMES/GAMES")
-EMU_LAUNCHERS_DIR = LAUNCHERS_DIR / "EMU-LAUNCHERS"
+EMU_LAUNCHERS_DIR = ICONS_ROOT_DEFAULT / "EMU-LAUNCHERS"
 EMU_GENERIC_LAUNCHER = EMU_LAUNCHERS_DIR / "emu-launch.sh"
 EMU_INSTALL_SH = EMU_LAUNCHERS_DIR / "emu-install.sh"
 
@@ -63,6 +67,7 @@ CONF_DIR = Path.home() / ".config" / "gamelauncher"
 EMULATION_CONF_HOME = CONF_DIR / "emulation.conf"
 EMULATION_CONF_REPO = EMU_LAUNCHERS_DIR / "emulation.conf"
 EMULATORS_JSON = CONF_DIR / "emulators.json"
+ICONS_CONF_KEY = "ICONS_ROOT"  # key in settings.conf voor gebruikers-icon-map
 
 
 def emulation_conf_path():
@@ -82,7 +87,7 @@ _PLATFORM_ALIASES = {
 # Boven deze grens krijgt een gamelijst een automatisch A-Z bucket-niveau
 BUCKET_THRESHOLD = 500
 
-APP_VERSION = "0.2.4"
+APP_VERSION = "0.2.6"
 
 # Systeem-mapnaam → emulation.conf-sleutel (alleen afwijkingen)
 _SYSTEM_ALIASES = {
@@ -270,11 +275,94 @@ def save_settings(opts):
     return True
 
 
+def get_icons_root() -> Path:
+    """Haal de geconfigureerde icon-root op uit settings, met fallback naar default."""
+    opts = load_settings()
+    if ICONS_CONF_KEY in opts and opts[ICONS_CONF_KEY]:
+        p = Path(opts[ICONS_CONF_KEY]).expanduser()
+        if p.exists():
+            return p
+    return ICONS_ROOT_DEFAULT
+
+
+def update_icon_dirs():
+    """Update ICONS_DIR en EMU_ICONS_DIR op basis van gebruikersconfiguratie."""
+    global ICONS_DIR, EMU_ICONS_DIR, EMU_ICONS_TREE_DIR, EMU_ICONS_INDEX, EMU_LAUNCHERS_DIR, EMU_GENERIC_LAUNCHER, EMU_INSTALL_SH, EMULATION_CONF_REPO
+    root = get_icons_root()
+    ICONS_DIR = root
+    EMU_ICONS_DIR = root / "emu-gameicons"
+    EMU_ICONS_TREE_DIR = root / "EMU-ICONS"
+    EMU_ICONS_INDEX = EMU_ICONS_TREE_DIR / "_index.json"
+    EMU_LAUNCHERS_DIR = root / "EMU-LAUNCHERS"
+    EMU_GENERIC_LAUNCHER = EMU_LAUNCHERS_DIR / "emu-launch.sh"
+    EMU_INSTALL_SH = EMU_LAUNCHERS_DIR / "emu-install.sh"
+    EMULATION_CONF_REPO = EMU_LAUNCHERS_DIR / "emulation.conf"
+    # Reset emu icon index cache
+    global _EMU_ICON_INDEX
+    _EMU_ICON_INDEX = None
+    # Reset scrape icon index cache
+    global _SCRAPE_ICON_INDEX
+    _SCRAPE_ICON_INDEX = None
+    # Ensure icon structure exists
+    ensure_icon_structure(root)
+
+
+def validate_icon_structure(root: Path) -> tuple[bool, list[str]]:
+    """Valideer of de icon-mapstructuur correct is.
+    Returns: (is_valid, list_of_errors)"""
+    errors = []
+    required = {
+        "gameicons (root)": root,
+        "systems": root / "systems",
+        "emu-gameicons": root / "emu-gameicons",
+        "EMU-ICONS": root / "EMU-ICONS",
+        "LINUXLAUNCHERS": root / "LINUXLAUNCHERS",
+        "EMU-LAUNCHERS": root / "EMU-LAUNCHERS",
+    }
+    for name, path in required.items():
+        if not path.exists() or not path.is_dir():
+            errors.append(f"Ontbrekende map: {name} ({path})")
+    # Check kritieke bestanden
+    if not (root / "back.jpg").exists():
+        errors.append("Ontbrekend bestand: back.jpg")
+    # Check minimaal systeem-iconen
+    systems_dir = root / "systems"
+    if systems_dir.exists():
+        sys_icons = {f.name for f in systems_dir.iterdir() if f.is_file()}
+        expected = {"ps2.png", "n64.png", "snes.png", "linux.png", "windows.png"}
+        missing = expected - sys_icons
+        if missing:
+            errors.append(f"Ontbrekende systeem-iconen: {', '.join(sorted(missing))}")
+    # Check scrape index
+    index_file = root / "EMU-ICONS" / "_index.json"
+    if not index_file.exists():
+        errors.append("Ontbrekend bestand: EMU-ICONS/_index.json (scrape-index)")
+    return len(errors) == 0, errors
+
+
+def ensure_icon_structure(root: Path) -> list[str]:
+    """Maak ontbrekende icon-mappen aan. Retourneert lijst van aangemaakte mappen."""
+    created = []
+    required_dirs = [
+        root / "systems",
+        root / "emu-gameicons",
+        root / "EMU-ICONS",
+        root / "LINUXLAUNCHERS",
+        root / "EMU-LAUNCHERS",
+    ]
+    for d in required_dirs:
+        if not d.exists():
+            d.mkdir(parents=True, exist_ok=True)
+            created.append(str(d))
+    return created
+
+
 def _norm(name):
     return re.sub(r"[^a-z0-9]", "", name.lower())
 
 
 _EMU_ICON_INDEX = None
+_SCRAPE_ICON_INDEX = None
 
 
 def _emu_icon_index():
@@ -287,6 +375,63 @@ def _emu_icon_index():
         else:
             _EMU_ICON_INDEX = {}
     return _EMU_ICON_INDEX
+
+
+def _scrape_icon_index():
+    """Laadt de scrape-index uit EMU-ICONS/_index.json.
+    Bouwt by_path (rom_path -> icon_path) en by_system (system_key -> icon_path).
+    Fallback: als index ontbreekt, scan de boom recursief op bestandsnaam."""
+    global _SCRAPE_ICON_INDEX
+    if _SCRAPE_ICON_INDEX is not None:
+        return _SCRAPE_ICON_INDEX
+
+    by_path = {}
+    by_system = {}
+
+    if EMU_ICONS_INDEX.exists():
+        try:
+            data = json.loads(EMU_ICONS_INDEX.read_text(encoding="utf-8"))
+            # data is games_index.json formaat: key -> entry met icon_abs_path
+            for rel_path, entry in data.items():
+                icon_abs = entry.get("icon_abs_path")
+                if not icon_abs:
+                    continue
+                icon_path = Path(icon_abs)
+                if not icon_path.exists():
+                    continue
+                # Game-match: via games_index_by_path.json logica
+                # We bouwen de rom_path uit de rel_path: GAMES/GAMES/<rel_path>
+                rom_path = GAMES_ROOT / rel_path
+                by_path[str(rom_path)] = icon_path
+                # Systeem-match: als folder_name == systeemnaam (bv. NINTENDO/SNES)
+                platform = entry.get("platform", "")
+                system_folder = entry.get("system_folder", "")
+                folder_name = entry.get("folder_name", "")
+                system = entry.get("system", "")
+                if folder_name and system_folder and folder_name == system_folder:
+                    # Dit is een systeem-icoon (bv. NINTENDO/SNES -> folder_name=SNES, system_folder=SNES)
+                    by_system[system] = icon_path
+        except (OSError, json.JSONDecodeError):
+            pass
+    else:
+        # Fallback: scan EMU-ICONS boom recursief
+        if EMU_ICONS_TREE_DIR.exists():
+            for icon_file in EMU_ICONS_TREE_DIR.rglob("*.png"):
+                if not icon_file.is_file():
+                    continue
+                # Probeer rom_path te reconstrueren
+                rel = icon_file.relative_to(EMU_ICONS_TREE_DIR)
+                rom_path = GAMES_ROOT / rel.with_suffix("")
+                by_path[str(rom_path)] = icon_file
+                # Systeem-iconen: bestanden direct in systeemmap (geen submap)
+                parts = rel.parts
+                if len(parts) == 2:  # platform/system/icon.png
+                    platform, system_folder = parts[0], parts[1]
+                    system = _conf_key(system_folder)
+                    by_system[system] = icon_file
+
+    _SCRAPE_ICON_INDEX = {"by_path": by_path, "by_system": by_system}
+    return _SCRAPE_ICON_INDEX
 
 
 def _read_launcher_meta(script_path):
@@ -572,7 +717,7 @@ class NavNode:
         return self._icon
 
     def _resolve_icon(self):
-        """Zoekt een scroller-icoon: eerst gameicons/systems, dan gameicons.
+        """Zoekt een scroller-icoon: eerst gameicons/systems, dan gameicons, dan scrape-index.
 
         Systeem-iconen staan in een eigen submap zodat ze nooit als
         game-cover worden gematcht (EmuGame/Game kijken alleen bovenop).
@@ -585,6 +730,12 @@ class NavNode:
             for f in d.iterdir():
                 if f.is_file() and _norm(f.stem) not in norm_icons:
                     norm_icons[_norm(f.stem)] = f
+        # Ook scrape-index systeem-iconen toevoegen
+        idx = _scrape_icon_index()
+        for sys_key, icon_path in idx["by_system"].items():
+            n = _norm(sys_key)
+            if n not in norm_icons:
+                norm_icons[n] = icon_path
         if not norm_icons:
             return None
         # 1) exact op systeemsleutel of titel
@@ -613,10 +764,11 @@ class EmuGame:
     kind = "emu"
     badge = None
 
-    def __init__(self, key, rom_path, system):
+    def __init__(self, key, rom_path, system, system_dir=None):
         self.key = f"emu:{system}:{key}"
         self.rom_path = rom_path
         self.system = system
+        self.system_dir = system_dir
         self.display_name = Game._prettify(key)
         self.script = EMU_GENERIC_LAUNCHER
         self._icon = None
@@ -646,8 +798,16 @@ class EmuGame:
         return self._icon
 
     def _resolve_icon(self):
-        # Covers zijn exact op weergavenaam gedownload; geen losse
-        # substring-match (die gaf bij duizenden covers verkeerde treffers).
+        # 1) Game-match via scrape-index (rom_path -> icon)
+        idx = _scrape_icon_index()
+        icon = idx["by_path"].get(str(self.rom_path))
+        if icon:
+            return icon
+        # 2) Systeem-match via scrape-index (system_key -> icon)
+        icon = idx["by_system"].get(self.system)
+        if icon:
+            return icon
+        # 3) Fallback: platte emu-gameicons/ op display_name
         return _emu_icon_index().get(_norm(self.display_name))
 
 
@@ -1203,6 +1363,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        update_icon_dirs()  # Initialiseer icon-mappen vanuit gebruikersconfiguratie
         self.nav_stack = []
         self.current_node = None
         self.current_items = []
@@ -1383,6 +1544,25 @@ class MainWindow(QMainWindow):
         vol_grid.setRowMinimumHeight(0, 20)
         lay.addLayout(vol_grid)
 
+        # Icon-map selectie
+        icons_row = QHBoxLayout()
+        icons_row.setSpacing(6)
+        self.icons_label = QLabel("Icon-map")
+        self.icons_edit = QLineEdit()
+        self.icons_edit.setPlaceholderText(str(ICONS_ROOT_DEFAULT))
+        self.icons_edit.setText(str(get_icons_root()))
+        self.icons_edit.textChanged.connect(self._on_icons_dir_changed)
+        self.icons_button = QPushButton("Bladeren…")
+        self.icons_button.clicked.connect(self._browse_icons_dir)
+        self.icons_validate_btn = QPushButton("Valideren")
+        self.icons_validate_btn.clicked.connect(self._validate_icons_dir)
+        self.icons_validate_btn.setFixedWidth(80)
+        icons_row.addWidget(self.icons_label)
+        icons_row.addWidget(self.icons_edit, 1)
+        icons_row.addWidget(self.icons_button)
+        icons_row.addWidget(self.icons_validate_btn)
+        lay.addLayout(icons_row)
+
         dir_row = QHBoxLayout()
         dir_row.setSpacing(6)
         self.dir_label = QLabel("Installatiemap")
@@ -1468,6 +1648,33 @@ class MainWindow(QMainWindow):
         chosen = QFileDialog.getExistingDirectory(self, "Kies installatiemap", start)
         if chosen:
             self.dir_edit.setText(chosen)
+
+    def _on_icons_dir_changed(self, text):
+        path = text.strip()
+        if path:
+            opts = load_settings()
+            opts[ICONS_CONF_KEY] = path
+            save_settings(opts)
+            update_icon_dirs()
+
+    def _browse_icons_dir(self):
+        start = self.icons_edit.text().strip() or str(ICONS_ROOT_DEFAULT)
+        chosen = QFileDialog.getExistingDirectory(self, "Kies icon-map (hoofdmap met gameicons/, emu-gameicons/, etc.)", start)
+        if chosen:
+            self.icons_edit.setText(chosen)
+
+    def _validate_icons_dir(self):
+        path = self.icons_edit.text().strip()
+        if not path:
+            QMessageBox.warning(self, "Valideren", "Geen map ingevuld.")
+            return
+        root = Path(path).expanduser()
+        valid, errors = validate_icon_structure(root)
+        if valid:
+            QMessageBox.information(self, "Valideren", f"Mapstructuur is correct:\n{root}")
+        else:
+            msg = "Mapstructuur incomplete:\n\n" + "\n".join(f"• {e}" for e in errors)
+            QMessageBox.warning(self, "Valideren", msg)
 
     # --- Navigatie (drill-down) ---------------------------------------------
 
@@ -1924,9 +2131,9 @@ def _is_format_dir(name):
     return 0 < len(name) <= 6 and " " not in name and stripped.isalnum()
 
 
-def _make_emu_game(path, system_key):
+def _make_emu_game(path, system_key, system_dir=None):
     name = path.stem if path.is_file() else path.name
-    return EmuGame(name, path, system_key)
+    return EmuGame(name, path, system_key, system_dir)
 
 
 def _maybe_bucket(games, title):
@@ -1965,7 +2172,7 @@ def _scan_system_games(sdir, skey, _depth=0):
         for bdir in sorted(dir_entries, key=lambda p: p.name.lower()):
             bucket_entries = _collect_game_entries(bdir)
             if bucket_entries:
-                games = [_make_emu_game(e, skey) for e in bucket_entries]
+                games = [_make_emu_game(e, skey, sdir) for e in bucket_entries]
                 games.sort(key=lambda g: g.display_name.lower())
                 children.append(NavNode(bdir.name.upper(), children=games))
         return children
@@ -1979,7 +2186,7 @@ def _scan_system_games(sdir, skey, _depth=0):
                 children.append(NavNode(fdir.name.upper(), children=inner))
         return children
 
-    games = [_make_emu_game(e, skey) for e in entries]
+    games = [_make_emu_game(e, skey, sdir) for e in entries]
     games.sort(key=lambda g: g.display_name.lower())
     return _maybe_bucket(games, skey)
 

@@ -33,9 +33,13 @@ BASE = Path(__file__).resolve().parent
 TEMPLATE_ROOT = Path("/mnt/VG_00/PUBLIC-LIBRARY/PRE-INSTALLED-GAMES/WINEPREFIX/template-scripts")
 LAUNCHERS_DIR = TEMPLATE_ROOT / "game-launchers"
 LINUXLAUNCHERS = LAUNCHERS_DIR / "LINUXLAUNCHERS"
-ICONS_DIR = LAUNCHERS_DIR / "gameicons"
 
-APP_VERSION = "1.9.8"
+# Standaard icon-map (nieuwe centrale locatie) met fallback naar template-scripts
+ICONS_ROOT_DEFAULT = Path("/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS")
+ICONS_DIR = ICONS_ROOT_DEFAULT
+
+APP_VERSION = "1.9.9"
+ICONS_CONF_KEY = "ICONS_ROOT"  # key in settings.conf voor gebruikers-icon-map
 
 CARD_W = 200.0
 CARD_H = 200.0
@@ -192,6 +196,49 @@ def save_settings(opts):
     except OSError:
         return False
     return True
+
+
+def get_icons_root() -> Path:
+    """Haal de geconfigureerde icon-root op uit settings, met fallback naar default."""
+    opts = load_settings()
+    if ICONS_CONF_KEY in opts and opts[ICONS_CONF_KEY]:
+        p = Path(opts[ICONS_CONF_KEY]).expanduser()
+        if p.exists():
+            return p
+    return ICONS_ROOT_DEFAULT
+
+
+def update_icon_dirs():
+    """Update ICONS_DIR op basis van gebruikersconfiguratie."""
+    global ICONS_DIR
+    root = get_icons_root()
+    ICONS_DIR = root
+
+
+def validate_icon_structure(root: Path) -> tuple[bool, list[str]]:
+    """Valideer of de icon-mapstructuur correct is.
+    Returns: (is_valid, list_of_errors)"""
+    errors = []
+    required = {
+        "gameicons (root)": root,
+        "systems": root / "systems",
+        "LINUXLAUNCHERS": root / "LINUXLAUNCHERS",
+    }
+    for name, path in required.items():
+        if not path.exists() or not path.is_dir():
+            errors.append(f"Ontbrekende map: {name} ({path})")
+    # Check kritieke bestanden
+    if not (root / "back.jpg").exists():
+        errors.append("Ontbrekend bestand: back.jpg")
+    # Check minimaal systeem-iconen
+    systems_dir = root / "systems"
+    if systems_dir.exists():
+        sys_icons = {f.name for f in systems_dir.iterdir() if f.is_file()}
+        expected = {"ps2.png", "n64.png", "snes.png", "linux.png", "windows.png"}
+        missing = expected - sys_icons
+        if missing:
+            errors.append(f"Ontbrekende systeem-iconen: {', '.join(sorted(missing))}")
+    return len(errors) == 0, errors
 
 
 def _norm(name):
@@ -837,6 +884,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self, games):
         super().__init__()
+        update_icon_dirs()  # Initialiseer icon-mappen vanuit gebruikersconfiguratie
         self.games = games
         self.runs = {}
         self.current_run = None
@@ -1000,6 +1048,25 @@ class MainWindow(QMainWindow):
         vol_grid.setRowMinimumHeight(0, 20)
         lay.addLayout(vol_grid)
 
+        # Icon-map selectie
+        icons_row = QHBoxLayout()
+        icons_row.setSpacing(6)
+        self.icons_label = QLabel("Icon-map")
+        self.icons_edit = QLineEdit()
+        self.icons_edit.setPlaceholderText(str(ICONS_ROOT_DEFAULT))
+        self.icons_edit.setText(str(get_icons_root()))
+        self.icons_edit.textChanged.connect(self._on_icons_dir_changed)
+        self.icons_button = QPushButton("Bladeren…")
+        self.icons_button.clicked.connect(self._browse_icons_dir)
+        self.icons_validate_btn = QPushButton("Valideren")
+        self.icons_validate_btn.clicked.connect(self._validate_icons_dir)
+        self.icons_validate_btn.setFixedWidth(80)
+        icons_row.addWidget(self.icons_label)
+        icons_row.addWidget(self.icons_edit, 1)
+        icons_row.addWidget(self.icons_button)
+        icons_row.addWidget(self.icons_validate_btn)
+        lay.addLayout(icons_row)
+
         dir_row = QHBoxLayout()
         dir_row.setSpacing(6)
         self.dir_label = QLabel("Installatiemap")
@@ -1084,6 +1151,33 @@ class MainWindow(QMainWindow):
         chosen = QFileDialog.getExistingDirectory(self, "Kies installatiemap", start)
         if chosen:
             self.dir_edit.setText(chosen)
+
+    def _on_icons_dir_changed(self, text):
+        path = text.strip()
+        if path:
+            opts = load_settings()
+            opts[ICONS_CONF_KEY] = path
+            save_settings(opts)
+            update_icon_dirs()
+
+    def _browse_icons_dir(self):
+        start = self.icons_edit.text().strip() or str(ICONS_ROOT_DEFAULT)
+        chosen = QFileDialog.getExistingDirectory(self, "Kies icon-map (hoofdmap met gameicons/, emu-gameicons/, etc.)", start)
+        if chosen:
+            self.icons_edit.setText(chosen)
+
+    def _validate_icons_dir(self):
+        path = self.icons_edit.text().strip()
+        if not path:
+            QMessageBox.warning(self, "Valideren", "Geen map ingevuld.")
+            return
+        root = Path(path).expanduser()
+        valid, errors = validate_icon_structure(root)
+        if valid:
+            QMessageBox.information(self, "Valideren", f"Mapstructuur is correct:\n{root}")
+        else:
+            msg = "Mapstructuur incomplete:\n\n" + "\n".join(f"• {e}" for e in errors)
+            QMessageBox.warning(self, "Valideren", msg)
 
     def _build_terminal(self):
         frame = QFrame()

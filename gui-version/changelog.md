@@ -1,6 +1,30 @@
 # Changelog voor game-gui.py
 
 
+## game-gui-fork v0.2.6 (2026-10-20)
+
+- **Iconen-boomstructuur gekoppeld aan fork**: `EMU-ICONS/` (geneste boom, spiegelt `GAMES/GAMES/`) + `_index.json` is nu de bron van waarheid voor emu-icons.
+- `ensure_icon_structure()`: ontbrekende mappen (`systems/`, `emu-gameicons/`, `EMU-ICONS/`, `LINUXLAUNCHERS/`, `EMU-LAUNCHERS/`) worden bij elke opstart automatisch aangemaakt.
+- `_scrape_icon_index()`: leest `EMU-ICONS/_index.json` (gegenereerd door `scrape_icons/`) en bouwt `by_path` (rom_path → icon) en `by_system` (system_key → icon).
+- `EmuGame._resolve_icon()`: matcht eerst op `rom_path` via index, dan op `system_key`, dan fallback naar platte `emu-gameicons/`.
+- `NavNode._resolve_icon()`: gebruikt ook `by_system` uit de scrape-index voor systeem-navnodes.
+- `validate_icon_structure()`: controleert nu ook op `EMU-ICONS/_index.json`.
+- `scrape_icons/placer.py`: schrijft de index nu ook naar `EMU-ICONS/_index.json` (naast `scrape_icons/games_index.json`), zodat de boom zelfbeschrijvend is en `scrape_icons/` later overbodig is.
+- `README-game-gui-fork.md` §8: volledige documentatie van de iconen-boom, match-logica, `_index.json`, en icon pack concept.
+- Versie: `0.2.5` → `0.2.6`.
+
+## game-gui-fork v0.2.5 (2026-10-19)
+
+- Nieuwe tool `template-scripts/tools/setup_icons.py`: valideert en creëert de vereiste icon-mapstructuur
+  (`gameicons/` (root), `systems/`, `emu-gameicons/`, `LINUXLAUNCHERS/`, `EMU-LAUNCHERS/`).
+- Standaard icon-map verplaatst naar `/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/` (platte structuur).
+- Gebruiker kan icon-map selecteren via GUI (opslaan in `~/.config/gamelauncher/settings.conf`).
+- Controleert kritieke bestanden: `back.jpg`, 28+ systeem-iconen, emu-covers.
+- Interactieve modus met bevestiging, `--yes`/`--dry-run`/`--check-only` flags voor automatisering.
+- Optie `--populate-systems` om ontbrekende systeem-iconen te kopiëren vanuit `PICTURES/ICONS/GAMEICONS/systems/`.
+- `--verify` flag test de `_resolve_icon()` logica van NavNode/Game/EmuGame tegen daadwerkelijke bestanden.
+- Zorgt dat scroller-iconen correct worden opgelost (systems/ eerst, dan root).
+
 ## game-gui-fork v0.2.4 (2026-10-18)
 
 - Preconf-mechanisme: standaard-config naast de AppImage (`<emu-dir>/preconf/`)
@@ -48,6 +72,18 @@
   launch-splitsing (`_start_pc`/`_start_emu`), navbar met terug-knop.
 
 ---
+
+## v1.9.9 (2026-10-19)
+
+- Nieuwe tool `template-scripts/tools/setup_icons.py`: valideert en creëert de vereiste icon-mapstructuur
+  (`gameicons/` (root), `systems/`, `emu-gameicons/`, `LINUXLAUNCHERS/`, `EMU-LAUNCHERS/`).
+- Standaard icon-map verplaatst naar `/mnt/VG_00/PUBLIC-LIBRARY/PICTURES/ICONS/GAMEICONS/` (platte structuur).
+- Gebruiker kan icon-map selecteren via GUI (opslaan in `~/.config/gamelauncher/settings.conf`).
+- Controleert kritieke bestanden: `back.jpg`, 28+ systeem-iconen, emu-covers.
+- Interactieve modus met bevestiging, `--yes`/`--dry-run`/`--check-only` flags voor automatisering.
+- Optie `--populate-systems` om ontbrekende systeem-iconen te kopiëren vanuit `PICTURES/ICONS/GAMEICONS/systems/`.
+- `--verify` flag test de `_resolve_icon()` logica van Game/LauncherNode tegen daadwerkelijke bestanden.
+- Zorgt dat scroller-iconen correct worden opgelost (systems/ eerst, dan root).
 
 ## v1.9.8 (2026-10-17)
 
